@@ -3,3 +3,4 @@
 # Do ports within this system clash with ports outside of the system too ?
 
 # This a terrible idea because then we cant export them - we should just build the image with the files somehow
+# Maybe I should just copy the way cloud companies do it ? - where there are different subfiles which can do things
