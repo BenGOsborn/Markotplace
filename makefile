@@ -1,3 +1,3 @@
-# Run the game engine
-gameEngine-run:
-	cd src/gameEngine/; go run .
+# Run the app engine
+appEngine-run:
+	cd src/appEngine/; go run .
