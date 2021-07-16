@@ -7,4 +7,4 @@ package main
 // The different running containers will be monitored for their last response and will be put to sleep if unused
 // If a user submits a bad Dockerfile which cant be run, their previous code will be submitted instead (and some sort of flag will be set for them ?)
 
-// Different checks will have to be done concurrently
+// Different checks will have to be done concurrently and shared across memory (store in Redis cache)
