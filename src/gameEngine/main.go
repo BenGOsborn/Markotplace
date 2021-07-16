@@ -8,3 +8,11 @@ package main
 // If a user submits a bad Dockerfile which cant be run, their previous code will be submitted instead (and some sort of flag will be set for them ?)
 
 // Different checks will have to be done concurrently and shared across memory (store in Redis cache)
+
+import (
+	"context"
+)
+
+func main() {
+	ctx := context.Background()
+}
