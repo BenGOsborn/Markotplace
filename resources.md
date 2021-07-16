@@ -1,0 +1,4 @@
+-   [Docker inside of Docker](https://stackoverflow.com/questions/27879713/is-it-ok-to-run-docker-from-inside-docker) + [Official image](https://hub.docker.com/_/docker)
+-   [Docker API for Go](https://docs.docker.com/engine/api/sdk/)
+-   [Docker Compose Tutorial](https://www.youtube.com/watch?v=Qw9zlE3t8Ko&t=352s)
+-   [Exit a container without it stopping](https://serverfault.com/questions/661909/the-right-way-to-keep-docker-container-started-when-it-used-for-periodic-tasks)
