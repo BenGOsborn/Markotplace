@@ -9,13 +9,21 @@ package main
 
 // Different checks will have to be done concurrently and shared across memory (store in Redis cache)
 
+// First step is going to be designing the main layout of the page
+
 import (
-	"context"
 	"fmt"
+	"log"
+	"net/http"
 )
 
 func main() {
-	ctx := context.Background()
+	// Handle routes
+	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(rw, "Index")
+		log.Println("Index hit")
+	})
 
-	fmt.Println(ctx)
+	// Log error
+	log.Fatalln(http.ListenAndServe(":3000", nil))
 }
