@@ -25,5 +25,5 @@ func main() {
 	})
 
 	// Log error
-	log.Fatalln(http.ListenAndServe(":4000", nil))
+	log.Fatalln(http.ListenAndServe(":3000", nil))
 }
