@@ -20,24 +20,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 )
 
+// Initialize default values
+const PORT = 3000
+var serverHits = 0
+var servers []string
+
+// LAN Docker
+
 func main() {
-	// Edit the redirect URL
-	origin, _ := url.Parse("http://localhost:3000")
-
-	// Initialize the director
-	director := func(req *http.Request) {
-		req.Header.Add("X-Forwarded-Host", req.Host)
-		req.Header.Add("X-Origin-Host", origin.Host)
-		req.URL.Scheme = "http"
-		req.URL.Host = origin.Host
-	}
-
-	// Initialize the proxy
-	proxy := &httputil.ReverseProxy{Director: director}
+	// Initialize the servers
+	servers = append(servers, "https://google.com", "https://facebook.com", "https://youtube.com")
 
 	// Handle routes
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -45,11 +39,6 @@ func main() {
 		log.Println("Index hit")
 	})
 
-	// Handle the proxy
-	http.HandleFunc("/proxy", func(w http.ResponseWriter, r *http.Request) {
-		proxy.ServeHTTP(w, r)
-	})
-
-	// Log error
-	log.Fatalln(http.ListenAndServe(":3000", nil))
+	// Start the server and log error
+	log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))
 }
