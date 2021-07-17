@@ -1,3 +1,5 @@
-# Load in environment variables
-load-env:
-	source .env
+include .env
+
+# Start Docker compose
+start:
+	docker-compose up -d
