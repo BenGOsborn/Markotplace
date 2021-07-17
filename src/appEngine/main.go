@@ -11,6 +11,9 @@ package main
 
 // First step is going to be designing the main layout of the page
 
+// Gorilla: https://www.youtube.com/watch?v=SonwZ6MF5BE&t=1683s
+// Reverse proxy: https://www.integralist.co.uk/posts/golang-reverse-proxy/
+
 import (
 	"fmt"
 	"log"
