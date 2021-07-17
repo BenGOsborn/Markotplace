@@ -1,8 +1,9 @@
 include .env
 
-# Start Docker compose
+# Startup Docker compose
 start:
 	docker-compose up -d
 
+# Shutdown Docker compose
 stop:
 	docker-compose down
