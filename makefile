@@ -10,9 +10,9 @@ stop:
 
 # -----------------------
 
-app-engine-dev:
+dev-app-engine:
 	cd src/appEngine; go run .
 
 app-engine:
 	docker build -t bengosborn/test src/appEngine
-	docker run -dp 3000:3000 bengosborn/test
+	docker run -dp 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/test
