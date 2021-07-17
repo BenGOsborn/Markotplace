@@ -44,21 +44,34 @@ func (container *Container) expired() bool {
 	return time.Now().After(container.LastHit.Add(20 * time.Minute))
 }
 
-// The main function I need is a proxy that is able to redirect requests to their appropriate containers
-// I need a way of starting up (NOT BUILDING - THIS WILL BE ANOTHER SERVICE) and monitoring Docker contains and tracking them, and shutting them down / pausing them - (maybe in the future also load balancing them and redirecting them to the correct instance)
+func (container *Container) startContainer() error {
+	// Initialize a context
+	ctx := context.Background()
+	
+	// Initialize the Docker client
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		panic(err)
+	}
 
-func test() {
-	for {
-		log.Println("Go test")
-		time.Sleep(5 * time.Second)
+	// ***** This needs to have the correct name of the image to work and should map to the correct port somehow ?
+
+	// Create a new container
+	resp, err := cli.ContainerCreate(ctx, &container.Config{
+		Image: "ubuntu",
+		Cmd: []string{"echo", "Hello world"},
+	}, nil, nil, nil, "")
+	if err != nil {
+		panic(err)
 	}
 }
+
+// The main function I need is a proxy that is able to redirect requests to their appropriate containers
+// I need a way of starting up (NOT BUILDING - THIS WILL BE ANOTHER SERVICE) and monitoring Docker contains and tracking them, and shutting them down / pausing them - (maybe in the future also load balancing them and redirecting them to the correct instance)
 
 func main() {
 	// Initialize the context
 	ctx := context.Background()
-
-	go test()
 
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -80,6 +93,7 @@ func main() {
 		panic(err)
 	}
 
+	// Wait for the container to finish
 	statusCh, errCh := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
 	select {
 	case err := <-errCh:
@@ -89,6 +103,7 @@ func main() {
 	case <-statusCh:
 	}
 
+	// Get the output from the container
 	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
 	if err != nil {
 		panic(err)
