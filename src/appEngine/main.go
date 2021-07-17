@@ -29,12 +29,10 @@ import (
 // Initialize default values
 const PORT = 3000
 var serverHits = 0
-var servers = []string{"http://localhost:4000"}
+var servers = []string{"http://localhost:4000"} // List of external servers
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Proxy ", PORT)
-
 		// Get the target server to redirect to and increment the server hits
 		target := servers[serverHits % len(servers)]
 		serverHits++
@@ -47,6 +45,9 @@ func main() {
 
 		// Initialize the proxy
 		proxy.ServeHTTP(w, r)
+
+		// Log the message
+		log.Println("Proxy called")
 	})
 
 	// Start the server and log error
