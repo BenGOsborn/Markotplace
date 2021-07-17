@@ -15,28 +15,40 @@ package main
 // First step is going to be designing the main layout of the page
 
 // Reverse proxy: https://www.integralist.co.uk/posts/golang-reverse-proxy/ OR https://medium.com/swlh/proxy-server-in-golang-43e2365d9cbc + https://github.com/akashjain132/load-balancer/blob/master/main.go
+// https://hackernoon.com/writing-a-reverse-proxy-in-just-one-line-with-go-c1edfa78c84b + https://github.com/bechurch/reverse-proxy-demo
 
 import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 )
 
 // Initialize default values
 const PORT = 3000
 var serverHits = 0
-var servers []string
-
-// LAN Docker
+var servers = []string{"https://wasm-bird.herokuapp.com"}
 
 func main() {
-	// Initialize the servers
-	servers = append(servers, "https://google.com", "https://facebook.com", "https://youtube.com")
-
 	// Handle routes
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Index")
 		log.Println("Index hit")
+	})
+	http.HandleFunc("/proxy", func(w http.ResponseWriter, r *http.Request) {
+		// Get the target server to redirect to and increment the server hits
+		target := servers[serverHits % len(servers)]
+		serverHits++
+
+		// Parse the origin URL
+		origin, _ := url.Parse(target)
+
+		// Create the reverse proxy
+		proxy := httputil.NewSingleHostReverseProxy(origin)
+
+		// Initialize the proxy
+		proxy.ServeHTTP(w, r)
 	})
 
 	// Start the server and log error
