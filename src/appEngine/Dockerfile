@@ -11,3 +11,13 @@
 #   These containers would be managed by something to check their uptime and stuff, and be able to setup another server with containers (like a master)
 #   The Nginx container would be able to serve external applications game files 
 #   It would also have to pull
+
+# Compile the Go server
+FROM golang:latest
+WORKDIR /usr/app
+COPY go.mod .
+COPY main.go .
+RUN go build -o main .
+
+# Start the server
+CMD ./main
