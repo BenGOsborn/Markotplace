@@ -4,3 +4,10 @@
 
 # This a terrible idea because then we cant export them - we should just build the image with the files somehow
 # Maybe I should just copy the way cloud companies do it ? - where there are different subfiles which can do things
+
+# Proposal
+#   I could have an Nginx container
+#   This Nginx container would be the entrypoint for different Dockerfiles that are running on its container
+#   These containers would be managed by something to check their uptime and stuff, and be able to setup another server with containers (like a master)
+#   The Nginx container would be able to serve external applications game files 
+#   It would also have to pull

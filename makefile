@@ -1,3 +1,3 @@
-# Run the app engine
-appEngine-run:
-	cd src/appEngine/; go run .
+# Load in environment variables
+load-env:
+	source .env
