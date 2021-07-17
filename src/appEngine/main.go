@@ -32,7 +32,7 @@ var serverHits = 0
 var servers = []string{"http://localhost:4000"}
 
 // The main function I need is a proxy that is able to redirect requests to their appropriate containers
-// I need a way of starting up (NOT BUILDING) and monitoring Docker contains and tracking them, and shutting them down - (maybe in the future also load balancing them and redirecting them to the correct instance)
+// I need a way of starting up (NOT BUILDING - THIS WILL BE ANOTHER SERVICE) and monitoring Docker contains and tracking them, and shutting them down - (maybe in the future also load balancing them and redirecting them to the correct instance)
 
 
 func main() {
