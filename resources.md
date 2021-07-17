@@ -2,6 +2,7 @@
 -   [Docker API for Go](https://docs.docker.com/engine/api/sdk/)
 -   [Docker Compose Tutorial](https://www.youtube.com/watch?v=Qw9zlE3t8Ko&t=352s)
 -   [Exit a container without it stopping](https://serverfault.com/questions/661909/the-right-way-to-keep-docker-container-started-when-it-used-for-periodic-tasks)
+-   [Pause a Docker container](https://docs.docker.com/engine/reference/commandline/pause/)
 
 <!-- I need some way of allowing my server to redirect to one of the docker images to get their content which is served by Nginx ? -->
 
@@ -10,3 +11,4 @@
 -   [Dont expose ports from Docker](https://stackoverflow.com/questions/51468830/talk-to-server-on-docker-container-with-no-exposed-ports)
 
 -   [Microservices with Nginx](https://youtu.be/QjhJs31h_4k)
+-   [Express reverse proxy](https://stackoverflow.com/questions/30800829/node-forward-path-request-to-another-server)

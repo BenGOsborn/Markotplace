@@ -11,20 +11,40 @@ package main
 
 // First step is going to be designing the main layout of the page
 
-// Gorilla: https://www.youtube.com/watch?v=SonwZ6MF5BE&t=1683s
-// Reverse proxy: https://www.integralist.co.uk/posts/golang-reverse-proxy/
+// Reverse proxy: https://www.integralist.co.uk/posts/golang-reverse-proxy/ OR https://medium.com/swlh/proxy-server-in-golang-43e2365d9cbc
 
 import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 )
 
 func main() {
+	// Edit the redirect URL
+	origin, _ := url.Parse("http://localhost:3000")
+
+	// Initialize the director
+	director := func(req *http.Request) {
+		req.Header.Add("X-Forwarded-Host", req.Host)
+		req.Header.Add("X-Origin-Host", origin.Host)
+		req.URL.Scheme = "http"
+		req.URL.Host = origin.Host
+	}
+
+	// Initialize the proxy
+	proxy := &httputil.ReverseProxy{Director: director}
+
 	// Handle routes
-	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(rw, "Index")
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Index")
 		log.Println("Index hit")
+	})
+
+	// Handle the proxy
+	http.HandleFunc("/proxy", func(w http.ResponseWriter, r *http.Request) {
+		proxy.ServeHTTP(w, r)
 	})
 
 	// Log error

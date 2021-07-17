@@ -12,5 +12,4 @@ stop:
 
 test-run:
 	docker build -t bengosborn/test src/appEngine
-	docker run -d bengosborn/test
-	docker ps
+	docker run -dp 3000:3000 bengosborn/test
