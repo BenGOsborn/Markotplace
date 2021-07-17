@@ -9,6 +9,7 @@ package main
 
 // Different checks will have to be done concurrently and shared across memory (store in Redis cache)
 // Make the containers expire after a while
+// Docker containers that can spawn siblings
 
 // In the future, I can store the data that details the containers in a shared cache (Redis) which can then map the request to the correct instance of the apps (if I make multiple instances with a load balancer)
 
@@ -28,15 +29,12 @@ import (
 // Initialize default values
 const PORT = 3000
 var serverHits = 0
-var servers = []string{"https://wasm-bird.herokuapp.com"}
+var servers = []string{"http://localhost:4000"}
 
 func main() {
-	// Handle routes
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Index")
-		log.Println("Index hit")
-	})
-	http.HandleFunc("/proxy", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Proxy ", PORT)
+
 		// Get the target server to redirect to and increment the server hits
 		target := servers[serverHits % len(servers)]
 		serverHits++
