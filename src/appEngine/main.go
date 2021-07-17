@@ -8,6 +8,9 @@ package main
 // If a user submits a bad Dockerfile which cant be run, their previous code will be submitted instead (and some sort of flag will be set for them ?)
 
 // Different checks will have to be done concurrently and shared across memory (store in Redis cache)
+// Make the containers expire after a while
+
+// In the future, I can store the data that details the containers in a shared cache (Redis) which can then map the request to the correct instance of the apps (if I make multiple instances with a load balancer)
 
 // First step is going to be designing the main layout of the page
 
