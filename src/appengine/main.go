@@ -16,17 +16,15 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"strings"
 
 	"appengine/containerutils"
 )
 
 // Initialize default values
 const PORT = 3000
-var serverHits = 0
-var servers = []string{"http://localhost:4000"}
+var servers = []string{"http://0.0.0.0:4000"}
 var ctx context.Context = context.Background()
-var containers *[]containerutils.Container
+var containers = []containerutils.Container{}
 
 func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	// Only allow get requests
@@ -36,11 +34,13 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the AppID from the path
-	pathsTemp := strings.Split(r.URL.Path, "/")
-	path := pathsTemp[len(pathsTemp) - 1]
+	appID := r.URL.Path
+	if len(appID) > 0 {
+		appID = appID[1:]
+	}
 
 	// Check if the specified path is valid
-	validAppID, err := containerutils.ValidAppID(ctx, path, containers)
+	container, validAppID, err := containerutils.ValidAppID(ctx, appID, containers)
 	if err != nil {
 		w.WriteHeader(500)
 		return
@@ -49,34 +49,21 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get the target server to redirect to and increment the server hits
-	target := servers[serverHits % len(servers)]
-	serverHits++
+	if container == nil {
+		// I would have to make a new container and update the reference to it
+	}
 
 	// Parse the origin URL
-	origin, _ := url.Parse(target)
-
-	log.Println(origin.Path)
+	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 4000)) // I should change localhost to the actual name of the running app (0.0.0.0 ?)
 
 	// Create the reverse proxy
 	proxy := httputil.NewSingleHostReverseProxy(origin)
 
 	// Initialize the proxy
 	proxy.ServeHTTP(w, r)
-
-	// Log the message
-	log.Println("Proxy called")
 } 
 
 func main() {
-	// container := containerutils.NewContainer("bengosborn/ts-wasmbird")
-	// if startErr := container.StartContainer(ctx, 4000); startErr != nil {
-	// 	panic(startErr)
-	// }
-	// if stopErr := container.StopContainer(ctx); stopErr != nil {
-	// 	panic(stopErr)
-	// }
-
 	http.HandleFunc("/", proxyHandler)
 
 	// Start the server and log error

@@ -2,10 +2,14 @@ package containerutils
 
 // Bind ports: https://stackoverflow.com/questions/41789083/set-portbindings-config-for-containercreate-function-in-golang-sdk-for-docker-ap
 
+// ******* I WANT ALL OF THE FUNCTIONS TO TAKE IN A REFERENCE TO THE ORIGINAL CONTAINERS
+// ******* I ALSO NEED A WAY TO SPIN UP AN EXISTING CONTAINER
+
 import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -133,11 +137,11 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 	}
 }
 
-func ValidAppID(ctx context.Context, appID string, containers *[]Container) (*Container, bool, error) {
-	// ************ Users COULD technically spin up base images from this, that wouldm't be intended
+func ValidAppID(ctx context.Context, appID string, containers []Container) (*Container, bool, error) {
+	// ************ Users COULD technically spin up base images from this, that wouldn't be intended
 
 	// Check if the image is in the list of containers and return that container
-	for _, ctr := range *containers {
+	for _, ctr := range containers {
 		if ctr.AppID == appID {
 			return &ctr, true, nil
 		}
@@ -157,7 +161,8 @@ func ValidAppID(ctx context.Context, appID string, containers *[]Container) (*Co
 
 	// Check if the image exists
 	for _, image := range images {
-		if image.ID == appID {
+		imageID := strings.Split(image.RepoTags[0], ":")[0]
+		if imageID == appID {
 			return nil, true, nil
 		}
 	}
