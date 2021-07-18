@@ -102,3 +102,41 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 	// Dont return error
 	return nil
 }
+
+// ********* Am I EXACTLY sure about this with its active thingo ?
+func CleanupContainers(ctx context.Context, containers *[]Container) {
+	// Continuously filter out unused containers
+	for {
+		// Filter out the expired containers
+		var newContainers = []Container{}
+
+		for _, ctr := range *containers {
+			if ctr.Expired() {
+				if ctr.Active {
+					// Stop the container
+					ctr.StopContainer(ctx)
+				}
+				continue
+			} else {
+				// Add the container to the list
+				newContainers = append(newContainers, ctr)
+			}
+		}
+
+		// Set the new containers
+		*containers = newContainers
+
+		// Sleep
+		time.Sleep(20 * time.Minute)
+	}
+}
+
+func AppIDExists(appID string, containers *[]Container) bool {
+	for _, ctr := range *containers {
+		if ctr.AppID == appID {
+			return true
+		}
+	}
+
+	return false
+}
