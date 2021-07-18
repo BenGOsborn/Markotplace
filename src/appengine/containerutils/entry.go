@@ -3,7 +3,7 @@ package containerutils
 // Bind ports: https://stackoverflow.com/questions/41789083/set-portbindings-config-for-containercreate-function-in-golang-sdk-for-docker-ap
 
 // ******* I WANT ALL OF THE FUNCTIONS TO TAKE IN A REFERENCE TO THE ORIGINAL CONTAINERS
-// ******* I ALSO NEED A WAY TO SPIN UP AN EXISTING CONTAINER
+// ******* I ALSO NEED A WAY TO SPIN UP A CONTAINER
 
 import (
 	"context"
