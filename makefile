@@ -14,7 +14,7 @@ kill:
 	docker kill $$(docker ps -q)
 
 dev-app-engine:
-	cd src/appengine; go run main.go
+	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
 
 app-engine:
 	docker build -t bengosborn/test src/appengine
