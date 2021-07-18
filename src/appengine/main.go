@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 
 	"appengine/containerutils"
 )
@@ -35,7 +36,18 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the AppID from the path
-	rawPath := r.URL.Path[1:]
+	pathsTemp := strings.Split(r.URL.Path, "/")
+	path := pathsTemp[len(pathsTemp) - 1]
+
+	// Check if the specified path is valid
+	validAppID, err := containerutils.ValidAppID(ctx, path, containers)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	} else if !validAppID {
+		w.WriteHeader(400)
+		return
+	}
 
 	// Get the target server to redirect to and increment the server hits
 	target := servers[serverHits % len(servers)]
