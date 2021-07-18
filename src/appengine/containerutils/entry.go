@@ -133,35 +133,35 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 	}
 }
 
-func ValidAppID(ctx context.Context, appID string, containers *[]Container) (bool, error) {
+func ValidAppID(ctx context.Context, appID string, containers *[]Container) (*Container, bool, error) {
 	// ************ Users COULD technically spin up base images from this, that wouldm't be intended
 
-	// Check if the image is in the list of containers
+	// Check if the image is in the list of containers and return that container
 	for _, ctr := range *containers {
 		if ctr.AppID == appID {
-			return true, nil
+			return &ctr, true, nil
 		}
 	}
 	
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
 	// Get a list of images
 	images, err := cli.ImageList(ctx, types.ImageListOptions{})
 	if err != nil {
-		return false, err
+		return nil, false, err
 	}
 
 	// Check if the image exists
 	for _, image := range images {
 		if image.ID == appID {
-			return true, nil
+			return nil, true, nil
 		}
 	}
 
 	// Return false if no app ID matches
-	return false, nil
+	return nil, false, nil
 }
