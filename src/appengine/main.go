@@ -63,11 +63,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	// Start the container if it does not exist
 	if !container.Active {
 		container.StartContainer(ctx, forwardPort)
-		fmt.Println(container)
 	}
-
-	// ****** Maybe wait for the container as well ?
-	// *********** The problem is that the functions are not modifying the values correctly
 
 	// Parse the origin URL
 	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
