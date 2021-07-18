@@ -40,21 +40,27 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if the specified path is valid
-	container, validAppID, err := containerutils.ValidAppID(ctx, appID, containers)
+	container, err := containerutils.GetContainer(ctx, appID, &containers)
 	if err != nil {
 		w.WriteHeader(500)
 		return
-	} else if !validAppID {
-		w.WriteHeader(400)
+	} else if container == nil {
+		w.WriteHeader(404)
 		return
 	}
 
-	if container == nil {
-		// I would have to make a new container and update the reference to it
+	// Initialize the forward URL
+	var forwardPort int
+
+	// Start up a container if it does not exist otherwise use the existing container
+	if container.Active {
+		forwardPort = container.Port
+	} else {
+		// Find a valid port and start the container on it
 	}
 
 	// Parse the origin URL
-	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 4000)) // I should change localhost to the actual name of the running app (0.0.0.0 ?)
+	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort)) // I should change localhost to the actual name of the running app (0.0.0.0 ?)
 
 	// Create the reverse proxy
 	proxy := httputil.NewSingleHostReverseProxy(origin)

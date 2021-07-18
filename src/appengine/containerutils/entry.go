@@ -9,6 +9,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand"
+	"net"
 	"strings"
 	"time"
 
@@ -24,13 +26,6 @@ type Container struct {
 	LastHit time.Time
 	Port int
 	Active bool
-}
-
-func NewContainer(appID string) *Container {
-	ctr := new(Container)
-	ctr.AppID = appID
-
-	return ctr
 }
 
 func (ctr *Container) Expired() bool {
@@ -107,67 +102,90 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 	return nil
 }
 
-// ********* Am I EXACTLY sure about this with its active thingo ?
-// ********* Also I should not be removing containers, I should only be stopping them
-// ********* I need a way of checking the images on the base OS first LOL
 func CleanupContainers(ctx context.Context, containers *[]Container) {
-	// Continuously filter out unused containers
+	// Continuously shutdown unused containers
 	for {
-		// Filter out the expired containers
-		var newContainers = []Container{}
-
 		for _, ctr := range *containers {
-			if ctr.Expired() {
-				if ctr.Active {
-					// Stop the container
+			if ctr.Active {
+				if ctr.Expired() {
 					ctr.StopContainer(ctx)
 				}
-				continue
-			} else {
-				// Add the container to the list
-				newContainers = append(newContainers, ctr)
 			}
 		}
-
-		// Set the new containers
-		*containers = newContainers
 
 		// Sleep
 		time.Sleep(20 * time.Minute)
 	}
 }
 
-func ValidAppID(ctx context.Context, appID string, containers []Container) (*Container, bool, error) {
-	// ************ Users COULD technically spin up base images from this, that wouldn't be intended
-
+func GetContainer(ctx context.Context, appID string, containers *[]Container) (*Container, error) {
 	// Check if the image is in the list of containers and return that container
-	for _, ctr := range containers {
+	for _, ctr := range *containers {
 		if ctr.AppID == appID {
-			return &ctr, true, nil
+			return &ctr, nil
 		}
 	}
 	
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 
 	// Get a list of images
 	images, err := cli.ImageList(ctx, types.ImageListOptions{})
 	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 
 	// Check if the image exists
 	for _, image := range images {
-		imageID := strings.Split(image.RepoTags[0], ":")[0] // This requires some modification - it should only allow for images that contain a slash in them OR a custom start
-		// if len(imageID) > 2 imageID[:2] == ""
+		// This requires some modification - it should only allow for images that contain a slash in them OR a custom start - users spinning up base images
+		imageID := strings.Split(image.RepoTags[0], ":")[0]
 		if imageID == appID {
-			return nil, true, nil
+			// Make a new instance of the container to return
+			newContainer := new(Container)
+			newContainer.AppID = appID
+
+			return newContainer, nil
 		}
 	}
 
 	// Return false if no app ID matches
-	return nil, false, nil
+	return nil, nil 
+}
+
+func GetPort(containers *[]Container) int {
+	// Check for a list of used ports AND restrict the ports to the given range
+	// Cant be already used by an existing container
+
+	portMin := 2000
+	portMax := 65535
+
+	// Make a map of used ports
+	var usedPorts []int
+	for _, container := range *containers {
+		usedPorts = append(usedPorts, container.Port)
+	}
+
+	// Generate a random port until it is correct
+	for {
+		// Generate a new random port within the range
+		port := portMin + rand.Int() % (portMax - portMin + 1)
+		for _, used := range usedPorts {
+			if (port < used) {
+				break
+			}
+			port += 1
+		}
+
+		// Check that the port is not used by the rest of the system
+		server, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+
+		// If the server connected to the port it must be valid, so return it, otherwise continue
+		if err == nil {
+			server.Close()
+			return port
+		}
+	}
 }
