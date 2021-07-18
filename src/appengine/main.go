@@ -51,6 +51,8 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	// Initialize the forward URL
 	var forwardPort int
 
+	log.Println(container)
+
 	// Start up a container if it does not exist otherwise use the existing container
 	if container.Active {
 		forwardPort = container.Port

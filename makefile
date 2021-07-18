@@ -10,6 +10,9 @@ stop:
 
 # -----------------------
 
+dev-kill:
+	docker kill $(docker ps -q)
+
 dev-app-engine:
 	cd src/appengine; go run main.go
 
