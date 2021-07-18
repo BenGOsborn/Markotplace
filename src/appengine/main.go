@@ -21,7 +21,7 @@ import (
 )
 
 // Initialize default values
-const PORT = 3000
+const PORT = 4000
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
@@ -63,10 +63,11 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	// Start the container if it does not exist
 	if !container.Active {
 		container.StartContainer(ctx, forwardPort)
+		fmt.Println(container)
 	}
 
 	// ****** Maybe wait for the container as well ?
-	// ****** Something is very wrong with the redirection for some reason ?
+	// *********** The problem is that the functions are not modifying the values correctly
 
 	// Parse the origin URL
 	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))

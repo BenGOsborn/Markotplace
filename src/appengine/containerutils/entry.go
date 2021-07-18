@@ -68,10 +68,10 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 	}
 
 	// Set the time the container started, the port it started on, the ID of the container, and return no errors
-	ctr.LastHit = time.Now()
-	ctr.Port = port
-	ctr.ContainerID = resp.ID
-	ctr.Active = true
+	(*ctr).LastHit = time.Now()
+	(*ctr).Port = port
+	(*ctr).ContainerID = resp.ID
+	(*ctr).Active = true
 
 	return nil
 }
@@ -94,10 +94,10 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 	}
 
 	// Reset the values for the container
-	ctr.LastHit = time.Time{}
-	ctr.Port = 0
-	ctr.ContainerID = ""
-	ctr.Active = false
+	(*ctr).LastHit = time.Time{}
+	(*ctr).Port = 0
+	(*ctr).ContainerID = ""
+	(*ctr).Active = false
 
 	// Dont return error
 	return nil
@@ -152,7 +152,7 @@ func GetContainer(ctx context.Context, appID string, containers *[]Container) (*
 			*containers = append(*containers, *newContainer)
 
 			// Return the container
-			return newContainer, nil
+			return &((*containers)[len(*containers) - 1]), nil
 		}
 	}
 
