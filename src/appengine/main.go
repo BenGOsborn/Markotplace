@@ -66,6 +66,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ****** Maybe wait for the container as well ?
+	// ****** Something is very wrong with the redirection for some reason ?
 
 	// Parse the origin URL
 	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
