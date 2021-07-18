@@ -1,5 +1,7 @@
 package containerutils
 
+// Bind ports: https://stackoverflow.com/questions/41789083/set-portbindings-config-for-containercreate-function-in-golang-sdk-for-docker-ap
+
 import (
 	"context"
 	"errors"
@@ -43,8 +45,6 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 	if err != nil {
 		return err
 	}
-
-	// ****** Clearly the port assignment here does not work
 
 	// Create a new container
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
