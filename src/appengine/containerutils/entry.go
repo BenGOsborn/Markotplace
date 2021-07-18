@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"sort"
 	"strings"
 	"time"
 
@@ -156,17 +157,18 @@ func GetContainer(ctx context.Context, appID string, containers *[]Container) (*
 }
 
 func GetPort(containers *[]Container) int {
-	// Check for a list of used ports AND restrict the ports to the given range
-	// Cant be already used by an existing container
-
 	portMin := 2000
 	portMax := 65535
 
-	// Make a map of used ports
+	// Make a map of used ports sorted in ascending order
 	var usedPorts []int
 	for _, container := range *containers {
-		usedPorts = append(usedPorts, container.Port)
+		// Don't check containers outside the valid port range
+		if container.Port >= portMin && container.Port <= portMax {
+			usedPorts = append(usedPorts, container.Port)
+		}
 	}
+	sort.Ints(usedPorts)
 
 	// Generate a random port until it is correct
 	for {
