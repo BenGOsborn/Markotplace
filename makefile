@@ -11,7 +11,7 @@ stop:
 # -----------------------
 
 dev-app-engine:
-	cd src/appengine; go run .
+	cd src/appengine; go run main.go
 
 app-engine:
 	docker build -t bengosborn/test src/appengine
