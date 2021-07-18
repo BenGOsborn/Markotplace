@@ -133,12 +133,33 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 	}
 }
 
-func AppIDExists(appID string, containers *[]Container) bool {
+func ValidAppID(ctx context.Context, appID string, containers *[]Container) (bool, error) {
+	// Check if the image is in the list of containers
 	for _, ctr := range *containers {
 		if ctr.AppID == appID {
-			return true
+			return true, nil
+		}
+	}
+	
+	// Initialize the Docker client
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return false, err
+	}
+
+	// Get a list of images
+	images, err := cli.ImageList(ctx, types.ImageListOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	// Check if the image exists
+	for _, image := range images {
+		if image.ID == appID {
+			return true, nil
 		}
 	}
 
-	return false
+	// Return false if no app ID matches
+	return false, nil
 }
