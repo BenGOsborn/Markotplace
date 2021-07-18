@@ -173,6 +173,7 @@ func GetPort(containers *[]Container) int {
 	// Generate a random port until it is correct
 	for {
 		// Generate a new random port within the range
+		// *********** Please check this and the container port restriction while creating the list of ports above
 		port := portMin + rand.Int() % (portMax - portMin + 1)
 		for _, used := range usedPorts {
 			if (port < used) {
