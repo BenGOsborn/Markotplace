@@ -31,7 +31,12 @@ func main() {
 	ctx := context.Background()
 
 	container := containerutils.NewContainer("bengosborn/ts-wasmbird")
-	container.StartContainer(ctx, 4000)
+	if startErr := container.StartContainer(ctx, 4000); startErr != nil {
+		panic(startErr)
+	}
+	if stopErr := container.StopContainer(ctx); stopErr != nil {
+		panic(stopErr)
+	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Get the target server to redirect to and increment the server hits
