@@ -50,10 +50,14 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: ctr.AppID,
 		ExposedPorts: nat.PortSet{
-			nat.Port(fmt.Sprintf("%d/tcp", port)): struct{}{},
+			nat.Port(fmt.Sprintf("%d/tcp", port)): {},
 		},
 		Env: []string{fmt.Sprintf("PORT=%d", port)},
-	}, &container.HostConfig{}, nil, nil, "")
+	}, &container.HostConfig{
+		PortBindings: nat.PortMap{
+			nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "0.0.0.0", HostPort: fmt.Sprintf("%d", port)}},
+		},
+	}, nil, nil, "")
 	if err != nil {
 		return err
 	}
