@@ -1,7 +1,5 @@
 package containerutils
 
-// TODO: IN the future add an option for UDP as well as TCP
-
 import (
 	"context"
 	"errors"
@@ -43,7 +41,7 @@ func (cnter *Container) StartContainer(ctx context.Context, port int) error {
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: cnter.AppID,
 		ExposedPorts: nat.PortSet{
-			nat.Port(fmt.Sprintf("%d/%s", port, "tcp")): struct{}{},
+			nat.Port(fmt.Sprintf("%d/tcp", port)): struct{}{},
 		},
 		Env: []string{fmt.Sprintf("PORT=%d", port)},
 	}, &container.HostConfig{}, nil, nil, "")
