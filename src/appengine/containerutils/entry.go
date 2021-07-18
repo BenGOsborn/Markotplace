@@ -134,6 +134,8 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 }
 
 func ValidAppID(ctx context.Context, appID string, containers *[]Container) (bool, error) {
+	// ************ Users COULD technically spin up base images from this, that wouldm't be intended
+
 	// Check if the image is in the list of containers
 	for _, ctr := range *containers {
 		if ctr.AppID == appID {
