@@ -57,10 +57,12 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		forwardPort = container.Port
 	} else {
 		// Find a valid port and start the container on it
+		forwardPort = containerutils.GetPort(&containers)
+		container.StartContainer(ctx, forwardPort)
 	}
 
 	// Parse the origin URL
-	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort)) // I should change localhost to the actual name of the running app (0.0.0.0 ?)
+	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
 
 	// Create the reverse proxy
 	proxy := httputil.NewSingleHostReverseProxy(origin)
@@ -70,6 +72,8 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 } 
 
 func main() {
+	// I also need to start the garbage container collection
+
 	http.HandleFunc("/", proxyHandler)
 
 	// Start the server and log error
