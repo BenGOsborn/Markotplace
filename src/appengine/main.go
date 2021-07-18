@@ -22,7 +22,6 @@ import (
 
 // Initialize default values
 const PORT = 3000
-var servers = []string{"http://0.0.0.0:4000"}
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 

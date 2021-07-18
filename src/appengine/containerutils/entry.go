@@ -144,10 +144,14 @@ func GetContainer(ctx context.Context, appID string, containers *[]Container) (*
 		// This requires some modification - it should only allow for images that contain a slash in them OR a custom start - users spinning up base images
 		imageID := strings.Split(image.RepoTags[0], ":")[0]
 		if imageID == appID {
-			// Make a new instance of the container to return
+			// Make a new instance of the container
 			newContainer := new(Container)
 			newContainer.AppID = appID
 
+			// Add the container to the list
+			*containers = append(*containers, *newContainer)
+
+			// Return the container
 			return newContainer, nil
 		}
 	}
