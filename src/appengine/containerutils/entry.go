@@ -2,6 +2,7 @@ package containerutils
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -10,24 +11,23 @@ import (
 )
 
 type Container struct {
-	// This should contain the data for the container
-	// Go API Docker https://docs.docker.com/engine/api/sdk/
 	AppID string
 	ContainerID string
 	LastHit time.Time
 	Port int
-	ctx context.Context // This seems very annoying to manage ALONG with the Docker context (how do I manage this ?)
+	Active bool
 }
 
-func (cnter *Container) expired() bool {
+func (cnter *Container) Expired(ctx context.Context) bool {
 	// Check if a container was last hit more than the given time
 	return time.Now().After(cnter.LastHit.Add(20 * time.Minute))
 }
 
-func (cnter *Container) startContainer(port int) error {
-	// Initialize a context
-	cnter.ctx = context.Background()
-	
+func (cnter *Container) StartContainer(ctx context.Context, port int) error {
+	if cnter.Active {
+		return errors.New("container is already active")
+	}
+
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -35,15 +35,15 @@ func (cnter *Container) startContainer(port int) error {
 	}
 
 	// Create a new container
-	resp, err := cli.ContainerCreate(cnter.ctx, &container.Config{
-		Image: "bengosborn/ts-wasmbird", // This should be the AppID as well, but we will use this for testing
+	resp, err := cli.ContainerCreate(ctx, &container.Config{
+		Image: cnter.AppID, // This should be the AppID as well, but we will use this for testing
 	}, nil, nil, nil, "")
 	if err != nil {
 		return err
 	}
 
 	// Start the container
-	if err := cli.ContainerStart(cnter.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 		return err
 	}
 
@@ -51,11 +51,16 @@ func (cnter *Container) startContainer(port int) error {
 	cnter.LastHit = time.Now()
 	cnter.Port = port
 	cnter.ContainerID = resp.ID
+	cnter.Active = true
 
 	return nil
 }
 
-func (cnter *Container) stopContainer() error {
+func (cnter *Container) StopContainer(ctx context.Context) error {
+	if !cnter.Active {
+		return errors.New("no active container to stop")
+	}
+	
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -63,9 +68,15 @@ func (cnter *Container) stopContainer() error {
 	}
 
 	// Stop the container
-	if err := cli.ContainerStop(cnter.ctx, cnter.ContainerID, nil); err != nil {
+	if err := cli.ContainerStop(ctx, cnter.ContainerID, nil); err != nil {
 		return err
 	}
+
+	// Reset the values for the container
+	cnter.LastHit = time.Time{}
+	cnter.Port = 0
+	cnter.ContainerID = ""
+	cnter.Active = false
 
 	// Dont return error
 	return nil
