@@ -10,7 +10,7 @@ stop:
 
 # -----------------------
 
-dev-kill:
+kill:
 	docker kill $(docker ps -q)
 
 dev-app-engine:

@@ -168,7 +168,7 @@ func GetPort(containers *[]Container) int {
 	var usedPorts []int
 	for _, container := range *containers {
 		// Don't check containers outside the valid port range
-		if container.Port >= portMin && container.Port <= portMax {
+		if container.Port != 0 {
 			usedPorts = append(usedPorts, container.Port)
 		}
 	}
