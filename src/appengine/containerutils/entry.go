@@ -161,7 +161,8 @@ func ValidAppID(ctx context.Context, appID string, containers []Container) (*Con
 
 	// Check if the image exists
 	for _, image := range images {
-		imageID := strings.Split(image.RepoTags[0], ":")[0]
+		imageID := strings.Split(image.RepoTags[0], ":")[0] // This requires some modification - it should only allow for images that contain a slash in them OR a custom start
+		// if len(imageID) > 2 imageID[:2] == ""
 		if imageID == appID {
 			return nil, true, nil
 		}
