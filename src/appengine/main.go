@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 
 	"appengine/containerutils"
 )
@@ -24,12 +25,54 @@ import (
 const PORT = 3000
 var serverHits = 0
 var servers = []string{"http://localhost:4000"}
+var ctx context.Context = context.Background()
+var containers *[]containerutils.Container
 
-var containers []containerutils.Container
+func proxyHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the target server to redirect to and increment the server hits
+	target := servers[serverHits % len(servers)]
+	serverHits++
+
+	// Parse the origin URL
+	origin, _ := url.Parse(target)
+
+	// Create the reverse proxy
+	proxy := httputil.NewSingleHostReverseProxy(origin)
+
+	// Initialize the proxy
+	proxy.ServeHTTP(w, r)
+
+	// Log the message
+	log.Println("Proxy called")
+} 
+
+func cleanupContainers(containers *[]containerutils.Container) {
+	// Continuously filter out unused containers
+	for {
+		// Filter out the expired containers
+		var newContainers = []containerutils.Container{}
+		
+		for _, ctr := range *containers {
+			if ctr.Expired() {
+				if ctr.Active {
+					// Stop the container
+					ctr.StopContainer(ctx)
+				}
+			} else {
+				// Add the container to the list
+				newContainers = append(newContainers, ctr)
+			}
+		}
+
+		// Set the new containers
+		*containers = newContainers
+
+		// Sleep
+		time.Sleep(20 * time.Minute)
+	}
+}
 
 func main() {
-	ctx := context.Background()
-
 	container := containerutils.NewContainer("bengosborn/ts-wasmbird")
 	if startErr := container.StartContainer(ctx, 4000); startErr != nil {
 		panic(startErr)
@@ -38,23 +81,7 @@ func main() {
 		panic(stopErr)
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// Get the target server to redirect to and increment the server hits
-		target := servers[serverHits % len(servers)]
-		serverHits++
-
-		// Parse the origin URL
-		origin, _ := url.Parse(target)
-
-		// Create the reverse proxy
-		proxy := httputil.NewSingleHostReverseProxy(origin)
-
-		// Initialize the proxy
-		proxy.ServeHTTP(w, r)
-
-		// Log the message
-		log.Println("Proxy called")
-	})
+	http.HandleFunc("/", proxyHandler)
 
 	// Start the server and log error
 	log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))

@@ -29,7 +29,7 @@ func NewContainer(appID string) *Container {
 	return ctr
 }
 
-func (ctr *Container) Expired(ctx context.Context) bool {
+func (ctr *Container) Expired() bool {
 	// Check if a container was last hit more than the given time
 	return time.Now().After(ctr.LastHit.Add(20 * time.Minute))
 }
