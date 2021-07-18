@@ -104,6 +104,8 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 }
 
 // ********* Am I EXACTLY sure about this with its active thingo ?
+// ********* Also I should not be removing containers, I should only be stopping them
+// ********* I need a way of checking the images on the base OS first LOL
 func CleanupContainers(ctx context.Context, containers *[]Container) {
 	// Continuously filter out unused containers
 	for {
