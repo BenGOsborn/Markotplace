@@ -26,50 +26,59 @@ var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
 func proxyHandler(w http.ResponseWriter, r *http.Request) {
-	// Only allow get requests
-	if r.Method != http.MethodGet {
-		w.WriteHeader(400)
-		return
-	}
+	// // Only allow get requests
+	// if r.Method != http.MethodGet {
+	// 	w.WriteHeader(400)
+	// 	return
+	// }
 
-	// Get the AppID from the path
-	appID := r.URL.Path
-	if len(appID) > 0 {
-		appID = appID[1:]
-	}
+	// // Get the AppID from the query (*********I am aware this is bad practice I just want it to work)
+	// appIDs, ok := r.URL.Query()["appID"]
+	// if !ok || len(appIDs) < 1 {
+	// 	w.WriteHeader(400)
+	// 	return
+	// }
+	// appID := appIDs[0]
 
-	// Check if the specified path is valid
-	container, err := containerutils.GetContainer(ctx, appID, &containers)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	} else if container == nil {
-		w.WriteHeader(404)
-		return
-	}
+	// // Check if the specified path is valid
+	// container, err := containerutils.GetContainer(ctx, appID, &containers)
+	// if err != nil {
+	// 	w.WriteHeader(500)
+	// 	return
+	// } else if container == nil {
+	// 	w.WriteHeader(404)
+	// 	return
+	// }
 
-	// Initialize the forward URL
-	var forwardPort int
+	// // Initialize the forward URL
+	// var forwardPort int
 
-	// Set the port of the container
-	if container.Port != 0 {
-		// If the port is something other than default
-		forwardPort = container.Port
-	} else {
-		// Find a valid port and start the container on it
-		forwardPort = containerutils.GetPort(&containers)
-	}
+	// // Set the port of the container
+	// if container.Port != 0 {
+	// 	// If the port is something other than default
+	// 	forwardPort = container.Port
+	// } else {
+	// 	// Find a valid port and start the container on it
+	// 	forwardPort = containerutils.GetPort(&containers)
+	// }
 
-	// Start the container if it does not exist
-	if !container.Active {
-		container.StartContainer(ctx, forwardPort)
-	}
+	// // Start the container if it does not exist
+	// if !container.Active {
+	// 	container.StartContainer(ctx, forwardPort)
+	// }
 
 	// Parse the origin URL
-	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
+	// origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
+	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 39138))
 
-	// Create the reverse proxy
-	proxy := httputil.NewSingleHostReverseProxy(origin)
+	// Initialize the proxy
+	director := func(req *http.Request) {
+		req.Header.Add("X-Forwarded-Host", req.Host)
+		req.Header.Add("X-Origin-Host", origin.Host)
+		req.URL.Scheme = "http"
+		req.URL.Host = origin.Host
+	}
+	proxy := &httputil.ReverseProxy{Director: director}
 
 	// Initialize the proxy
 	proxy.ServeHTTP(w, r)
