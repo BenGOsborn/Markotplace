@@ -1,13 +1,17 @@
 package containerutils
 
+// TODO: IN the future add an option for UDP as well as TCP
+
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
+	"github.com/docker/go-connections/nat"
 )
 
 type Container struct {
@@ -24,6 +28,7 @@ func (cnter *Container) Expired(ctx context.Context) bool {
 }
 
 func (cnter *Container) StartContainer(ctx context.Context, port int) error {
+	// Check that the container is active
 	if cnter.Active {
 		return errors.New("container is already active")
 	}
@@ -34,12 +39,14 @@ func (cnter *Container) StartContainer(ctx context.Context, port int) error {
 		return err
 	}
 
-	// ****** I need to set the port, and I need to pass the port in as an environment variable too
-
 	// Create a new container
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: cnter.AppID, // This should be the AppID as well, but we will use this for testing
-	}, nil, nil, nil, "")
+		Image: cnter.AppID,
+		ExposedPorts: nat.PortSet{
+			nat.Port(fmt.Sprintf("%d/%s", port, "tcp")): struct{}{},
+		},
+		Env: []string{fmt.Sprintf("PORT=%d", port)},
+	}, &container.HostConfig{}, nil, nil, "")
 	if err != nil {
 		return err
 	}
@@ -59,6 +66,7 @@ func (cnter *Container) StartContainer(ctx context.Context, port int) error {
 }
 
 func (cnter *Container) StopContainer(ctx context.Context) error {
+	// Check that the container is not active
 	if !cnter.Active {
 		return errors.New("no active container to stop")
 	}
