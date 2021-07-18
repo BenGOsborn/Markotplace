@@ -10,6 +10,7 @@ package main
 // Pausing and restarting containers: https://stackoverflow.com/questions/34782678/difference-between-running-and-starting-a-docker-container (maybe put some of these in a deep sleep after an hour or so)
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,6 +28,11 @@ var servers = []string{"http://localhost:4000"}
 var containers []containerutils.Container
 
 func main() {
+	ctx := context.Background()
+
+	container := containerutils.NewContainer("bengosborn/ts-wasmbird")
+	container.StartContainer(ctx, 4000)
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Get the target server to redirect to and increment the server hits
 		target := servers[serverHits % len(servers)]

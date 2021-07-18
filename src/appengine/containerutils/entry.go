@@ -20,14 +20,21 @@ type Container struct {
 	Active bool
 }
 
-func (cnter *Container) Expired(ctx context.Context) bool {
-	// Check if a container was last hit more than the given time
-	return time.Now().After(cnter.LastHit.Add(20 * time.Minute))
+func NewContainer(appID string) *Container {
+	ctr := new(Container)
+	ctr.AppID = appID
+
+	return ctr
 }
 
-func (cnter *Container) StartContainer(ctx context.Context, port int) error {
+func (ctr *Container) Expired(ctx context.Context) bool {
+	// Check if a container was last hit more than the given time
+	return time.Now().After(ctr.LastHit.Add(20 * time.Minute))
+}
+
+func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 	// Check that the container is active
-	if cnter.Active {
+	if ctr.Active {
 		return errors.New("container is already active")
 	}
 
@@ -37,9 +44,11 @@ func (cnter *Container) StartContainer(ctx context.Context, port int) error {
 		return err
 	}
 
+	// ****** Clearly the port assignment here does not work
+
 	// Create a new container
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: cnter.AppID,
+		Image: ctr.AppID,
 		ExposedPorts: nat.PortSet{
 			nat.Port(fmt.Sprintf("%d/tcp", port)): struct{}{},
 		},
@@ -55,17 +64,17 @@ func (cnter *Container) StartContainer(ctx context.Context, port int) error {
 	}
 
 	// Set the time the container started, the port it started on, the ID of the container, and return no errors
-	cnter.LastHit = time.Now()
-	cnter.Port = port
-	cnter.ContainerID = resp.ID
-	cnter.Active = true
+	ctr.LastHit = time.Now()
+	ctr.Port = port
+	ctr.ContainerID = resp.ID
+	ctr.Active = true
 
 	return nil
 }
 
-func (cnter *Container) StopContainer(ctx context.Context) error {
+func (ctr *Container) StopContainer(ctx context.Context) error {
 	// Check that the container is not active
-	if !cnter.Active {
+	if !ctr.Active {
 		return errors.New("no active container to stop")
 	}
 	
@@ -76,15 +85,15 @@ func (cnter *Container) StopContainer(ctx context.Context) error {
 	}
 
 	// Stop the container
-	if err := cli.ContainerStop(ctx, cnter.ContainerID, nil); err != nil {
+	if err := cli.ContainerStop(ctx, ctr.ContainerID, nil); err != nil {
 		return err
 	}
 
 	// Reset the values for the container
-	cnter.LastHit = time.Time{}
-	cnter.Port = 0
-	cnter.ContainerID = ""
-	cnter.Active = false
+	ctr.LastHit = time.Time{}
+	ctr.Port = 0
+	ctr.ContainerID = ""
+	ctr.Active = false
 
 	// Dont return error
 	return nil
