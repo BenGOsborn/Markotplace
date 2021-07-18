@@ -16,21 +16,21 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"os"
 	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
-	"github.com/docker/docker/pkg/stdcopy"
 )
 
 type Container struct {
 	// This should contain the data for the container
 	// Go API Docker https://docs.docker.com/engine/api/sdk/
 	AppID string
+	ContainerID string
 	LastHit time.Time
 	Port int
+	ctx context.Context // This seems very annoying to manage ALONG with the Docker context (how do I manage this ?)
 }
 
 // Initialize default values
@@ -39,78 +39,62 @@ var serverHits = 0
 var servers = []string{"http://localhost:4000"}
 var containers []Container
 
-func (container *Container) expired() bool {
-	// Check if a container was last hit more than 20 minutes ago
-	return time.Now().After(container.LastHit.Add(20 * time.Minute))
+func (cnter *Container) expired() bool {
+	// Check if a container was last hit more than the given time
+	return time.Now().After(cnter.LastHit.Add(20 * time.Minute))
 }
 
-func (container *Container) startContainer() error {
+func (cnter *Container) startContainer(port int) error {
 	// Initialize a context
-	ctx := context.Background()
+	cnter.ctx = context.Background()
 	
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		panic(err)
+		return err
 	}
-
-	// ***** This needs to have the correct name of the image to work and should map to the correct port somehow ?
 
 	// Create a new container
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "ubuntu",
-		Cmd: []string{"echo", "Hello world"},
+	resp, err := cli.ContainerCreate(cnter.ctx, &container.Config{
+		Image: "bengosborn/ts-wasmbird", // This should be the AppID as well, but we will use this for testing
 	}, nil, nil, nil, "")
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	// Start the container
+	if err := cli.ContainerStart(cnter.ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+		return err
+	}
+
+	// Set the time the container started, the port it started on, the ID of the container, and return no errors
+	cnter.LastHit = time.Now()
+	cnter.Port = port
+	cnter.ContainerID = resp.ID
+
+	return nil
+}
+
+func (cnter *Container) stopContainer() error {
+	// Initialize the Docker client
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	// Stop the container
+	if err := cli.ContainerStop(cnter.ctx, cnter.ContainerID, nil); err != nil {
+		return err
+	}
+
+	// Dont return error
+	return nil
 }
 
 // The main function I need is a proxy that is able to redirect requests to their appropriate containers
 // I need a way of starting up (NOT BUILDING - THIS WILL BE ANOTHER SERVICE) and monitoring Docker contains and tracking them, and shutting them down / pausing them - (maybe in the future also load balancing them and redirecting them to the correct instance)
 
 func main() {
-	// Initialize the context
-	ctx := context.Background()
-
-	// Initialize the Docker client
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(err)
-	}
-
-	// Create a new container
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "ubuntu",
-		Cmd: []string{"echo", "Hello world"},
-	}, nil, nil, nil, "")
-	if err != nil {
-		panic(err)
-	}
-
-	// Start the container
-	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		panic(err)
-	}
-
-	// Wait for the container to finish
-	statusCh, errCh := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
-	select {
-	case err := <-errCh:
-		if err != nil {
-			panic(err)
-		}
-	case <-statusCh:
-	}
-
-	// Get the output from the container
-	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
-	if err != nil {
-		panic(err)
-	}
-
-	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Get the target server to redirect to and increment the server hits
 		target := servers[serverHits % len(servers)]
