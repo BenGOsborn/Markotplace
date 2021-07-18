@@ -1,4 +1,4 @@
-module appEngine
+module appengine
 
 go 1.16
 
