@@ -34,6 +34,8 @@ func (cnter *Container) StartContainer(ctx context.Context, port int) error {
 		return err
 	}
 
+	// ****** I need to set the port, and I need to pass the port in as an environment variable too
+
 	// Create a new container
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: cnter.AppID, // This should be the AppID as well, but we will use this for testing
