@@ -36,6 +36,8 @@ dev-db:
 dev-db-access:
 	docker exec -it db psql -U ${POSTGRES_USER} ${POSTGRES_DB}
 
+# *** Maybe provide some sort of way of providing the details for the redis and the database inside of the container (process.env.db http://db:PORT) e.g
+
 # Start Redis
 dev-redis:
 	docker run -p 6379:6379 --name redis -d redis
