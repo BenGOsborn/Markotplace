@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"appengine/containerutils"
 )
@@ -62,18 +63,15 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 		forwardPort = container.Port
 	}
 
+	// Refresh the last hit time
+	container.LastHit = time.Now()
+
 	// ********* Also if I implement a firewall this is going to break for sure (the reverse proxy might have to return somehow)
-	// **** I also need to set the last hit of the container
 
 	// Parse the origin URL
 	redirectURL := fmt.Sprintf("http://0.0.0.0:%d", forwardPort)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 } 
-
-func test() {
-	// Here I should test what is going on with the references and stuff
-	// Essentially the object in the array is not being modified correctly by the cleanup
-}
 
 func main() {
 	// Start the container cleanup process

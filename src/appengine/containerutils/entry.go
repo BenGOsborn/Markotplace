@@ -30,8 +30,7 @@ type Container struct {
 
 func (ctr *Container) Expired() bool {
 	// Check if a container was last hit more than the given time
-	return time.Now().After(ctr.LastHit.Add(5 * time.Second))
-	// return time.Now().After(ctr.LastHit.Add(20 * time.Minute))
+	return time.Now().After(ctr.LastHit.Add(20 * time.Minute))
 }
 
 func (ctr *Container) StartContainer(ctx context.Context, port int) error {
@@ -115,8 +114,7 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 		}
 
 		// Sleep
-		time.Sleep(5 * time.Second)
-		// time.Sleep(5 * time.Minute)
+		time.Sleep(5 * time.Minute)
 	}
 }
 
