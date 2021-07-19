@@ -9,3 +9,9 @@ services:
             - POSTGRES_DB="${POSTGRES_DB}"
         ports:
             - "5432:5432"
+    appengine:
+        build: src/appengine/Dockerfile
+        ports:
+            - "4000:4000" # Fix this up eventually
+        depends_on:
+            - db # Needs to be last to execute as it can assign random ports
