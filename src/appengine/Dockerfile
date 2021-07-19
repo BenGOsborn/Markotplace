@@ -1,9 +1,9 @@
 # Compile the Go server
 FROM golang:latest
 WORKDIR /usr/app
-COPY go.mod .
-COPY main.go .
-RUN go build -o main .
+COPY . .
+RUN go mod download
+RUN go build main.go
 
 # Copy the files to a new server
 FROM ubuntu:latest
