@@ -65,12 +65,12 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	// **** I also need to set the last hit of the container
 	// **** Perhaps I am not shutting the process down properly either ?
-	// I am not shutting down the process correctly - it is not setting active to false
+	// I am not shutting down the process correctly - it is not setting active to false (the variables are not modifying the correct variable)
 	fmt.Println(containers)
 
 	// Start the container if it does not exist
 	if !container.Active {
-		container.StartContainer(ctx, forwardPort)
+		container.StartContainer(ctx, forwardPort) // **** What is the difference between modifying this variable and modifying the one from the for loop in CleanupContainers
 	}
 
 	// Parse the origin URL
