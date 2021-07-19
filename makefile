@@ -15,9 +15,9 @@ kill:
 
 # ---------- App engine ----------
 
-dev-app-engine:
+ae-dev:
 	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
 
-app-engine:
+ae-start:
 	docker build -t bengosborn/appengine src/appengine
 	docker run -dp 4000:4000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/appengine
