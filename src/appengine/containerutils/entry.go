@@ -109,9 +109,7 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 		for i, ctr := range *containers {
 			if ctr.Active {
 				if ctr.Expired() {
-					// *** Why does this not modify the actual value - the value is not set to false
-					(*containers)[i].StopContainer(ctx)
-					fmt.Println(*containers)
+					(*containers)[i].StopContainer(ctx) // ******** CHECK THIS AND OTHERS
 				}
 			}
 		}
