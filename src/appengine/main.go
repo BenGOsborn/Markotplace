@@ -58,7 +58,7 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	// Start the container if it does not exist, otherwise get the port for the container
 	if !container.Active {
 		forwardPort = containerutils.GetPort()
-		container.StartContainer(ctx, forwardPort) // **** What is the difference between modifying this variable and modifying the one from the for loop in CleanupContainers
+		container.StartContainer(ctx, forwardPort)
 	} else {
 		forwardPort = container.Port
 	}
