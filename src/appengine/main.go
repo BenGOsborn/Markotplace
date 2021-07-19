@@ -51,30 +51,29 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Initialize the forward URL **** Ports must be initialized each time
-	var forwardPort int = containerutils.GetPort(&containers)
+	// Initialize the forward URL
+	var forwardPort int
 
-	// **** I also need to set the last hit of the container
-	// **** Perhaps I am not shutting the process down properly either ?
-	// I am not shutting down the process correctly - it is not setting active to false (the variables are not modifying the correct variable)
-	fmt.Println("Started")
-	fmt.Println(containers)
-
-	// Start the container if it does not exist
+	// Start the container if it does not exist, otherwise get the port for the container
 	if !container.Active {
+		forwardPort = containerutils.GetPort()
 		container.StartContainer(ctx, forwardPort) // **** What is the difference between modifying this variable and modifying the one from the for loop in CleanupContainers
-		container.StopContainer(ctx)
+	} else {
+		forwardPort = container.Port
 	}
 
-	fmt.Println("Stopped")
-	fmt.Println(containers)
-
 	// ********* Also if I implement a firewall this is going to break for sure (the reverse proxy might have to return somehow)
+	// **** I also need to set the last hit of the container
 
 	// Parse the origin URL
 	redirectURL := fmt.Sprintf("http://0.0.0.0:%d", forwardPort)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 } 
+
+func test() {
+	// Here I should test what is going on with the references and stuff
+	// Essentially the object in the array is not being modified correctly by the cleanup
+}
 
 func main() {
 	// Start the container cleanup process

@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
-	"sort"
 	"strings"
 	"time"
 
@@ -94,8 +93,6 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 		return err
 	}
 
-	fmt.Println("Stopping")
-
 	// Reset the values for the container
 	ctr.LastHit = time.Time{}
 	ctr.Port = 0
@@ -109,10 +106,12 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 func CleanupContainers(ctx context.Context, containers *[]Container) {
 	// Continuously shutdown unused containers
 	for {
-		for _, ctr := range *containers {
+		for i, ctr := range *containers {
 			if ctr.Active {
 				if ctr.Expired() {
-					(&ctr).StopContainer(ctx)
+					// *** Why does this not modify the actual value - the value is not set to false
+					(*containers)[i].StopContainer(ctx)
+					fmt.Println(*containers)
 				}
 			}
 		}
@@ -164,31 +163,15 @@ func GetContainer(ctx context.Context, appID string, containers *[]Container) (*
 	return nil, nil 
 }
 
-func GetPort(containers *[]Container) int {
+func GetPort() int {
+	// Specify the valid port range
 	portMin := 2000
 	portMax := 65535
-
-	// Make a map of used ports sorted in ascending order
-	var usedPorts []int
-	for _, container := range *containers {
-		// Don't check containers outside the valid port range
-		if container.Port != 0 {
-			usedPorts = append(usedPorts, container.Port)
-		}
-	}
-	sort.Ints(usedPorts)
 
 	// Generate a random port until it is correct
 	for {
 		// Generate a new random port within the range
-		// *********** Please check this and the container port restriction while creating the list of ports above
 		port := portMin + rand.Int() % (portMax - portMin + 1)
-		for _, used := range usedPorts {
-			if (port < used) {
-				break
-			}
-			port += 1
-		}
 
 		// Check that the port is not used by the rest of the system
 		server, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
