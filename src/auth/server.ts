@@ -3,6 +3,8 @@ import session from "express-session";
 import redis from "redis";
 import connectRedis from "connect-redis";
 
+// Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
+
 const app = express();
 
 // Initialize Redis connection - https://youtu.be/mzG3tpZmRUE (Redis sessions) - https://youtu.be/jgpVdJB2sKQ (Redis tutorial)
@@ -10,6 +12,7 @@ const RedisStore = connectRedis(session);
 const redisClient = redis.createClient({
     host: process.env.NODE_ENV !== "production" ? "localhost" : "redis",
 });
+redisClient.auth(process.env.REDIS_PASSWORD as string);
 
 // Initialize middleware
 app.use(express.json());

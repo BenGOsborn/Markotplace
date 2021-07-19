@@ -1,5 +1,3 @@
-include .env
-
 # ---------- Main ----------
 
 # Startup Docker Compose
@@ -22,6 +20,10 @@ dc-start:
 d-kill:
 	docker rm -f $$(docker ps -q)
 
+# Export env variables from .env
+env:
+	export $$(cat .env)	
+
 # ---------- Dev ----------
 
 # Start the development application engine
@@ -29,26 +31,27 @@ dev-appengine:
 	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
 
 # Start PostgreSQL
-dev-db:
-	docker run -p 5432:5432 --name db -d -e POSTGRES_USER=${POSTGRES_USER} -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} -e POSTGRES_DB=${POSTGRES_DB} postgres
+dev-db: env
+	docker run -p 5432:5432 --name db -d -e POSTGRES_USER=$$(echo POSTGRES_USER) -e POSTGRES_PASSWORD=$$(echo POSTGRES_PASSWORD) -e POSTGRES_DB=$$(echo POSTGRES_DB) postgres
 
 # Access PostgreSQL db
-dev-db-access:
-	docker exec -it db psql -U ${POSTGRES_USER} ${POSTGRES_DB}
-
-# *** Maybe provide some sort of way of providing the details for the redis and the database inside of the container (process.env.db http://db:PORT) e.g
+dev-db-access: env
+	docker exec -it db psql -U $$(echo POSTGRES_USER) $$(echo POSTGRES_DB)
 
 # Start Redis
-dev-redis:
-	docker run -p 6379:6379 --name redis -d redis
+dev-redis: env
+	docker run -p 6379:6379 --name redis -d redis redis-server --requirepass $$(echo REDIS_PASSWORD)
 
 # Access Redis
 dev-redis-access:
 	docker exec -it redis redis-cli
 
 # Start the auth service
-dev-auth:
+dev-auth: env
 	npm run --prefix src/auth dev
+
+dev-auth-migrate: env
+	npx prisma migrate dev --name init --schema src/auth/prisma/schema.prisma
 
 # ---------- Run images ----------
 
