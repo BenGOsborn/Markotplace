@@ -1,17 +1,17 @@
 version: "3"
 
 services:
-    db:
-        image: postgres:latest-alpine
-        environment:
-            - POSTGRES_USER="${POSTGRES_USER}"
-            - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
-            - POSTGRES_DB="${POSTGRES_DB}"
-        ports:
-            - "5432:5432"
+    # db:
+    #     image: postgres:latest-alpine
+    #     environment:
+    #         - POSTGRES_USER="${POSTGRES_USER}"
+    #         - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
+    #         - POSTGRES_DB="${POSTGRES_DB}"
+    #     ports:
+    #         - "5432:5432"
     appengine:
         build: src/appengine/Dockerfile
         ports:
             - "4000:4000" # Fix this up eventually
-        depends_on:
-            - db # Needs to be last to execute as it can assign random ports
+        # depends_on:
+        #     - db # Needs to be last to execute as it can assign random ports
