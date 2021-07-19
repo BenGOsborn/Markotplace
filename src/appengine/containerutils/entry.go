@@ -112,7 +112,7 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 		for _, ctr := range *containers {
 			if ctr.Active {
 				if ctr.Expired() {
-					ctr.StopContainer(ctx)
+					(&ctr).StopContainer(ctx)
 				}
 			}
 		}
