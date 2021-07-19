@@ -26,19 +26,28 @@ var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
 func proxyHandler(w http.ResponseWriter, r *http.Request) {
-	// // Only allow get requests
-	// if r.Method != http.MethodGet {
-	// 	w.WriteHeader(400)
-	// 	return
-	// }
+	// Only allow get requests
+	if r.Method != http.MethodGet {
+		fmt.Println("Called")
+		w.WriteHeader(400)
+		return
+	}
 
-	// // Get the AppID from the query (*********I am aware this is bad practice I just want it to work)
-	// appIDs, ok := r.URL.Query()["appID"]
+	// Get the AppID from the query (*********I am aware this is bad practice I just want it to work)
+	appIDs := r.URL.Query()
+	fmt.Println(appIDs)
+	
+	// IT IS BECAUSE THE REQUESTS FROM THE PAGE ARE HAVING THEIR QUERY PARSED TOO
+	// Maybe I can send along a session token which can be used to tell the server what URL it is going to ?
+
 	// if !ok || len(appIDs) < 1 {
 	// 	w.WriteHeader(400)
 	// 	return
 	// }
 	// appID := appIDs[0]
+	// fmt.Println(appID)
+
+	// appID := "bengosborn/ts-wasmbird"
 
 	// // Check if the specified path is valid
 	// container, err := containerutils.GetContainer(ctx, appID, &containers)
@@ -69,16 +78,10 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Parse the origin URL
 	// origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
-	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 39138))
+	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 44221))
 
 	// Initialize the proxy
-	director := func(req *http.Request) {
-		req.Header.Add("X-Forwarded-Host", req.Host)
-		req.Header.Add("X-Origin-Host", origin.Host)
-		req.URL.Scheme = "http"
-		req.URL.Host = origin.Host
-	}
-	proxy := &httputil.ReverseProxy{Director: director}
+	proxy := httputil.NewSingleHostReverseProxy(origin)
 
 	// Initialize the proxy
 	proxy.ServeHTTP(w, r)
