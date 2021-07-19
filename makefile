@@ -1,6 +1,7 @@
 include .env
 
 # ---------- Main ----------
+
 # Startup Docker Compose
 dc-run:
 	docker-compose up -d
@@ -23,9 +24,11 @@ kill:
 
 # ---------- App engine ----------
 
+# Start the development application engine
 ae-dev:
 	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
 
+# Build the app engine image and start it
 ae-start:
 	docker build -t bengosborn/appengine src/appengine
 	docker run -dp 4000:4000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/appengine
