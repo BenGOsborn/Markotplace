@@ -14,8 +14,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 
 	"appengine/containerutils"
 )
@@ -25,7 +23,7 @@ const PORT = 4000
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
-func proxyHandler(w http.ResponseWriter, r *http.Request) {
+func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	// Only allow get requests
 	if r.Method != http.MethodGet {
 		fmt.Println("Called")
@@ -34,63 +32,56 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the AppID from the query (*********I am aware this is bad practice I just want it to work)
-	appIDs := r.URL.Query()
-	fmt.Println(appIDs)
-	
-	// IT IS BECAUSE THE REQUESTS FROM THE PAGE ARE HAVING THEIR QUERY PARSED TOO
-	// Maybe I can send along a session token which can be used to tell the server what URL it is going to ?
+	appIDs, ok := r.URL.Query()["appID"]
 
-	// if !ok || len(appIDs) < 1 {
-	// 	w.WriteHeader(400)
-	// 	return
-	// }
-	// appID := appIDs[0]
-	// fmt.Println(appID)
+	if !ok || len(appIDs) < 1 {
+		w.WriteHeader(400)
+		return
+	}
+	appID := appIDs[0]
 
-	// appID := "bengosborn/ts-wasmbird"
 
-	// // Check if the specified path is valid
-	// container, err := containerutils.GetContainer(ctx, appID, &containers)
-	// if err != nil {
-	// 	w.WriteHeader(500)
-	// 	return
-	// } else if container == nil {
-	// 	w.WriteHeader(404)
-	// 	return
-	// }
+	// Check if the specified path is valid
+	container, err := containerutils.GetContainer(ctx, appID, &containers)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	} else if container == nil {
+		w.WriteHeader(404)
+		return
+	}
 
-	// // Initialize the forward URL
-	// var forwardPort int
+	// Initialize the forward URL
+	var forwardPort int
 
-	// // Set the port of the container
-	// if container.Port != 0 {
-	// 	// If the port is something other than default
-	// 	forwardPort = container.Port
-	// } else {
-	// 	// Find a valid port and start the container on it
-	// 	forwardPort = containerutils.GetPort(&containers)
-	// }
+	// Set the port of the container
+	if container.Port != 0 {
+		// If the port is something other than default
+		forwardPort = container.Port
+	} else {
+		// Find a valid port and start the container on it
+		forwardPort = containerutils.GetPort(&containers)
+	}
 
-	// // Start the container if it does not exist
-	// if !container.Active {
-	// 	container.StartContainer(ctx, forwardPort)
-	// }
+	// Start the container if it does not exist
+	if !container.Active {
+		container.StartContainer(ctx, forwardPort)
+	}
+
+	// I also need to set the last hit of the container
+	// Perhaps I am not shutting the process down properly either ?
 
 	// Parse the origin URL
-	// origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
-	origin, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 44221))
-
-	// Initialize the proxy
-	proxy := httputil.NewSingleHostReverseProxy(origin)
-
-	// Initialize the proxy
-	proxy.ServeHTTP(w, r)
+	redirectURL := fmt.Sprintf("http://0.0.0.0:%d", forwardPort)
+	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 } 
 
 func main() {
-	// I also need to start the garbage container collection
+	// Start the container cleanup process
+	go containerutils.CleanupContainers(ctx, &containers)
 
-	http.HandleFunc("/", proxyHandler)
+	// Handle the main container redirect route
+	http.HandleFunc("/", redirectHandler)
 
 	// Start the server and log error
 	log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))

@@ -31,7 +31,8 @@ type Container struct {
 
 func (ctr *Container) Expired() bool {
 	// Check if a container was last hit more than the given time
-	return time.Now().After(ctr.LastHit.Add(20 * time.Minute))
+	return time.Now().After(ctr.LastHit.Add(20 * time.Second))
+	// return time.Now().After(ctr.LastHit.Add(20 * time.Minute))
 }
 
 func (ctr *Container) StartContainer(ctx context.Context, port int) error {
@@ -68,10 +69,10 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 	}
 
 	// Set the time the container started, the port it started on, the ID of the container, and return no errors
-	(*ctr).LastHit = time.Now()
-	(*ctr).Port = port
-	(*ctr).ContainerID = resp.ID
-	(*ctr).Active = true
+	ctr.LastHit = time.Now()
+	ctr.Port = port
+	ctr.ContainerID = resp.ID
+	ctr.Active = true
 
 	return nil
 }
@@ -94,10 +95,10 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 	}
 
 	// Reset the values for the container
-	(*ctr).LastHit = time.Time{}
-	(*ctr).Port = 0
-	(*ctr).ContainerID = ""
-	(*ctr).Active = false
+	ctr.LastHit = time.Time{}
+	ctr.Port = 0
+	ctr.ContainerID = ""
+	ctr.Active = false
 
 	// Dont return error
 	return nil
@@ -115,7 +116,8 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 		}
 
 		// Sleep
-		time.Sleep(20 * time.Minute)
+		time.Sleep(5 * time.Second)
+		// time.Sleep(5 * time.Minute)
 	}
 }
 
