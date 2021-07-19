@@ -1,5 +1,6 @@
 include .env
 
+# ---------- Main ----------
 # Startup Docker compose
 start:
 	docker-compose up -d
@@ -8,10 +9,11 @@ start:
 stop:
 	docker-compose down
 
-# -----------------------
-
+# Kill all Docker containers
 kill:
 	docker kill $$(docker ps -q)
+
+# ---------- App engine ----------
 
 dev-app-engine:
 	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
