@@ -32,15 +32,13 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get the AppID from the query (*********I am aware this is bad practice I just want it to work)
+	// Get the AppID from the query
 	appIDs, ok := r.URL.Query()["appID"]
-
 	if !ok || len(appIDs) < 1 {
 		w.WriteHeader(400)
 		return
 	}
 	appID := appIDs[0]
-
 
 	// Check if the specified path is valid
 	container, err := containerutils.GetContainer(ctx, appID, &containers)
@@ -55,20 +53,16 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	// Initialize the forward URL
 	var forwardPort int
 
-	// Start the container if it does not exist, otherwise get the port for the container
+	// Start the container if it does not exist, otherwise get the port for the container and log a hit
 	if !container.Active {
 		forwardPort = containerutils.GetPort()
 		container.StartContainer(ctx, forwardPort)
 	} else {
 		forwardPort = container.Port
+		container.LastHit = time.Now()
 	}
 
-	// Refresh the last hit time
-	container.LastHit = time.Now()
-
-	// ********* Also if I implement a firewall this is going to break for sure (the reverse proxy might have to return somehow)
-
-	// Parse the origin URL
+	// Redirect to the correct server - *** I might have to change this to the proxy system later on if I have a firewall
 	redirectURL := fmt.Sprintf("http://0.0.0.0:%d", forwardPort)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 } 
