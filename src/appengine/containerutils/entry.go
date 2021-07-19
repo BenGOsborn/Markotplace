@@ -31,7 +31,7 @@ type Container struct {
 
 func (ctr *Container) Expired() bool {
 	// Check if a container was last hit more than the given time
-	return time.Now().After(ctr.LastHit.Add(20 * time.Second))
+	return time.Now().After(ctr.LastHit.Add(5 * time.Second))
 	// return time.Now().After(ctr.LastHit.Add(20 * time.Minute))
 }
 
@@ -93,6 +93,8 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 	if err := cli.ContainerStop(ctx, ctr.ContainerID, nil); err != nil {
 		return err
 	}
+
+	fmt.Println("Stopping")
 
 	// Reset the values for the container
 	ctr.LastHit = time.Time{}

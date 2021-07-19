@@ -63,13 +63,15 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 		forwardPort = containerutils.GetPort(&containers)
 	}
 
+	// **** I also need to set the last hit of the container
+	// **** Perhaps I am not shutting the process down properly either ?
+	// I am not shutting down the process correctly - it is not setting active to false
+	fmt.Println(containers)
+
 	// Start the container if it does not exist
 	if !container.Active {
 		container.StartContainer(ctx, forwardPort)
 	}
-
-	// I also need to set the last hit of the container
-	// Perhaps I am not shutting the process down properly either ?
 
 	// Parse the origin URL
 	redirectURL := fmt.Sprintf("http://0.0.0.0:%d", forwardPort)
