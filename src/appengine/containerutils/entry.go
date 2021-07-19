@@ -109,7 +109,7 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 		for i, ctr := range *containers {
 			if ctr.Active {
 				if ctr.Expired() {
-					(*containers)[i].StopContainer(ctx) // ******** CHECK THIS AND OTHERS
+					(*containers)[i].StopContainer(ctx)
 				}
 			}
 		}
@@ -122,9 +122,9 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 
 func GetContainer(ctx context.Context, appID string, containers *[]Container) (*Container, error) {
 	// Check if the image is in the list of containers and return that container
-	for _, ctr := range *containers {
+	for i, ctr := range *containers {
 		if ctr.AppID == appID {
-			return &ctr, nil
+			return &(*containers)[i], nil
 		}
 	}
 	
