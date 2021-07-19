@@ -1,13 +1,21 @@
 include .env
 
 # ---------- Main ----------
-# Startup Docker compose
-start:
+# Startup Docker Compose
+dc-run:
 	docker-compose up -d
 
-# Shutdown Docker compose
-stop:
+# Shutdown Docker Compose
+dc-stop:
 	docker-compose down
+
+# Build Docker Compose images
+dc-build:
+	docker-compose build
+
+# Build images and start them up
+dc-start:
+	docker-compose up --build
 
 # Kill all Docker containers
 kill:

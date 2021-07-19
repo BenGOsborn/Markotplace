@@ -10,7 +10,7 @@ services:
     #     ports:
     #         - "5432:5432"
     appengine:
-        build: src/appengine/Dockerfile
+        build: src/appengine/
         ports:
             - "4000:4000" # Fix this up eventually
         # depends_on:
