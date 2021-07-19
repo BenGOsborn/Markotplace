@@ -44,6 +44,10 @@ dev-redis:
 dev-redis-access:
 	docker exec -it redis redis-cli
 
+# Start the auth service
+dev-auth:
+	npm run --prefix src/auth dev
+
 # ---------- Run images ----------
 
 # Build the app engine image and start it
