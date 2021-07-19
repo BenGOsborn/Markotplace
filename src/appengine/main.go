@@ -73,6 +73,8 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 		container.StartContainer(ctx, forwardPort) // **** What is the difference between modifying this variable and modifying the one from the for loop in CleanupContainers
 	}
 
+	// ********* Also if I implement a firewall this is going to break for sure (the reverse proxy might have to return somehow)
+
 	// Parse the origin URL
 	redirectURL := fmt.Sprintf("http://0.0.0.0:%d", forwardPort)
 	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
