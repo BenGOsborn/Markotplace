@@ -19,14 +19,32 @@ dc-start:
 	docker-compose up --build
 
 # Kill all Docker containers
-kill:
-	docker kill $$(docker ps -q)
+d-kill:
+	docker rm -f $$(docker ps -q)
 
-# ---------- App engine ----------
+# ---------- Dev ----------
 
 # Start the development application engine
-ae-dev:
+dev-ae:
 	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
+
+# Start PostgreSQL
+dev-db:
+	docker run -p 5432:5432 --name db -d -e POSTGRES_USER=${POSTGRES_USER} -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} -e POSTGRES_DB=${POSTGRES_DB} postgres
+
+# Access PostgreSQL db
+dev-db-access:
+	docker exec -it db psql -U ${POSTGRES_USER} ${POSTGRES_DB}
+
+# Start Redis
+dev-redis:
+	docker run -p 6379:6379 --name redis -d redis
+
+# Access Redis
+dev-redis-access:
+	docker exec -it redis redis-cli
+
+# ---------- Run images ----------
 
 # Build the app engine image and start it
 ae-start:
