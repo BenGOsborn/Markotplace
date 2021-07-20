@@ -52,8 +52,9 @@ dev-redis-access:
 dev-auth: env
 	npm run --prefix src/auth dev
 
-dev-auth-migrate: env
-	npx prisma migrate dev --name init --schema src/auth/prisma/schema.prisma
+dev-prisma: env
+# npx prisma migrate dev --name init --schema src/auth/prisma/schema.prisma
+	npx prisma generate --schema src/auth/prisma/schema.prisma
 
 # ---------- Run images ----------
 
