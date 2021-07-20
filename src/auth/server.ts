@@ -35,6 +35,9 @@ app.use(
 // Initialize Prisma
 const prisma = new PrismaClient();
 
+// Initialize constants
+const EXPIRY = 60 * 60 * 24;
+
 // Login endpoint
 app.post("/register", async (req, res) => {
     // Get data from request
@@ -48,6 +51,7 @@ app.post("/register", async (req, res) => {
     const { error } = registerSchema.validate({ username, email, password });
     if (error) return res.status(400).end(error.details[0].message);
 
+    // ****** Cache this part
     // Check if the username and email are unique
     const exists = await prisma.user.findFirst({
         where: {
