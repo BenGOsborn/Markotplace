@@ -43,6 +43,8 @@ app.post("/register", async (req, res) => {
         password,
     }: { username: string; email: string; password: string } = req.body;
 
+    // Validate these using Joi
+
     // Create a mew user in the database
     const user = await prisma.user.create({
         data: {
@@ -52,12 +54,10 @@ app.post("/register", async (req, res) => {
         },
     });
 
-    // Store values in the session
-    // @ts-ignore
-    req.session.username = username;
+    // Store value in the session
 
     // Return success
-    res.sendStatus(200);
+    res.json(user);
 });
 
 // Protected route
