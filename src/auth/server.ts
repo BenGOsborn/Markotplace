@@ -7,19 +7,21 @@ import { registerSchema } from "./utils/joiSchema";
 import { cacheData, cacheDataIfNot } from "./utils/cache";
 import bcrypt from "bcrypt";
 
-// Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
-
+// Initialize express
 const app = express();
+app.use(express.json());
 
-// Initialize Redis connection - https://youtu.be/mzG3tpZmRUE (Redis sessions) - https://youtu.be/jgpVdJB2sKQ (Redis tutorial)
+// Initialize Prisma
+const prisma = new PrismaClient();
+
+// Initialize Redis connection
 const RedisStore = connectRedis(session);
 const redisClient = redis.createClient({
     host: process.env.NODE_ENV !== "production" ? "localhost" : "redis",
 });
 redisClient.auth(process.env.REDIS_PASSWORD as string);
 
-// Initialize middleware
-app.use(express.json());
+// Initialize sessions
 app.use(
     session({
         store: new RedisStore({ client: redisClient }),
@@ -33,9 +35,6 @@ app.use(
         },
     })
 );
-
-// Initialize Prisma
-const prisma = new PrismaClient();
 
 // Initialize constants
 const EXPIRY = 60 * 60 * 12;
