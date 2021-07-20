@@ -48,58 +48,52 @@ app.use(
 const EXPIRY = 60 * 60 * 12;
 
 // Register a new user
-// app.post("/register", async (req, res) => {
-//     // Get data from request
-//     const {
-//         username,
-//         email,
-//         password,
-//     }: { username: string; email: string; password: string } = req.body;
+app.post("/register", async (req, res) => {
+    // Get data from request
+    const {
+        username,
+        email,
+        password,
+    }: { username: string; email: string; password: string } = req.body;
 
-//     // Validate the data against the schema
-//     const { error } = registerSchema.validate({ username, email, password });
-//     if (error) return res.status(400).end(error.details[0].message);
+    // Validate the data against the schema
+    const { error } = registerSchema.validate({ username, email, password });
+    if (error) return res.status(400).end(error.details[0].message);
 
-//     // Check if the username and email are unique
-//     const exists = await cacheDataIfNot(
-//         redisClient,
-//         EXPIRY,
-//         `auth-register:${username}${email}`,
-//         null,
-//         async () => {
-//             const existingUser = await prisma.user.findFirst({
-//                 where: {
-//                     OR: [
-//                         { username: { equals: username } },
-//                         { email: { equals: email } },
-//                     ],
-//                 },
-//             });
-//             return existingUser;
-//         }
-//     );
-//     if (exists) return res.status(400).end("Username or email already taken");
+    // Check if the username and email are unique
+    const exists = await cacheDataIfNot(
+        redisClient,
+        EXPIRY,
+        `auth-register:${username}${email}`,
+        null,
+        async () => {
+            const existingUser = await User.findOne({
+                where: [{ username }, { email }],
+            });
+            return existingUser;
+        }
+    );
+    if (exists) return res.status(400).end("Username or email already taken");
 
-//     // Hash the password
-//     const salt = await bcrypt.genSalt();
-//     const hashedPassword = await bcrypt.hash(password, salt);
+    // Hash the password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-//     // Create the new user
-//     const user = await prisma.user.create({
-//         data: {
-//             username,
-//             email,
-//             password: hashedPassword,
-//         },
-//     });
+    // Create the new user
+    const user = User.create({
+        username,
+        email,
+        password: hashedPassword,
+    });
+    await user.save();
 
-//     // Set the ID of the user in the session
-//     // @ts-ignore
-//     req.session.userID = user.id;
+    // Set the ID of the user in the session
+    // @ts-ignore
+    req.session.userID = user.id;
 
-//     // Return the userID
-//     res.json({ userID: user.id });
-// });
+    // Return the userID
+    res.json({ userID: user.id });
+});
 
 // // Login a user
 // app.post("/login", async (req, res) => {
