@@ -53,22 +53,14 @@ app.post("/register", async (req, res) => {
     if (error) return res.status(400).end(error.details[0].message);
 
     // Check if the username and email are unique
-    const exists = await cacheData<User | null>(
-        redisClient,
-        EXPIRY,
-        `register:${username}${email}`,
-        async () => {
-            const existingUser = await prisma.user.findFirst({
-                where: {
-                    OR: [
-                        { username: { equals: username } },
-                        { email: { equals: email } },
-                    ],
-                },
-            });
-            return existingUser;
-        }
-    );
+    const exists = await prisma.user.findFirst({
+        where: {
+            OR: [
+                { username: { equals: username } },
+                { email: { equals: email } },
+            ],
+        },
+    });
     if (exists) return res.status(400).end("Username or email already taken");
 
     // Create the new user
