@@ -39,7 +39,7 @@ const prisma = new PrismaClient();
 // Initialize constants
 const EXPIRY = 60 * 60 * 12;
 
-// Login endpoint
+// Register a new user
 app.post("/register", async (req, res) => {
     // Get data from request
     const {
@@ -87,6 +87,11 @@ app.post("/register", async (req, res) => {
 
     // Return the userID
     res.json({ userID: user.id });
+});
+
+// Login a user
+app.post("/login", async (req, res) => {
+    return res.sendStatus(200);
 });
 
 // Protected route
