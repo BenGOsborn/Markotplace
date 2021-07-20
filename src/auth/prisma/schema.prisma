@@ -8,6 +8,7 @@ datasource db {
 
 generator client {
     provider = "prisma-client-js"
+    // It looks like we will be sharing this across all of the services
 }
 
 model User {

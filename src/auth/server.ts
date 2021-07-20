@@ -2,7 +2,7 @@ import express from "express";
 import session from "express-session";
 import redis from "redis";
 import connectRedis from "connect-redis";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client"; // How do I actually use this in production ?????
 import { registerSchema } from "./utils/joiSchema";
 import { cacheData, cacheDataIfNot } from "./utils/cache";
 import bcrypt from "bcrypt";
