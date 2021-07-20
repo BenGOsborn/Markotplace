@@ -65,7 +65,7 @@ app.post("/register", async (req, res) => {
         redisClient,
         EXPIRY,
         `auth-register:${username}${email}`,
-        null,
+        undefined,
         async () => {
             const existingUser = await User.findOne({
                 where: [{ username }, { email }],
