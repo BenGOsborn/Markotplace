@@ -37,16 +37,24 @@ const prisma = new PrismaClient();
 // Login endpoint
 app.post("/register", async (req, res) => {
     // Get params
-    const { email, password }: { email: string; password: string } = req.body;
+    const {
+        username,
+        email,
+        password,
+    }: { username: string; email: string; password: string } = req.body;
 
     // Create a mew user in the database
-    const user = await prisma.user.create({ data: {} });
+    const user = await prisma.user.create({
+        data: {
+            username,
+            email,
+            password,
+        },
+    });
 
     // Store values in the session
     // @ts-ignore
-    req.session.email = email;
-    // @ts-ignore
-    req.session.password = password;
+    req.session.username = username;
 
     // Return success
     res.sendStatus(200);
