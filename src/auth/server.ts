@@ -2,8 +2,9 @@ import express from "express";
 import session from "express-session";
 import redis from "redis";
 import connectRedis from "connect-redis";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { registerSchema } from "./utils/joiSchema";
+import { cacheData } from "./utils/cache";
 
 // Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
 
@@ -36,7 +37,7 @@ app.use(
 const prisma = new PrismaClient();
 
 // Initialize constants
-const EXPIRY = 60 * 60 * 24;
+const EXPIRY = 60 * 60 * 12;
 
 // Login endpoint
 app.post("/register", async (req, res) => {
@@ -51,16 +52,23 @@ app.post("/register", async (req, res) => {
     const { error } = registerSchema.validate({ username, email, password });
     if (error) return res.status(400).end(error.details[0].message);
 
-    // ****** Cache this part
     // Check if the username and email are unique
-    const exists = await prisma.user.findFirst({
-        where: {
-            OR: [
-                { username: { equals: username } },
-                { email: { equals: email } },
-            ],
-        },
-    });
+    const exists = await cacheData<User | null>(
+        redisClient,
+        EXPIRY,
+        `register:${username}${email}`,
+        async () => {
+            const existingUser = await prisma.user.findFirst({
+                where: {
+                    OR: [
+                        { username: { equals: username } },
+                        { email: { equals: email } },
+                    ],
+                },
+            });
+            return existingUser;
+        }
+    );
     if (exists) return res.status(400).end("Username or email already taken");
 
     // Create the new user
