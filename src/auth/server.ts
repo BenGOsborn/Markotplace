@@ -161,6 +161,8 @@ app.get("/authenticated", async (req, res) => {
 app.get("/game/:appName", async (req, res) => {
     // Get the name of the app
     const appName = req.params.appName;
+
+    res.sendStatus(200);
 });
 
 // Start the server on the specified port
