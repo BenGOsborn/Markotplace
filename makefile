@@ -33,15 +33,15 @@ dev-appengine:
 	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
 
 # Start PostgreSQL
-dev-db:
+dev-db: env
 	docker run -p 5432:5432 --name db -d -e POSTGRES_USER=${POSTGRES_USER} -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} -e POSTGRES_DB=${POSTGRES_DB} postgres
 
 # Access PostgreSQL db
-dev-db-access:
+dev-db-access: env
 	docker exec -it db psql -U ${POSTGRES_USER} ${POSTGRES_DB}
 
 # Start Redis
-dev-redis:
+dev-redis: env
 	docker run -p 6379:6379 --name redis -d redis redis-server --requirepass ${REDIS_PASSWORD}
 
 # Access Redis
