@@ -122,10 +122,10 @@ app.post("/login", async (req, res) => {
         res.sendStatus(400);
     }
 
-    // Set the session and return true
+    // Set the session and the userID
     // @ts-ignore
     req.session.userID = user.id;
-    return res.sendStatus(200);
+    res.json({ userID: user.id });
 });
 
 // Validate a users session
@@ -156,8 +156,8 @@ app.get("/authenticated", async (req, res) => {
         return res.sendStatus(403);
     }
 
-    // Return success
-    return res.sendStatus(200);
+    // Return the userID
+    return res.json({ userID });
 });
 
 // Start the server on the specified port
