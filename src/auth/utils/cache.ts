@@ -1,19 +1,21 @@
 import { RedisClient } from "redis";
 
 // Cache data to redis
-const cacheData = async (
+const cacheData = async <T>(
     redisClient: RedisClient,
+    seconds: number,
     key: string,
-    callback: () => Promise<any>
+    callback: () => Promise<T>
 ) => {
-    // Attempt to get the key from redis
-    // Otherwise use the callback to get the data and store it in the cache
-
-    // How can I make a custom type from this ?
-
-    return new Promise((resolve, object) => {
-        redisClient.get(key, (error, data) => {
-            if (error) return PromiseRejectionEvent(error);
+    return new Promise<T>((resolve, reject) => {
+        redisClient.get(key, async (error, cachedData) => {
+            if (error) return reject(error);
+            if (cachedData != null) resolve(JSON.parse(cachedData));
+            else {
+                const freshData = await callback();
+                redisClient.setex(key, seconds, JSON.stringify(freshData));
+                resolve(freshData);
+            }
         });
     });
 };
