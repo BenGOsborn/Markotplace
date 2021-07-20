@@ -1,5 +1,7 @@
 import { RedisClient } from "redis";
 
+// Checkout caching problems
+
 // Attempt to get the data from the cache if it exists otherwise create it
 export const cacheData = <T>(
     redisClient: RedisClient,
