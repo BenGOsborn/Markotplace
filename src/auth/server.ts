@@ -3,7 +3,7 @@ import session from "express-session";
 import redis from "redis";
 import connectRedis from "connect-redis";
 import { PrismaClient } from "@prisma/client";
-import { registerSchema } from "./joiSchema";
+import { registerSchema } from "./utils/joiSchema";
 
 // Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
 
