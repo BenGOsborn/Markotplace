@@ -57,7 +57,7 @@ app.post("/register", async (req, res) => {
     const exists = await cacheDataIfNot(
         redisClient,
         EXPIRY,
-        `register:${username}${email}`,
+        `auth-register:${username}${email}`,
         null,
         async () => {
             const existingUser = await prisma.user.findFirst({
@@ -106,7 +106,7 @@ app.post("/login", async (req, res) => {
     const user = await cacheData(
         redisClient,
         EXPIRY,
-        `login:${username}`,
+        `auth-login:${username}`,
         async () => {
             const existingUser = await prisma.user.findUnique({
                 where: { username },
@@ -116,20 +116,47 @@ app.post("/login", async (req, res) => {
     );
     if (!user) return res.status(400).end("User does not exist");
 
-    // Compare the passwords and return success
+    // Check that the passwords match
     const match = await bcrypt.compare(password, user.password);
-    if (match) return res.sendStatus(200);
-    res.sendStatus(400);
+    if (!match) {
+        res.sendStatus(400);
+    }
+
+    // Set the session and return true
+    // @ts-ignore
+    req.session.userID = user.id;
+    return res.sendStatus(200);
 });
 
 // Validate a users session
 app.get("/authenticated", async (req, res) => {
     // Get the user ID from the session and check if it is valid
     // @ts-ignore
-    const userID: string = req.session.userID;
+    const userID: number = req.session.userID;
 
     // If the user ID exists the user is authenticated else no
-    if (userID) return res.sendStatus(403);
+    if (!userID) return res.sendStatus(403);
+
+    // Also do a check of the user ID to make sure it exists - if it doesnt then void the session
+    const user = await cacheData(
+        redisClient,
+        EXPIRY,
+        `auth-authenticated:${userID}`,
+        async () => {
+            const existingUser = await prisma.user.findUnique({
+                where: {
+                    id: userID,
+                },
+            });
+            return existingUser;
+        }
+    );
+    if (!user) {
+        req.session.destroy((err) => {});
+        return res.sendStatus(403);
+    }
+
+    // Return success
     return res.sendStatus(200);
 });
 
