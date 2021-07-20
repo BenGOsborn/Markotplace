@@ -46,7 +46,7 @@ dev-redis: env
 
 # Access Redis
 dev-redis-access:
-	docker exec -it redis redis-cli
+	docker exec -it redis redis-cli -a ${REDIS_PASSWORD}
 
 # Start the auth service
 dev-auth: env

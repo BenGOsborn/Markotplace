@@ -3,6 +3,7 @@ import session from "express-session";
 import redis from "redis";
 import connectRedis from "connect-redis";
 import { PrismaClient } from "@prisma/client";
+import { registerSchema } from "./joiSchema";
 
 // Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
 
@@ -43,7 +44,22 @@ app.post("/register", async (req, res) => {
         password,
     }: { username: string; email: string; password: string } = req.body;
 
-    // Create a mew user in the database
+    // Validate the data against the schema
+    const { error } = registerSchema.validate({ username, email, password });
+    if (error) return res.status(400).end(error.details[0].message);
+
+    // Check if the username and email are unique
+    const exists = await prisma.user.findFirst({
+        where: {
+            OR: [
+                { username: { equals: username } },
+                { email: { equals: email } },
+            ],
+        },
+    });
+    if (exists) return res.status(400).end("Username or email already taken");
+
+    // Create the new user
     const user = await prisma.user.create({
         data: {
             username,
@@ -52,8 +68,12 @@ app.post("/register", async (req, res) => {
         },
     });
 
-    // Return the user
-    res.json(user);
+    // Set the ID of the user in the session
+    // @ts-ignore
+    req.session.userID = user.id;
+
+    // Return the userID
+    res.json({ userID: user.id });
 });
 
 // Protected route
