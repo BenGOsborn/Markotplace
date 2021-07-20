@@ -23,7 +23,7 @@ export const cacheData = <T>(
     });
 };
 
-// Cache the data if successful
+// Cache the data if it doesnt match the excluded value
 export const cacheDataIfNot = <T>(
     redisClient: RedisClient,
     expiry: number,
