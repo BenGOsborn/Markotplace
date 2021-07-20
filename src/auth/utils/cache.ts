@@ -23,11 +23,12 @@ export const cacheData = <T>(
     });
 };
 
-// I should have another function which should set the cache on success
-export const setCacheIfExists = <T>(
+// Cache the data if successful
+export const cacheDataIfNot = <T>(
     redisClient: RedisClient,
     expiry: number,
     key: string,
+    exclude: any,
     callback: () => Promise<T>
 ) => {
     return new Promise<T>((resolve, reject) => {
@@ -37,9 +38,9 @@ export const setCacheIfExists = <T>(
             // Return the cached data
             else if (cachedData != null) resolve(JSON.parse(cachedData));
             else {
-                // Create the new cached data and store it in the cache if it exists
+                // Cache the data if it doesnt match the value specified
                 const freshData = await callback();
-                if (freshData) {
+                if (freshData !== exclude) {
                     redisClient.setex(key, expiry, JSON.stringify(freshData));
                 }
                 resolve(freshData);
