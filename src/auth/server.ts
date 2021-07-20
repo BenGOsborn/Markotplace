@@ -157,6 +157,12 @@ app.get("/authenticated", async (req, res) => {
     return res.json({ userID });
 });
 
+// Validate a users app
+app.get("/game/:appName", async (req, res) => {
+    // Get the name of the app
+    const appName = req.params.appName;
+});
+
 // Start the server on the specified port
 const PORT = 4000;
 
