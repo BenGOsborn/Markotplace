@@ -160,7 +160,7 @@ app.get("/authenticated", async (req, res) => {
     return res.sendStatus(200);
 });
 
-// Listen on specified port
+// Start the server on the specified port
 const PORT = 4000;
 
 app.listen(PORT, () => {
