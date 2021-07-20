@@ -4,7 +4,8 @@ import redis from "redis";
 import connectRedis from "connect-redis";
 import { PrismaClient } from "@prisma/client";
 import { registerSchema } from "./utils/joiSchema";
-import { cacheDataIfNot } from "./utils/cache";
+import { cacheData, cacheDataIfNot } from "./utils/cache";
+import bcrypt from "bcrypt";
 
 // Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
 
@@ -72,12 +73,16 @@ app.post("/register", async (req, res) => {
     );
     if (exists) return res.status(400).end("Username or email already taken");
 
+    // Hash the password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     // Create the new user
     const user = await prisma.user.create({
         data: {
             username,
             email,
-            password,
+            password: hashedPassword,
         },
     });
 
@@ -91,16 +96,41 @@ app.post("/register", async (req, res) => {
 
 // Login a user
 app.post("/login", async (req, res) => {
-    return res.sendStatus(200);
+    // Get data from request
+    const {
+        username,
+        password,
+    }: { username: string; email: string; password: string } = req.body;
+
+    // Get the user if they exist
+    const user = await cacheData(
+        redisClient,
+        EXPIRY,
+        `login:${username}`,
+        async () => {
+            const existingUser = await prisma.user.findUnique({
+                where: { username },
+            });
+            return existingUser;
+        }
+    );
+    if (!user) return res.status(400).end("User does not exist");
+
+    // Compare the passwords and return success
+    const match = await bcrypt.compare(password, user.password);
+    if (match) return res.sendStatus(200);
+    res.sendStatus(400);
 });
 
-// Protected route
-app.get("/users", async (req, res) => {
-    // Get a list of users
-    const users = await prisma.user.findMany();
+// Validate a users session
+app.get("/authenticated", async (req, res) => {
+    // Get the user ID from the session and check if it is valid
+    // @ts-ignore
+    const userID: string = req.session.userID;
 
-    // Return the users
-    res.json(users);
+    // If the user ID exists the user is authenticated else no
+    if (userID) return res.sendStatus(403);
+    return res.sendStatus(200);
 });
 
 // Listen on specified port
