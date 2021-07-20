@@ -36,14 +36,12 @@ const prisma = new PrismaClient();
 
 // Login endpoint
 app.post("/register", async (req, res) => {
-    // Get params
+    // Get data from request
     const {
         username,
         email,
         password,
     }: { username: string; email: string; password: string } = req.body;
-
-    // Validate these using Joi
 
     // Create a mew user in the database
     const user = await prisma.user.create({
@@ -54,15 +52,17 @@ app.post("/register", async (req, res) => {
         },
     });
 
-    // Store value in the session
-
-    // Return success
+    // Return the user
     res.json(user);
 });
 
 // Protected route
-app.get("/protected", async (req, res) => {
-    return res.json(req.session);
+app.get("/users", async (req, res) => {
+    // Get a list of users
+    const users = await prisma.user.findMany();
+
+    // Return the users
+    res.json(users);
 });
 
 // Listen on specified port
