@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import redis from "redis";
 import connectRedis from "connect-redis";
+import { PrismaClient } from "@prisma/client";
 
 // Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
 
@@ -30,10 +31,16 @@ app.use(
     })
 );
 
+// Initialize Prisma
+const prisma = new PrismaClient();
+
 // Login endpoint
-app.post("/login", (req, res) => {
+app.post("/register", async (req, res) => {
     // Get params
     const { email, password }: { email: string; password: string } = req.body;
+
+    // Create a mew user in the database
+    const user = await prisma.user.create({ data: {} });
 
     // Store values in the session
     // @ts-ignore
@@ -46,7 +53,7 @@ app.post("/login", (req, res) => {
 });
 
 // Protected route
-app.get("/protected", (req, res) => {
+app.get("/protected", async (req, res) => {
     return res.json(req.session);
 });
 
