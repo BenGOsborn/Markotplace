@@ -166,7 +166,7 @@ app.get("/game/:appName", async (req, res) => {
 });
 
 // Start the server on the specified port
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
