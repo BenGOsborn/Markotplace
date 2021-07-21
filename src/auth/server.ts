@@ -17,6 +17,7 @@ app.use(express.json());
 // Initialize ORM
 createConnection({
     type: "postgres",
+    host: process.env.NODE_ENV !== "production" ? "localhost" : "db",
     database: process.env.POSTGRES_DB,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
