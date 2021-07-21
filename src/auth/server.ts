@@ -133,7 +133,7 @@ app.post("/login", async (req, res) => {
 app.get("/authenticated", async (req, res) => {
     // Get the user ID from the session and check if it is valid
     // @ts-ignore
-    const userID: number = req.session.userID;
+    const { userID }: { userID: number } = req.session;
 
     // If the user ID exists the user is authenticated else no
     if (!userID) return res.sendStatus(403);
@@ -157,10 +157,12 @@ app.get("/authenticated", async (req, res) => {
     return res.json({ userID });
 });
 
-// Validate a users app
+// Provide a way where a user can delete their profile
+
+// Validate a users app ****** Should this be here ?
 app.get("/game/:appName", async (req, res) => {
     // Get the name of the app
-    const appName = req.params.appName;
+    const { appName } = req.params;
 
     res.sendStatus(200);
 });
