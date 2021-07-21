@@ -1,10 +1,9 @@
-import { RedisClient } from "redis";
+import { redisClient } from "./redis";
 
 // Checkout caching problems
 
 // Attempt to get the data from the cache if it exists otherwise create it
 export const cacheData = <T>(
-    redisClient: RedisClient,
     expiry: number,
     key: string,
     callback: () => Promise<T>
@@ -27,7 +26,6 @@ export const cacheData = <T>(
 
 // Cache the data if it doesnt match the excluded value
 export const cacheDataIfNot = <T>(
-    redisClient: RedisClient,
     expiry: number,
     key: string,
     exclude: any,

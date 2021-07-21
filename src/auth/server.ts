@@ -8,6 +8,7 @@ import { cacheData, cacheDataIfNot } from "./utils/cache";
 import bcrypt from "bcrypt";
 import { User } from "./entities/user";
 import { Dev } from "./entities/dev";
+import { redisClient } from "./utils/redis";
 
 // Initialize express
 const app = express();
@@ -23,17 +24,10 @@ createConnection({
     entities: [User, Dev],
 });
 
-// Initialize Redis connection
-const RedisStore = connectRedis(session);
-const redisClient = redis.createClient({
-    host: process.env.NODE_ENV !== "production" ? "localhost" : "redis",
-});
-redisClient.auth(process.env.REDIS_PASSWORD as string);
-
-// Initialize sessions
+// Initialize sessions with redis
 app.use(
     session({
-        store: new RedisStore({ client: redisClient }),
+        store: new (connectRedis(session))({ client: redisClient }),
         secret: process.env.SECRET || "secret",
         saveUninitialized: false,
         resave: false,
@@ -63,7 +57,6 @@ app.post("/register", async (req, res) => {
 
     // Check if the username and email are unique
     const exists = await cacheDataIfNot(
-        redisClient,
         EXPIRY,
         `auth-register:${username}${email}`,
         undefined,
@@ -105,17 +98,12 @@ app.post("/login", async (req, res) => {
     }: { username: string; email: string; password: string } = req.body;
 
     // Get the user if they exist
-    const user = await cacheData(
-        redisClient,
-        EXPIRY,
-        `auth-login:${username}`,
-        async () => {
-            const existingUser = await User.findOne({
-                where: { username },
-            });
-            return existingUser;
-        }
-    );
+    const user = await cacheData(EXPIRY, `auth-login:${username}`, async () => {
+        const existingUser = await User.findOne({
+            where: { username },
+        });
+        return existingUser;
+    });
     if (!user) return res.status(400).end("User does not exist");
 
     // Check that the passwords match
@@ -141,7 +129,6 @@ app.get("/authenticated", async (req, res) => {
 
     // Also do a check of the user ID to make sure it exists - if it doesnt then void the session
     const user = await cacheData(
-        redisClient,
         EXPIRY,
         `auth-authenticated:${userID}`,
         async () => {
