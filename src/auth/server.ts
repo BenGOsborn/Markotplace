@@ -121,7 +121,7 @@ app.post("/login", async (req, res) => {
 });
 
 // Validate a users session
-app.get("/authenticated", async (req, res) => {
+app.get("/authorized", async (req, res) => {
     // Get the user ID from the session and check if it is valid
     // @ts-ignore
     const { userID }: { userID: number } = req.session;

@@ -5,6 +5,7 @@ import axios from "axios";
 import { Dev } from "./entities/dev";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { cacheDataIfNot } from "./utils/cache";
 
 // Initialize express
 const app = express();
@@ -27,28 +28,26 @@ app.use(async (req, res, next) => {
     // Get the authentication URL
     const authURL = `http://${
         process.env.NODE_ENV !== "production" ? "localhost" : "auth"
-    }:4000/authenticated`;
-
-    // *** Maybe find a better way of storing sessions without the need for cookies ?
-    // Maybe I should use JWT instead of sessions or a hybrid of both for a better stateless experience ?
-    console.log(req.cookies["connect.sid"]);
-    res.cookie(
-        "connect.sid",
-        "s%3AzX8_eoSdEhrhEuewv4cXZrNIoI0ctRbL.Ly0gDH9kdBCNHk6azXaZW3Kcimc5wGhBvprDIVCIdrA"
-    );
+    }:4000/authorized`;
 
     try {
         // Get the userID from the user
-        const response = await axios.get(authURL, {
-            // headers: { Cookie: `connect.sid=${req.cookies["connect.sid"]}` }, // Change to with credentials instead ?
+        const {
+            data: { userID },
+        } = await axios.get<{ userID: string }>(authURL, {
+            headers: { Cookie: `connect.sid=${req.cookies["connect.sid"]}` },
         });
+
+        // Set the userID for the request
+        // @ts-ignore
+        req.locals = { userID };
+
+        // Go to the next route
+        next();
     } catch (e) {
-        // Return error
+        // Return error code
         return res.sendStatus(e.response.status);
     }
-
-    // Go to the next route
-    next();
 });
 
 // Authorize user with GitHub
@@ -63,24 +62,24 @@ app.get("/authorize/github", async (req, res) => {
 // Callback for GitHub authorization
 app.get("/authorize/github/callback", async (req, res) => {
     // Extract the code from the callback
-    const { code } = req.query;
+    // const { code } = req.query;
 
-    // Get the access token
-    const {
-        data: { access_token },
-    } = await axios.post<{
-        access_token: string;
-        token_type: string;
-        scope: string;
-    }>(
-        "https://github.com/login/oauth/access_token",
-        {
-            client_id: process.env.GITHUB_CLIENT_ID,
-            client_secret: process.env.GITHUB_CLIENT_SECRET,
-            code,
-        },
-        { headers: { Accept: "application/json" } }
-    );
+    // // Get the access token
+    // const {
+    //     data: { access_token },
+    // } = await axios.post<{
+    //     access_token: string;
+    //     token_type: string;
+    //     scope: string;
+    // }>(
+    //     "https://github.com/login/oauth/access_token",
+    //     {
+    //         client_id: process.env.GITHUB_CLIENT_ID,
+    //         client_secret: process.env.GITHUB_CLIENT_SECRET,
+    //         code,
+    //     },
+    //     { headers: { Accept: "application/json" } }
+    // );
 
     // **** The response from this should be saved
     // **** It should also track failed requests and then reset the access token auth (should be easy enough)
@@ -89,29 +88,27 @@ app.get("/authorize/github/callback", async (req, res) => {
     // **** We also need some way of authenticating here and tracking the users ID (simple stateless middleware)
     // **** Add in a new deployment too
 
-    // Fetch the users GitHub username
-    const {
-        data: { login: username },
-    } = await axios.get("https://api.github.com/user", {
-        headers: { Authorization: `token ${access_token}` },
-    });
+    // Create a new dev account for the user OR update their existing dev account
+    // @ts-ignore
+    const user = await User.findOne(req.locals.userID);
+    console.log(user);
 
-    // The user has to actually enable my app first
+    // // Fetch the users repositories
+    // const { data: repos } = await axios.get(
+    //     "https://api.github.com/user/repos",
+    //     {
+    //         headers: { Authorization: `token ${access_token}` },
+    //     }
+    // );
 
-    // Fetch the users repositories
-    const { data: repos } = await axios.get(
-        "https://api.github.com/user/repos",
-        {
-            headers: { Authorization: `token ${access_token}` },
-        }
-    );
+    // // This only gets me a list of public - I NEED PRIVATE TOO
+    // const repoNames = repos.map((repo: any) => {
+    //     return repo.name;
+    // });
 
-    // This only gets me a list of public - I NEED PRIVATE TOO
-    const repoNames = repos.map((repo: any) => {
-        return repo.name;
-    });
+    // res.json({ access_token, repoNames });
 
-    res.json({ access_token, username, repoNames });
+    res.sendStatus(200);
 });
 
 // Start the server on the specified port
