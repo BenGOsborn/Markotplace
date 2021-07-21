@@ -18,6 +18,31 @@ createConnection({
     entities: [User, Dev],
 });
 
+// Initialize the auth middleware
+app.use(async (req, res, next) => {
+    // Get the authentication URL
+    const authURL = `http://${
+        process.env.NODE_ENV !== "production" ? "localhost" : "auth"
+    }:4000/authenticated`;
+
+    // *** Maybe find a better way of storing sessions without the need for cookies ?
+    // Maybe I should use JWT instead of sessions or a hybrid of both for a better stateless experience ?
+    console.log(req.cookies);
+
+    try {
+        // Get the userID from the user
+        const response = await axios.get(authURL);
+
+        console.log(response.data);
+    } catch (e) {
+        console.log(e.response.data);
+        return res.sendStatus(403);
+    }
+
+    // Go to the next route
+    next();
+});
+
 // Authorize user with GitHub
 app.get("/authorize/github", async (req, res) => {
     // Declare the rediret URL

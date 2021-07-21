@@ -5,6 +5,7 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Todo
 
 -   Change name appengine to containermanager
+-   There could be problems with using http in production instead of https for the authentication section
 -   How do I use my redis connection across multiple files ? (some sort of shared npm package with the modules)
 -   Make some sort of shared utils
 -   Instead of using a proxy, forward the request using a get / post request method to the specified port then return that request (how do I implement UDP or websockets ? - I can use a seperate reverse proxy for web sockets only (how do websockets work for Heroku and other platforms ?))
