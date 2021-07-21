@@ -2,6 +2,7 @@ import express from "express";
 import { createConnection } from "typeorm";
 import { User } from "./entities/user";
 import axios from "axios";
+import { Dev } from "./entities/dev";
 
 // Initialize express
 const app = express();
@@ -14,7 +15,7 @@ createConnection({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     synchronize: true,
-    entities: [User],
+    entities: [User, Dev],
 });
 
 // Authorize user with GitHub
@@ -64,14 +65,9 @@ app.get("/authorize/github/callback", async (req, res) => {
 
     // The user has to actually enable my app first
 
-    // Fetch the users repositories ******** something is wrong with the token - not enough permissions?
-    // I need to install the app into the repository for it to work properly - full private access of account with oauth
-    // https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps
-    // https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
+    // Fetch the users repositories
     const { data: repos } = await axios.get(
         "https://api.github.com/user/repos",
-        // "https://api.github.com/user/installations",
-        // "https://api.github.com/installation/repositories",
         {
             headers: { Authorization: `token ${access_token}` },
         }
