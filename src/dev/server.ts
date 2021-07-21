@@ -49,6 +49,8 @@ app.get("/authorize/github/callback", async (req, res) => {
     // **** The response from this should be saved
     // **** It should also track failed requests and then reset the access token auth (should be easy enough)
 
+    // **** Set up webhooks and repository connections
+
     // Get the token
     const { access_token: token } = response.data;
 
