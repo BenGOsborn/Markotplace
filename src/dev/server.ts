@@ -50,6 +50,7 @@ app.get("/authorize/github/callback", async (req, res) => {
     // **** It should also track failed requests and then reset the access token auth (should be easy enough)
 
     // **** Set up webhooks and repository connections
+    // **** We also need some way of authenticating here and tracking the users ID (simple stateless middleware)
 
     // Get the token
     const { access_token: token } = response.data;
