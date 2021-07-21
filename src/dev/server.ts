@@ -19,8 +19,8 @@ createConnection({
 
 // Authorize user with GitHub
 app.get("/authorize/github", async (req, res) => {
-    // Declare the rediret URL - ***  Change this from localhost
-    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:5000/authorize/github/callback`;
+    // Declare the rediret URL
+    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:5000/authorize/github/callback&scope=repo`;
 
     // Redirect the user to GitHub
     res.redirect(redirectURL);
@@ -62,21 +62,27 @@ app.get("/authorize/github/callback", async (req, res) => {
         headers: { Authorization: `token ${access_token}` },
     });
 
-    // Fetch the users repositories
+    // The user has to actually enable my app first
+
+    // Fetch the users repositories ******** something is wrong with the token - not enough permissions?
+    // I need to install the app into the repository for it to work properly - full private access of account with oauth
+    // https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps
+    // https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
     const { data: repos } = await axios.get(
-        // "https://api.github.com/user/repos",
-        `https://api.github.com/repos/${username}/Cerci`,
+        "https://api.github.com/user/repos",
+        // "https://api.github.com/user/installations",
+        // "https://api.github.com/installation/repositories",
         {
             headers: { Authorization: `token ${access_token}` },
         }
     );
 
     // This only gets me a list of public - I NEED PRIVATE TOO
-    // const repoNames = repos.map((repo: any) => {
-    //     return repo.name;
-    // });
+    const repoNames = repos.map((repo: any) => {
+        return repo.name;
+    });
 
-    res.json({ access_token, username, repos });
+    res.json({ access_token, username, repoNames });
 });
 
 // Start the server on the specified port
