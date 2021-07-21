@@ -48,6 +48,10 @@ dev-redis-access:
 dev-auth:
 	npm run --prefix src/auth dev
 
+# Start the dev dev service
+dev-dev:
+	npm run --prefix src/dev dev
+
 # ---------- Run images ----------
 
 # Build the app engine image and start it
