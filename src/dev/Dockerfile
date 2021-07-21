@@ -5,7 +5,7 @@ COPY . .
 RUN npm install
 RUN npm run build
 
-# Copy the files to a new environment
+# Copy the files to the new environment
 FROM node:latest
 WORKDIR /usr/app
 COPY package*.json ./
