@@ -64,13 +64,13 @@ app.get("/authorize/github/callback", async (req, res) => {
 
     // Fetch the users repositories
     const { data: repos } = await axios.get(
-        `https://api.github.com/users/${username}/repos`,
+        "https://api.github.com/user/repos",
         {
             headers: { Authorization: `token ${access_token}` },
         }
     );
 
-    // THis only gets me a list of public - I NEED PRIVATE TOO
+    // This only gets me a list of public - I NEED PRIVATE TOO
     const repoNames = repos.map((repo: any) => {
         return repo.name;
     });
