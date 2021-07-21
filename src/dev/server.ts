@@ -3,10 +3,14 @@ import { createConnection } from "typeorm";
 import { User } from "./entities/user";
 import axios from "axios";
 import { Dev } from "./entities/dev";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 // Initialize express
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors());
 
 // Initialize ORM
 createConnection({
@@ -27,16 +31,20 @@ app.use(async (req, res, next) => {
 
     // *** Maybe find a better way of storing sessions without the need for cookies ?
     // Maybe I should use JWT instead of sessions or a hybrid of both for a better stateless experience ?
-    console.log(req.cookies);
+    console.log(req.cookies["connect.sid"]);
+    res.cookie(
+        "connect.sid",
+        "s%3AzX8_eoSdEhrhEuewv4cXZrNIoI0ctRbL.Ly0gDH9kdBCNHk6azXaZW3Kcimc5wGhBvprDIVCIdrA"
+    );
 
     try {
         // Get the userID from the user
-        const response = await axios.get(authURL);
-
-        console.log(response.data);
+        const response = await axios.get(authURL, {
+            // headers: { Cookie: `connect.sid=${req.cookies["connect.sid"]}` }, // Change to with credentials instead ?
+        });
     } catch (e) {
-        console.log(e.response.data);
-        return res.sendStatus(403);
+        // Return error
+        return res.sendStatus(e.response.status);
     }
 
     // Go to the next route

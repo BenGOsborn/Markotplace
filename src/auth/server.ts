@@ -1,6 +1,5 @@
 import express from "express";
 import session from "express-session";
-import redis from "redis";
 import connectRedis from "connect-redis";
 import { createConnection } from "typeorm";
 import { registerSchema } from "./utils/joiSchema";
@@ -9,10 +8,12 @@ import bcrypt from "bcrypt";
 import { User } from "./entities/user";
 import { Dev } from "./entities/dev";
 import { redisClient } from "./utils/redis";
+import cors from "cors";
 
 // Initialize express
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Initialize ORM
 createConnection({
