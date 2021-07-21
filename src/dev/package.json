@@ -2,7 +2,9 @@
     "name": "dev",
     "version": "1.0.0",
     "scripts": {
-        "dev": "nodemon -r dotenv/config server.ts dotenv_config_path=../../.env"
+        "dev": "nodemon -r dotenv/config server.ts dotenv_config_path=../../.env",
+        "build": "tsc",
+        "start": "node dist/server.js"
     },
     "dependencies": {
         "axios": "^0.21.1",
