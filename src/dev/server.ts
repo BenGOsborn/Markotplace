@@ -32,7 +32,9 @@ app.get("/authorize/github/callback", async (req, res) => {
     const { code } = req.query;
 
     // Get the access token
-    const response = await axios.post<{
+    const {
+        data: { access_token },
+    } = await axios.post<{
         access_token: string;
         token_type: string;
         scope: string;
@@ -51,15 +53,29 @@ app.get("/authorize/github/callback", async (req, res) => {
 
     // **** Set up webhooks and repository connections
     // **** We also need some way of authenticating here and tracking the users ID (simple stateless middleware)
+    // **** Add in a new deployment too
 
-    // Get the token
-    const { access_token: token } = response.data;
-
-    const ghFetch = await axios.get("https://api.github.com/user", {
-        headers: { Authorization: `token ${token}` },
+    // Fetch the users GitHub username
+    const {
+        data: { login: username },
+    } = await axios.get("https://api.github.com/user", {
+        headers: { Authorization: `token ${access_token}` },
     });
 
-    res.json(ghFetch.data);
+    // Fetch the users repositories
+    const { data: repos } = await axios.get(
+        `https://api.github.com/users/${username}/repos`,
+        {
+            headers: { Authorization: `token ${access_token}` },
+        }
+    );
+
+    // THis only gets me a list of public - I NEED PRIVATE TOO
+    const repoNames = repos.map((repo: any) => {
+        return repo.name;
+    });
+
+    res.json({ access_token, username, repoNames });
 });
 
 // Start the server on the specified port
