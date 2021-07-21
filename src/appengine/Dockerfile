@@ -5,7 +5,7 @@ COPY . .
 RUN go mod download
 RUN go build main.go
 
-# Copy the files to a new server
+# Copy the files to a new environment
 FROM ubuntu:latest
 WORKDIR /usr/app
 COPY --from=0 /usr/app/main .
