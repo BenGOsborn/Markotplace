@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
+import { Dev } from "./dev";
 
 @Entity()
 export class User extends BaseEntity {
@@ -13,4 +20,7 @@ export class User extends BaseEntity {
 
     @Column()
     password!: string;
+
+    @OneToOne(() => Dev, (dev) => dev.user)
+    dev!: Dev;
 }

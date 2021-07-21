@@ -7,6 +7,7 @@ import { registerSchema } from "./utils/joiSchema";
 import { cacheData, cacheDataIfNot } from "./utils/cache";
 import bcrypt from "bcrypt";
 import { User } from "./entities/user";
+import { Dev } from "./entities/dev";
 
 // Initialize express
 const app = express();
@@ -19,7 +20,7 @@ createConnection({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     synchronize: true,
-    entities: [User],
+    entities: [User, Dev],
 });
 
 // Initialize Redis connection
