@@ -24,10 +24,6 @@ d-kill:
 
 # ---------- Dev ----------
 
-# Start the development application engine
-dev-appengine:
-	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
-
 # Start PostgreSQL
 dev-db:
 	docker run -p 5432:5432 --name db -d -e POSTGRES_USER=${POSTGRES_USER} -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} -e POSTGRES_DB=${POSTGRES_DB} postgres
@@ -44,13 +40,13 @@ dev-redis:
 dev-redis-access:
 	docker exec -it redis redis-cli -a ${REDIS_PASSWORD}
 
-# Start the auth service
-dev-user:
-	npm run --prefix src/user dev
+# Start the development application engine
+dev-appengine:
+	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
 
-# Start the dev dev service
-dev-dev:
-	npm run --prefix src/dev dev
+# Start the api
+dev-api:
+	npm run --prefix src/api dev
 
 # ---------- Run images ----------
 
@@ -58,3 +54,5 @@ dev-dev:
 appengine-start:
 	docker build -t bengosborn/appengine src/appengine
 	docker run -dp 4000:4000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/appengine
+
+# Build the API image and start it
