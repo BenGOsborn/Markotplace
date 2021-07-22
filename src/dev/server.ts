@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { cacheData } from "./utils/cache";
 import { App } from "./entities/app";
+import { registerSchema } from "./utils/joiSchema";
 
 // Initialize express
 const app = express();
@@ -135,15 +136,63 @@ app.get("/dev/authorize/github/callback", async (req, res) => {
     return res.sendStatus(200);
 });
 
-// **** Come up with a better system of allowing a user to connect their accounts (whats wrong with letting them redirect ?)
+// **** Come up with a better system of allowing a user to connect their accounts (whats wrong with letting them reset ?)
 
 // Add an app
 app.post("/dev/app/create", async (req, res) => {
+    // Get the user data from the request
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
+
+    // Check that the user has a dev account
+    if (typeof user.dev === "undefined")
+        return res.status(400).end("A dev account is required");
+
+    // Get the data for the app
+    const {
+        name,
+        title,
+        description,
+        price,
+    }: { name: string; title: string; description: string; price: number } =
+        req.body;
+
+    // Validate the app data
+    const { error } = registerSchema.validate({
+        name,
+        title,
+        description,
+        price,
+    });
+    if (error) return res.status(400).end(error.details[0].message);
+
+    // Check that an app with the same name does not exist
+    const exists = await cacheData(
+        EXPIRY,
+        `dev-app-create:${name}`,
+        async () => {
+            return await App.findOne({ where: { name } });
+        }
+    );
+    if (typeof exists !== "undefined")
+        return res.status(400).end("An app with that name already exists");
+
+    // Create a new app and assign it to the dev account
+    const app = App.create({ name, title, description, price });
+    await app.save();
+    let newApps: App[] = [app];
+    if (typeof user.apps !== "undefined") newApps = [...user.apps, ...newApps];
+    await User.update(user.id, { apps: newApps });
+
     // Add an app
     res.sendStatus(200);
 });
 
 // Edit an app
+app.patch("/dev/app/edit", async (req, res) => {
+    // Edit an app
+    res.sendStatus(200);
+});
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 5000;

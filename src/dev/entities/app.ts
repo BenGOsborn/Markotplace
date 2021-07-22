@@ -13,10 +13,10 @@ export class App extends BaseEntity {
     id!: number;
 
     @Column({ unique: true })
-    appName!: string;
+    name!: string;
 
     @Column()
-    name!: string;
+    title!: string;
 
     @Column()
     description!: string;
