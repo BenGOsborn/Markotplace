@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { cacheData } from "./utils/cache";
 import { App } from "./entities/app";
-import { registerSchema } from "./utils/joiSchema";
+import { createAppSchema, editAppSchema } from "./utils/joiSchema";
 
 // Initialize express
 const app = express();
@@ -158,7 +158,7 @@ app.post("/dev/app/create", async (req, res) => {
         req.body;
 
     // Validate the app data
-    const { error } = registerSchema.validate({
+    const { error } = createAppSchema.validate({
         name,
         title,
         description,
@@ -180,6 +180,7 @@ app.post("/dev/app/create", async (req, res) => {
     // Create a new app and assign it to the dev account
     const app = App.create({ name, title, description, price });
     await app.save();
+
     let newApps: App[] = [app];
     if (typeof user.apps !== "undefined") newApps = [...user.apps, ...newApps];
     await User.update(user.id, { apps: newApps });
@@ -190,6 +191,52 @@ app.post("/dev/app/create", async (req, res) => {
 
 // Edit an app
 app.patch("/dev/app/edit", async (req, res) => {
+    // Get the user data from the request
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
+
+    // Check that the user has a dev account
+    if (typeof user.dev === "undefined")
+        return res.status(400).end("A dev account is required");
+
+    // Get the data for the app
+    const {
+        name,
+        title,
+        description,
+        price,
+    }: {
+        name: string;
+        title: string | undefined;
+        description: string | undefined;
+        price: number | undefined;
+    } = req.body;
+
+    // Validate the edit app data
+    const { error } = editAppSchema.validate({
+        name,
+        title,
+        description,
+        price,
+    });
+    if (error) return res.status(400).end(error.details[0].message);
+
+    // Find the app with the existing name - **** MAYBE I SHOULDNT CACHE THIS ONE ? (I could also do this WITHOUT checking the ID)
+    const existingApp = await cacheData(
+        EXPIRY,
+        `dev-app-edit:${name}`,
+        async () => {
+            return await App.findOne({ where: { name } });
+        }
+    );
+    if (typeof existingApp === "undefined")
+        return res.status(400).end("No app with this name exists");
+    if (existingApp.dev.id !== user.dev.id)
+        // **** Check that this logic even makes sense ?
+        return res.status(403).end("You are not able to edit this app");
+
+    // **** Dont forget to remove the caches
+
     // Edit an app
     res.sendStatus(200);
 });
