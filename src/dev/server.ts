@@ -92,6 +92,8 @@ app.get("/authorize/github/callback", async (req, res) => {
     // **** We also need some way of authenticating here and tracking the users ID (simple stateless middleware)
     // **** Add in a new deployment too
 
+    // **** I SHOULD ALSO REDIRECT BACK TO THE CORRECT PAGE
+
     // Get the username of the user
     const {
         data: { login: username },

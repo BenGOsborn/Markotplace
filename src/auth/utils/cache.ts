@@ -46,3 +46,15 @@ export const cacheDataIfNot = <T>(
         });
     });
 };
+
+// Delete cached data
+export const clearCache = (key: string) => {
+    return new Promise<void>((resolve, reject) => {
+        redisClient.del(key, async (error, reply) => {
+            // Reject if there was an error
+            if (error) reject(error);
+            // Resolve if successful
+            else resolve();
+        });
+    });
+};
