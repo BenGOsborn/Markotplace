@@ -3,9 +3,12 @@ import {
     Column,
     Entity,
     JoinColumn,
+    JoinTable,
+    ManyToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from "typeorm";
+import { App } from "./app";
 import { Dev } from "./dev";
 
 @Entity()
@@ -29,5 +32,7 @@ export class User extends BaseEntity {
     @JoinColumn()
     dev!: Dev;
 
-    // Many to many for apps column
+    @ManyToMany(() => App)
+    @JoinTable()
+    apps!: App[];
 }

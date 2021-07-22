@@ -21,7 +21,7 @@ export class App extends BaseEntity {
     @Column()
     description!: string;
 
-    @Column()
+    @Column({ default: 0 })
     price!: number;
 
     @ManyToOne(() => Dev, (dev) => dev.apps)
