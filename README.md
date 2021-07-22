@@ -12,3 +12,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   **I reckon that a simple reverse proxy will work if the user specifies the absolute path to their request each time even with different protocols**
 -   App engine can probably be changed so that it sets the name of the container instead of using the container ID
 -   \*\*\*\* Some things that are not necessary SHOULD not do any caching (especially if it is dangerous)
+- Instead of using Nginx as a main load balancer, use DNS for different servers on the network via stuff like user.website.com instead of website.com
