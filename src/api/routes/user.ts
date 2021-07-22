@@ -3,6 +3,7 @@ import { User } from "../entities/user";
 import { cacheData, clearCache } from "../utils/cache";
 import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
+import { protectedMiddleware } from "../utils/middleware";
 
 // Initialize the router
 const router = express.Router();
@@ -81,46 +82,15 @@ router.post("/user/login", async (req, res) => {
     res.json({ userID: user.id });
 });
 
-// Authenticated middleware
-const authMiddleware = async (
-    req: express.Request,
-    res: express.Response,
-    next: NextFunction
-) => {
-    // Get the userID from the session and check if it is valid
-    // @ts-ignore
-    const { userID }: { userID: number } = req.session;
-
-    // If the user ID exists the user is authenticated else no
-    if (typeof userID === "undefined") return res.sendStatus(403);
-
-    // Also do a check of the user ID to make sure it exists - if it doesnt then void the session and return error
-    const user = await cacheData(`user-authorized:${userID}`, async () => {
-        const existingUser = await User.findOne(userID);
-        return existingUser;
-    });
-    if (typeof user === "undefined") {
-        req.session.destroy((err) => {});
-        return res.sendStatus(403);
-    }
-
-    // Pass on the user
-    // @ts-ignore
-    req.locals = { user };
-
-    // Return the userID
-    next();
-};
-
 // Validate a users session
-router.get("/user/authorized", authMiddleware, async (req, res) => {
+router.get("/user/authorized", protectedMiddleware, async (req, res) => {
     // Return the userID
     // @ts-ignore
     return res.json({ userID: req.locals.user.id });
 });
 
 // Provide a way for the user to edit their account
-router.patch("/user/edit", authMiddleware, async (req, res) => {
+router.patch("/user/edit", protectedMiddleware, async (req, res) => {
     // Get the user and extract the userID
     // @ts-ignore
     const { user }: { user: User } = req.locals;
