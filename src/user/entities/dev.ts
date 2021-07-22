@@ -7,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./user";
+import { App } from "./app";
 
 @Entity()
 export class Dev extends BaseEntity {
@@ -25,4 +26,6 @@ export class Dev extends BaseEntity {
     @OneToOne(() => User)
     @JoinColumn()
     user!: User;
+
+    // One to many ?
 }
