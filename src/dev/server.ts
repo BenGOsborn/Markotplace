@@ -107,7 +107,7 @@ app.get("/dev/authorize/github/callback", async (req, res) => {
         // Make a new dev account for the user
         const dev = Dev.create({
             token: access_token,
-            gh_username: username,
+            ghUsername: username,
             user,
         });
         await dev.save();
@@ -121,7 +121,7 @@ app.get("/dev/authorize/github/callback", async (req, res) => {
 
     // Update a users existing dev account
     const devID = user?.dev.id as number;
-    await Dev.update(devID, { token: access_token, gh_username: username });
+    await Dev.update(devID, { token: access_token, ghUsername: username });
 
     // Return success
     res.sendStatus(200);
