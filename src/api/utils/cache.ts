@@ -1,10 +1,13 @@
 import { redisClient } from "./redis";
 
+// Declare the cache expiry time
+export const DEFAULT_EXPIRY = 60 * 60 * 12;
+
 // Cache the data if it doesnt match the excluded value
 export const cacheData = <T>(
-    expiry: number,
     key: string,
-    callback: () => Promise<T | undefined>
+    callback: () => Promise<T | undefined>,
+    expiry?: number
 ) => {
     return new Promise<T | undefined>((resolve, reject) => {
         redisClient.get(key, async (error, cachedData) => {
@@ -16,7 +19,11 @@ export const cacheData = <T>(
                 // Cache the data if it doesnt match the value specified
                 const freshData = await callback();
                 if (typeof freshData !== "undefined") {
-                    redisClient.setex(key, expiry, JSON.stringify(freshData));
+                    redisClient.setex(
+                        key,
+                        expiry || DEFAULT_EXPIRY,
+                        JSON.stringify(freshData)
+                    );
                 }
                 resolve(freshData);
             }
