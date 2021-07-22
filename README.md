@@ -20,3 +20,9 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Implement a better system for user accounts (including deletion) and GitHub authentication ?
 -   Implement payment system ?
 -   The apps will require their own GitHub repository link (or repo name to be deployed)
+
+### New dev system
+
+-   Each user has a single github account connected
+-   At any time a user should be able to reauthorize their GitHub account which will update their OAuth token and their Username
+-   Each app has a single repo to pull from (and uses that users OAuth token - if it doesnt work, then thats just unlucky)
