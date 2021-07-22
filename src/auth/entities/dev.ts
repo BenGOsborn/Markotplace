@@ -2,6 +2,7 @@ import {
     BaseEntity,
     Column,
     Entity,
+    JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
 } from "typeorm";
@@ -15,6 +16,10 @@ export class Dev extends BaseEntity {
     @Column({ unique: true })
     token!: string;
 
-    @OneToOne(() => User, (user) => user.dev)
+    @Column()
+    gh_username!: string;
+
+    @OneToOne(() => User)
+    @JoinColumn()
     user!: User;
 }

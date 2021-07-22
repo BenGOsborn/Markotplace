@@ -69,7 +69,8 @@ app.post("/register", async (req, res) => {
             return existingUser;
         }
     );
-    if (exists) return res.status(400).end("Username or email already taken");
+    if (typeof exists !== "undefined")
+        return res.status(400).end("Username or email already taken");
 
     // Hash the password
     const salt = await bcrypt.genSalt();
@@ -106,7 +107,8 @@ app.post("/login", async (req, res) => {
         });
         return existingUser;
     });
-    if (!user) return res.status(400).end("User does not exist");
+    if (typeof user === "undefined")
+        return res.status(400).end("User does not exist");
 
     // Check that the passwords match
     const match = await bcrypt.compare(password, user.password);
@@ -138,7 +140,7 @@ app.get("/authorized", async (req, res) => {
             return existingUser;
         }
     );
-    if (!user) {
+    if (typeof user === "undefined") {
         req.session.destroy((err) => {});
         return res.sendStatus(403);
     }
@@ -147,15 +149,9 @@ app.get("/authorized", async (req, res) => {
     return res.json({ userID });
 });
 
-// Provide a way where a user can delete their profile
+// **** Provide a way where a user can delete their account
 
-// Validate a users app ****** Should this be here ?
-app.get("/game/:appName", async (req, res) => {
-    // Get the name of the app
-    const { appName } = req.params;
-
-    res.sendStatus(200);
-});
+// **** Provide a way where a user can edit their account
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 4000;

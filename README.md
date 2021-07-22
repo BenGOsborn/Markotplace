@@ -16,3 +16,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Auth with Nginx - https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-subrequest-authentication/
 -   **I reckon that a simple reverse proxy will work if the user specifies the absolute path to their request each time even with different protocols**
 -   App engine can probably be changed so that it sets the name of the container instead of using the container ID
+-   \*\*\*\* Some things that are not necessary SHOULD not do any caching (especially if it is dangerous)

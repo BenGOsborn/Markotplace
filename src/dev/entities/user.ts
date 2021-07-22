@@ -2,6 +2,7 @@ import {
     BaseEntity,
     Column,
     Entity,
+    JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
 } from "typeorm";
@@ -21,6 +22,7 @@ export class User extends BaseEntity {
     @Column()
     password!: string;
 
-    @OneToOne(() => Dev, (dev) => dev.user)
+    @OneToOne(() => Dev)
+    @JoinColumn()
     dev!: Dev;
 }

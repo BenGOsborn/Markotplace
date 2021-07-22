@@ -23,6 +23,9 @@ createConnection({
     entities: [User, Dev],
 });
 
+// Initialize constants
+const EXPIRY = 60 * 60 * 12;
+
 // Initialize the auth middleware
 app.use(async (req, res, next) => {
     // Get the authentication URL
@@ -62,52 +65,63 @@ app.get("/authorize/github", async (req, res) => {
 // Callback for GitHub authorization
 app.get("/authorize/github/callback", async (req, res) => {
     // Extract the code from the callback
-    // const { code } = req.query;
+    const { code } = req.query;
+
+    // Get the userID from the request
+    // @ts-ignore
+    const { userID }: { userID: string } = req.locals;
 
     // // Get the access token
-    // const {
-    //     data: { access_token },
-    // } = await axios.post<{
-    //     access_token: string;
-    //     token_type: string;
-    //     scope: string;
-    // }>(
-    //     "https://github.com/login/oauth/access_token",
-    //     {
-    //         client_id: process.env.GITHUB_CLIENT_ID,
-    //         client_secret: process.env.GITHUB_CLIENT_SECRET,
-    //         code,
-    //     },
-    //     { headers: { Accept: "application/json" } }
-    // );
-
-    // **** The response from this should be saved
-    // **** It should also track failed requests and then reset the access token auth (should be easy enough)
+    const {
+        data: { access_token },
+    } = await axios.post<{
+        access_token: string;
+        token_type: string;
+        scope: string;
+    }>(
+        "https://github.com/login/oauth/access_token",
+        {
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            code,
+        },
+        { headers: { Accept: "application/json" } }
+    );
 
     // **** Set up webhooks and repository connections
     // **** We also need some way of authenticating here and tracking the users ID (simple stateless middleware)
     // **** Add in a new deployment too
 
-    // Create a new dev account for the user OR update their existing dev account
-    // @ts-ignore
-    const user = await User.findOne(req.locals.userID);
-    console.log(user);
+    // Get the username of the user
+    const {
+        data: { login: username },
+    } = await axios.get("https://api.github.com/user", {
+        headers: { Authorization: `token ${access_token}` },
+    });
 
-    // // Fetch the users repositories
-    // const { data: repos } = await axios.get(
-    //     "https://api.github.com/user/repos",
-    //     {
-    //         headers: { Authorization: `token ${access_token}` },
-    //     }
-    // );
+    // Check if the user has a dev account
+    const user = await User.findOne(userID);
+    if (typeof user?.dev === "undefined") {
+        // Make a new dev account for the user
+        const dev = Dev.create({
+            token: access_token,
+            gh_username: username,
+            user,
+        });
+        await dev.save();
 
-    // // This only gets me a list of public - I NEED PRIVATE TOO
-    // const repoNames = repos.map((repo: any) => {
-    //     return repo.name;
-    // });
+        // Update the users dev account
+        await User.update(userID, { dev });
 
-    // res.json({ access_token, repoNames });
+        // Return success
+        return res.sendStatus(200);
+    }
 
+    // Update a users existing dev account
+    const devID = user?.dev.id as number;
+    await Dev.update(devID, { token: access_token, gh_username: username });
+
+    // Return success
     res.sendStatus(200);
 });
 
