@@ -31,7 +31,7 @@ app.use(async (req, res, next) => {
     // Get the authentication URL
     const authURL = `http://${
         process.env.NODE_ENV !== "production" ? "localhost" : "auth"
-    }:4000/authorized`;
+    }:4000/user/authorized`;
 
     try {
         // Get the userID from the user
@@ -54,16 +54,16 @@ app.use(async (req, res, next) => {
 });
 
 // Authorize user with GitHub
-app.get("/authorize/github", async (req, res) => {
+app.get("/dev/authorize/github", async (req, res) => {
     // Declare the rediret URL
-    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:5000/authorize/github/callback&scope=repo`;
+    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:5000/dev/authorize/github/callback&scope=repo`;
 
     // Redirect the user to GitHub
     res.redirect(redirectURL);
 });
 
 // Callback for GitHub authorization
-app.get("/authorize/github/callback", async (req, res) => {
+app.get("/dev/authorize/github/callback", async (req, res) => {
     // Extract the code from the callback
     const { code } = req.query;
 

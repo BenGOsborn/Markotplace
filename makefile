@@ -45,8 +45,8 @@ dev-redis-access:
 	docker exec -it redis redis-cli -a ${REDIS_PASSWORD}
 
 # Start the auth service
-dev-auth:
-	npm run --prefix src/auth dev
+dev-user:
+	npm run --prefix src/user dev
 
 # Start the dev dev service
 dev-dev:
