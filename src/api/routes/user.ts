@@ -1,4 +1,4 @@
-import express, { NextFunction } from "express";
+import express from "express";
 import { User } from "../entities/user";
 import { cacheData, clearCache } from "../utils/cache";
 import { registerSchema, updateSchema } from "../utils/joiSchema";
