@@ -1,10 +1,16 @@
+import axios from "axios";
 import express from "express";
+import { App } from "../entities/app";
+import { Dev } from "../entities/dev";
+import { User } from "../entities/user";
+import { cacheData } from "../utils/cache";
+import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 
 // Initialize the router
 const router = express.Router();
 
 // Authorize user with GitHub
-router.get("/dev/authorize/github", async (req, res) => {
+router.get("/authorize/github", async (req, res) => {
     // Get the user data from the request
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -21,7 +27,7 @@ router.get("/dev/authorize/github", async (req, res) => {
 });
 
 // Callback for GitHub authorization
-app.get("/dev/authorize/github/callback", async (req, res) => {
+router.get("/authorize/github/callback", async (req, res) => {
     // Get the user data from the request
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -82,7 +88,7 @@ app.get("/dev/authorize/github/callback", async (req, res) => {
 // **** Come up with a better system of allowing a user to connect their accounts (whats wrong with letting them reset ?)
 
 // Add an app
-router.post("/dev/app/create", async (req, res) => {
+router.post("/app/create", async (req, res) => {
     // Get the user data from the request
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -110,13 +116,9 @@ router.post("/dev/app/create", async (req, res) => {
     if (error) return res.status(400).end(error.details[0].message);
 
     // Check that an app with the same name does not exist
-    const exists = await cacheData(
-        EXPIRY,
-        `dev-app-create:${name}`,
-        async () => {
-            return await App.findOne({ where: { name } });
-        }
-    );
+    const exists = await cacheData(`dev-app-create:${name}`, async () => {
+        return await App.findOne({ where: { name } });
+    });
     if (typeof exists !== "undefined")
         return res.status(400).end("An app with that name already exists");
 
@@ -133,7 +135,7 @@ router.post("/dev/app/create", async (req, res) => {
 });
 
 // Edit an app
-router.patch("/dev/app/edit", async (req, res) => {
+router.patch("/app/edit", async (req, res) => {
     // Get the user data from the request
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -165,13 +167,9 @@ router.patch("/dev/app/edit", async (req, res) => {
     if (error) return res.status(400).end(error.details[0].message);
 
     // Find the app with the existing name - **** MAYBE I SHOULDNT CACHE THIS ONE ? (I could also do this WITHOUT checking the ID)
-    const existingApp = await cacheData(
-        EXPIRY,
-        `dev-app-edit:${name}`,
-        async () => {
-            return await App.findOne({ where: { name } });
-        }
-    );
+    const existingApp = await cacheData(`dev-app-edit:${name}`, async () => {
+        return await App.findOne({ where: { name } });
+    });
     if (typeof existingApp === "undefined")
         return res.status(400).end("No app with this name exists");
     if (existingApp.dev.id !== user.dev.id)
@@ -194,4 +192,5 @@ router.patch("/dev/app/edit", async (req, res) => {
     res.sendStatus(200);
 });
 
+// Export the router
 export default router;
