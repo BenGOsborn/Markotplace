@@ -218,6 +218,12 @@ app.patch("/user/edit", authMiddleware, async (req, res) => {
     return res.sendStatus(200);
 });
 
+// Allow a developer to view their games
+
+// Allow a developer to create a game
+
+// Allow a developer to view their games
+
 // Start the server on the specified port
 const PORT = process.env.PORT || 4000;
 
