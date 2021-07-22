@@ -3,7 +3,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { createConnection } from "typeorm";
 import { registerSchema, updateSchema } from "./utils/joiSchema";
-import { cacheData, cacheDataIfNot } from "./utils/cache";
+import { cacheData, clearCache } from "./utils/cache";
 import bcrypt from "bcrypt";
 import { User } from "./entities/user";
 import { Dev } from "./entities/dev";
@@ -58,10 +58,9 @@ app.post("/user/register", async (req, res) => {
     if (error) return res.status(400).end(error.details[0].message);
 
     // Check if the username and email are unique
-    const exists = await cacheDataIfNot(
+    const exists = await cacheData(
         EXPIRY,
         `user-register:${username}${email}`,
-        undefined,
         async () => {
             const existingUser = await User.findOne({
                 where: [{ username }, { email }],
@@ -112,9 +111,7 @@ app.post("/user/login", async (req, res) => {
 
     // Check that the passwords match
     const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-        res.sendStatus(400);
-    }
+    if (!match) return res.sendStatus(400);
 
     // Set the session and the userID
     // @ts-ignore
@@ -138,7 +135,7 @@ const authMiddleware = async (
     // Also do a check of the user ID to make sure it exists - if it doesnt then void the session and return error
     const user = await cacheData(
         EXPIRY,
-        `user-authenticated:${userID}`,
+        `user-authorized:${userID}`,
         async () => {
             const existingUser = await User.findOne(userID);
             return existingUser;
@@ -149,9 +146,9 @@ const authMiddleware = async (
         return res.sendStatus(403);
     }
 
-    // Pass on the userID
+    // Pass on the user
     // @ts-ignore
-    req.locals.userID = userID;
+    req.locals = { user };
 
     // Return the userID
     next();
@@ -161,14 +158,15 @@ const authMiddleware = async (
 app.get("/user/authorized", authMiddleware, async (req, res) => {
     // Return the userID
     // @ts-ignore
-    return res.json({ userID: req.locals.userID });
+    return res.json({ userID: req.locals.user.id });
 });
 
-// **** Provide a way where a user can delete their account
+// Provide a way for the user to edit their account
 app.patch("/user/edit", authMiddleware, async (req, res) => {
-    // Get the userID
+    // Get the user and extract the userID
     // @ts-ignore
-    const { userID } = req.locals;
+    const { user }: { user: User } = req.locals;
+    const { id: userID } = user;
 
     // Get the data to update
     const {
@@ -195,23 +193,31 @@ app.patch("/user/edit", authMiddleware, async (req, res) => {
     const { error } = updateSchema.validate({ username, email, password });
     if (error) return res.status(400).end(error.details[0].message);
 
-    // If there is a password, hash it first
+    // Set the data to update
+    const updateData: any = {};
+    if (typeof username !== "undefined") updateData.username = username;
+    if (typeof email !== "undefined") updateData.email = email;
     if (typeof password !== "undefined") {
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        await User.update(userID, {
-            username,
-            email,
-            password: hashedPassword,
-        });
-    } else {
-        await User.update(userID, { username, email, password });
+        updateData.password = hashedPassword;
     }
 
+    // Update the user
+    await User.update(userID, updateData);
+
+    // Get the old username
+    const { username: oldUsername } = user;
+
+    // Clear the cached data for the user **** Check that this is necessary
+    await clearCache(`user-login:${oldUsername}`);
+    await clearCache(`user-authorized:${oldUsername}`);
+
+    // Return success
     return res.sendStatus(200);
 });
 
-// **** Provide a way where a user can edit their account
+// Provide a way for users to delete their account
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 4000;
