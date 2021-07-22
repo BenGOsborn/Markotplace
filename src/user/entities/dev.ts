@@ -3,6 +3,7 @@ import {
     Column,
     Entity,
     JoinColumn,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from "typeorm";
@@ -24,8 +25,8 @@ export class Dev extends BaseEntity {
     stripeConnectID!: string | null;
 
     @OneToOne(() => User)
-    @JoinColumn()
     user!: User;
 
-    // One to many ?
+    @OneToMany(() => App, (app) => app.dev)
+    apps!: App[];
 }

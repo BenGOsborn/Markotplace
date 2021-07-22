@@ -1,4 +1,10 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+    BaseEntity,
+    Column,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { Dev } from "./dev";
 
 @Entity()
@@ -17,4 +23,7 @@ export class App extends BaseEntity {
 
     @Column()
     price!: number;
+
+    @ManyToOne(() => Dev, (dev) => dev.apps)
+    dev!: Dev;
 }
