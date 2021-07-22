@@ -45,7 +45,7 @@ app.use(
 const EXPIRY = 60 * 60 * 12;
 
 // Register a new user
-app.post("/register", async (req, res) => {
+app.post("/user/register", async (req, res) => {
     // Get data from request
     const {
         username,
@@ -60,7 +60,7 @@ app.post("/register", async (req, res) => {
     // Check if the username and email are unique
     const exists = await cacheDataIfNot(
         EXPIRY,
-        `auth-register:${username}${email}`,
+        `user-register:${username}${email}`,
         undefined,
         async () => {
             const existingUser = await User.findOne({
@@ -93,7 +93,7 @@ app.post("/register", async (req, res) => {
 });
 
 // Login a user
-app.post("/login", async (req, res) => {
+app.post("/user/login", async (req, res) => {
     // Get data from request
     const {
         username,
@@ -101,7 +101,7 @@ app.post("/login", async (req, res) => {
     }: { username: string; email: string; password: string } = req.body;
 
     // Get the user if they exist
-    const user = await cacheData(EXPIRY, `auth-login:${username}`, async () => {
+    const user = await cacheData(EXPIRY, `user-login:${username}`, async () => {
         const existingUser = await User.findOne({
             where: { username },
         });
@@ -123,7 +123,7 @@ app.post("/login", async (req, res) => {
 });
 
 // Validate a users session
-app.get("/authorized", async (req, res) => {
+app.get("/user/authorized", async (req, res) => {
     // Get the user ID from the session and check if it is valid
     // @ts-ignore
     const { userID }: { userID: number } = req.session;
@@ -134,7 +134,7 @@ app.get("/authorized", async (req, res) => {
     // Also do a check of the user ID to make sure it exists - if it doesnt then void the session
     const user = await cacheData(
         EXPIRY,
-        `auth-authenticated:${userID}`,
+        `user-authenticated:${userID}`,
         async () => {
             const existingUser = await User.findOne(userID);
             return existingUser;
