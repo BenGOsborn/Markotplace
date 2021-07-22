@@ -52,7 +52,10 @@ dev-api:
 
 # Build the app engine image and start it
 appengine-start:
-	docker build -t bengosborn/appengine src/appengine
-	docker run -dp 4000:4000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/appengine
+	docker build -t bengosborn/markotplace/appengine src/appengine
+	docker run -dp 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/markotplace/appengine
 
 # Build the API image and start it
+api-start:
+	docker build -t bengosborn/markotplace/api src/api
+	docker run -dp 4000:4000 bengosborn/markotplace/api
