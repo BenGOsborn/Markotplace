@@ -235,7 +235,17 @@ app.patch("/dev/app/edit", async (req, res) => {
         // **** Check that this logic even makes sense ?
         return res.status(403).end("You are not able to edit this app");
 
-    // **** Dont forget to remove the caches
+    // Set the data to update
+    const updateData: any = {};
+    if (typeof title !== "undefined") updateData.title = title;
+    if (typeof description !== "undefined")
+        updateData.description = description;
+    if (typeof price !== "undefined") updateData.price = price;
+
+    // Update the app
+    await App.update(existingApp.id, updateData);
+
+    // **** Dont forget to remove the caches USING the pulled data
 
     // Edit an app
     res.sendStatus(200);
