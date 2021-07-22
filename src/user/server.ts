@@ -209,7 +209,7 @@ app.patch("/user/edit", authMiddleware, async (req, res) => {
     // Get the old username
     const { username: oldUsername } = user;
 
-    // Clear the cached data for the user **** Check that this is necessary
+    // Clear the cached data for the user **** WHAT HAPPENS IF I DO NOT CLEAR THE CACHE ON THEM THOUGH ?
     await clearCache(`user-login:${oldUsername}`);
     await clearCache(`user-authorized:${oldUsername}`);
 
@@ -218,6 +218,10 @@ app.patch("/user/edit", authMiddleware, async (req, res) => {
 });
 
 // Provide a way for users to delete their account
+app.delete("/user/delete", authMiddleware, async (req, res) => {
+    // Delete the users account and clear their cache
+    res.sendStatus(200);
+});
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 4000;
