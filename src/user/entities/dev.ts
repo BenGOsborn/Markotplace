@@ -19,6 +19,9 @@ export class Dev extends BaseEntity {
     @Column({ unique: true })
     ghUsername!: string;
 
+    @Column({ unique: true, nullable: true })
+    stripeConnectID!: string | null;
+
     @OneToOne(() => User)
     @JoinColumn()
     user!: User;
