@@ -6,6 +6,7 @@ import { Dev } from "./entities/dev";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { cacheData } from "./utils/cache";
+import { App } from "./entities/app";
 
 // Initialize express
 const app = express();
@@ -20,7 +21,7 @@ createConnection({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     synchronize: true,
-    entities: [User, Dev],
+    entities: [User, Dev, App],
 });
 
 // Initialize constants

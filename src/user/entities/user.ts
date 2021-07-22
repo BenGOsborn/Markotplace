@@ -28,4 +28,6 @@ export class User extends BaseEntity {
     @OneToOne(() => Dev)
     @JoinColumn()
     dev!: Dev;
+
+    // Many to many for apps column
 }
