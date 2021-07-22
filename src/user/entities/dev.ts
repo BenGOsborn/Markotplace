@@ -16,7 +16,7 @@ export class Dev extends BaseEntity {
     @Column({ unique: true })
     token!: string;
 
-    @Column()
+    @Column({ unique: true })
     ghUsername!: string;
 
     @OneToOne(() => User)

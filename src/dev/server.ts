@@ -5,6 +5,7 @@ import axios from "axios";
 import { Dev } from "./entities/dev";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { cacheData } from "./utils/cache";
 
 // Initialize express
 const app = express();
@@ -40,9 +41,14 @@ app.use(async (req, res, next) => {
             headers: { Cookie: `connect.sid=${req.cookies["connect.sid"]}` },
         });
 
-        // Set the userID for the request
+        // Get the user
+        const user = await cacheData(EXPIRY, `dev-all:${userID}`, async () => {
+            return await User.findOne(userID);
+        });
+
+        // Set the user data on the request
         // @ts-ignore
-        req.locals = { userID };
+        req.locals = { user };
 
         // Go to the next route
         next();
@@ -54,6 +60,14 @@ app.use(async (req, res, next) => {
 
 // Authorize user with GitHub
 app.get("/dev/authorize/github", async (req, res) => {
+    // Get the user data from the request
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
+
+    // If the user is already connected then return error
+    if (typeof user.dev !== "undefined")
+        return res.status(400).end("GitHub account already connected");
+
     // Declare the rediret URL
     const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:5000/dev/authorize/github/callback&scope=repo`;
 
@@ -63,12 +77,16 @@ app.get("/dev/authorize/github", async (req, res) => {
 
 // Callback for GitHub authorization
 app.get("/dev/authorize/github/callback", async (req, res) => {
+    // Get the user data from the request
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
+
+    // If the user is already connected then return error
+    if (typeof user.dev !== "undefined")
+        return res.status(400).end("GitHub account already connected");
+
     // Extract the code from the callback
     const { code } = req.query;
-
-    // Get the userID from the request
-    // @ts-ignore
-    const { userID }: { userID: string } = req.locals;
 
     // // Get the access token
     const {
@@ -101,31 +119,30 @@ app.get("/dev/authorize/github/callback", async (req, res) => {
         headers: { Authorization: `token ${access_token}` },
     });
 
-    // Check if the user has a dev account
-    const user = await User.findOne(userID);
-    if (typeof user?.dev === "undefined") {
-        // Make a new dev account for the user
-        const dev = Dev.create({
-            token: access_token,
-            ghUsername: username,
-            user,
-        });
-        await dev.save();
+    // Make a new dev account for the user
+    const dev = Dev.create({
+        token: access_token,
+        ghUsername: username,
+        user,
+    });
+    await dev.save();
 
-        // Update the users dev account
-        await User.update(userID, { dev });
-
-        // Return success
-        return res.sendStatus(200);
-    }
-
-    // Update a users existing dev account
-    const devID = user?.dev.id as number;
-    await Dev.update(devID, { token: access_token, ghUsername: username });
+    // Update the users dev account
+    await User.update(user.id, { dev });
 
     // Return success
+    return res.sendStatus(200);
+});
+
+// **** Come up with a better system of allowing a user to connect their accounts (whats wrong with letting them redirect ?)
+
+// Add an app
+app.post("/dev/app/create", async (req, res) => {
+    // Add an app
     res.sendStatus(200);
 });
+
+// Edit an app
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 5000;
