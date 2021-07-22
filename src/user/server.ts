@@ -1,8 +1,8 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { createConnection } from "typeorm";
-import { registerSchema } from "./utils/joiSchema";
+import { registerSchema, updateSchema } from "./utils/joiSchema";
 import { cacheData, cacheDataIfNot } from "./utils/cache";
 import bcrypt from "bcrypt";
 import { User } from "./entities/user";
@@ -122,16 +122,20 @@ app.post("/user/login", async (req, res) => {
     res.json({ userID: user.id });
 });
 
-// Validate a users session
-app.get("/user/authorized", async (req, res) => {
-    // Get the user ID from the session and check if it is valid
+// Authenticated middleware
+const authMiddleware = async (
+    req: express.Request,
+    res: express.Response,
+    next: NextFunction
+) => {
+    // Get the userID from the session and check if it is valid
     // @ts-ignore
     const { userID }: { userID: number } = req.session;
 
     // If the user ID exists the user is authenticated else no
-    if (!userID) return res.sendStatus(403);
+    if (typeof userID === "undefined") return res.sendStatus(403);
 
-    // Also do a check of the user ID to make sure it exists - if it doesnt then void the session
+    // Also do a check of the user ID to make sure it exists - if it doesnt then void the session and return error
     const user = await cacheData(
         EXPIRY,
         `user-authenticated:${userID}`,
@@ -145,11 +149,67 @@ app.get("/user/authorized", async (req, res) => {
         return res.sendStatus(403);
     }
 
+    // Pass on the userID
+    // @ts-ignore
+    req.locals.userID = userID;
+
     // Return the userID
-    return res.json({ userID });
+    next();
+};
+
+// Validate a users session
+app.get("/user/authorized", authMiddleware, async (req, res) => {
+    // Return the userID
+    // @ts-ignore
+    return res.json({ userID: req.locals.userID });
 });
 
 // **** Provide a way where a user can delete their account
+app.patch("/user/edit", authMiddleware, async (req, res) => {
+    // Get the userID
+    // @ts-ignore
+    const { userID } = req.locals;
+
+    // Get the data to update
+    const {
+        email,
+        username,
+        password,
+    }: {
+        username: string | undefined;
+        email: string | undefined;
+        password: string | undefined;
+    } = req.body;
+
+    // Check that at least one parameter is specified
+    if (
+        typeof username === "undefined" &&
+        typeof email === "undefined" &&
+        typeof password === "undefined"
+    )
+        return res
+            .status(400)
+            .end("At least one parameter to modify is required");
+
+    // Verify the data against the schema
+    const { error } = updateSchema.validate({ username, email, password });
+    if (error) return res.status(400).end(error.details[0].message);
+
+    // If there is a password, hash it first
+    if (typeof password !== "undefined") {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+        await User.update(userID, {
+            username,
+            email,
+            password: hashedPassword,
+        });
+    } else {
+        await User.update(userID, { username, email, password });
+    }
+
+    return res.sendStatus(200);
+});
 
 // **** Provide a way where a user can edit their account
 

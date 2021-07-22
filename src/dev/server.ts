@@ -5,7 +5,6 @@ import axios from "axios";
 import { Dev } from "./entities/dev";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { cacheDataIfNot } from "./utils/cache";
 
 // Initialize express
 const app = express();
@@ -95,6 +94,7 @@ app.get("/dev/authorize/github/callback", async (req, res) => {
     // **** I SHOULD ALSO REDIRECT BACK TO THE CORRECT PAGE
 
     // Get the username of the user
+    // ********* Try and find some way of caching this
     const {
         data: { login: username },
     } = await axios.get("https://api.github.com/user", {
