@@ -5,7 +5,6 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Todo
 
 -   Change name appengine to containermanager AND move to a Python (with types) SOCKS5 reverse proxy (that or explore NAT / PAT options)
--   Make some sort of shared utils
 -   SECURITY PROBLEM: if someone draws from my base image, they can start their own version of it and copy the source code for it (SECURE THESE APPS) (I should use a hash for the docker images and run them that way ?)
 -   Maybe add a subscription payment system in the future ?
 -   \*\*\*\*Problem with current setup - ANYONE can just access the game on the port WITHOUT authentication
@@ -17,11 +16,8 @@ An online marketplace that allows developers to monetize their online web apps.
 
 ## Immediate
 
--   Implement a better system for user accounts (including deletion) and GitHub authentication ?
 -   Implement payment system ?
 -   Reimplement caching
--   I need to create a stripe account and a stripe connect account for the user on signup with regular account and dev accounts
--   Add type checking for some of the undefined values on the database (e.g. the connected fields)
 
 ### New dev system
 
