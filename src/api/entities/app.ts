@@ -24,6 +24,12 @@ export class App extends BaseEntity {
     @Column({ default: 0 })
     price!: number;
 
+    @Column()
+    ghRepoOwner!: string;
+
+    @Column()
+    ghRepoName!: string;
+
     @ManyToOne(() => Dev, (dev) => dev.apps)
     dev!: Dev;
 }

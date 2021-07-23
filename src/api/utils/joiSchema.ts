@@ -26,6 +26,8 @@ export const createAppSchema = Joi.object({
     title: Joi.string().required().min(1).max(50),
     description: Joi.string().required().min(1).max(500),
     price: Joi.number().required().min(0).max(999),
+    ghRepoOwner: Joi.string().required(),
+    ghRepoName: Joi.string().required(),
 });
 
 // Initialize the schema for the app edit process
@@ -34,4 +36,6 @@ export const editAppSchema = Joi.object({
     title: Joi.string().min(1).max(50),
     description: Joi.string().min(1).max(500),
     price: Joi.number().min(0).max(999),
+    ghRepoOwner: Joi.string(),
+    ghRepoName: Joi.string(),
 });

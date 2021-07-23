@@ -122,9 +122,6 @@ router.patch("/user/edit", protectedMiddleware, async (req, res) => {
     // Update the user
     await User.update(userID, updateData);
 
-    // Get the old username and email
-    const { username: oldUsername, email: oldEmail } = user;
-
     // Return success
     return res.sendStatus(200);
 });

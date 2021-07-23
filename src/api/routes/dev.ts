@@ -87,9 +87,16 @@ router.post("/app/create", async (req, res) => {
         title,
         description,
         price,
-    }: // Add an option for the repo
-    { name: string; title: string; description: string; price: number } =
-        req.body;
+        ghRepoOwner,
+        ghRepoName,
+    }: {
+        name: string;
+        title: string;
+        description: string;
+        price: number;
+        ghRepoOwner: string;
+        ghRepoName: string;
+    } = req.body;
 
     // Validate the app data
     const { error } = createAppSchema.validate({
@@ -97,6 +104,8 @@ router.post("/app/create", async (req, res) => {
         title,
         description,
         price,
+        ghRepoOwner,
+        ghRepoName,
     });
     if (error) return res.status(400).end(error.details[0].message);
 
@@ -106,7 +115,14 @@ router.post("/app/create", async (req, res) => {
         return res.status(400).end("An app with that name already exists");
 
     // Create a new app and assign it to the dev account
-    const app = App.create({ name, title, description, price });
+    const app = App.create({
+        name,
+        title,
+        description,
+        price,
+        ghRepoOwner,
+        ghRepoName,
+    });
     await app.save();
 
     let newApps: App[] = [app];
