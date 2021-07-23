@@ -15,7 +15,34 @@ router.get("/profile", async (req, res) => {
     if (typeof user.dev === "undefined")
         return res.status(400).end("No user account");
 
-    // Also check the status of the account - if it is not verified allow the user to be able to create it (this is the best way)
+    // Also check the status of the account
+    const detailsSubmitted = (
+        await stripe.accounts.retrieve(user.dev.stripeConnectID)
+    ).details_submitted;
+    if (detailsSubmitted) {
+        // Redirect the user to their Stripe dashboard
+        const dashbordLink = (
+            await stripe.accounts.createLoginLink(user.dev.stripeConnectID)
+        ).url;
+
+        // Redirect the user to it
+        res.redirect(dashbordLink);
+    } else {
+        // Create an onboarding link for the dev
+        const onboardingLink = (
+            await stripe.accountLinks.create({
+                account: user.dev.stripeConnectID,
+                type: "account_onboarding", // What is account update ?
+            })
+        ).url;
+
+        // Redirect the user to it
+        res.redirect(onboardingLink);
+    }
+
+    // HOW WILL I HANDLE DEVELOPERS NOT GETTING PAID UNLESS THEY VERIFY THEIR ACCOUNT
+
+    res.sendStatus(200);
 });
 
 // Allow a user to purchase an app
