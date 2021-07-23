@@ -15,7 +15,7 @@ router.get("/profile", protectedMiddleware, async (req, res) => {
 
     // Check that the user has a dev account
     if (typeof user.dev === "undefined")
-        return res.status(400).end("No user account");
+        return res.status(400).send("No user account");
 
     // Also check the status of the account
     const detailsSubmitted = (
@@ -68,7 +68,7 @@ router.post("/purchase/success", async (req, res) => {
         // Get the webhook event
         const event = stripe.webhooks.constructEvent(
             req.body,
-            signature,
+            signature as string,
             process.env.STRIPE_WEBOOK_SECRET_PURCHASE as string
         );
 
@@ -82,7 +82,7 @@ router.post("/purchase/success", async (req, res) => {
         }
     } catch (err) {
         // Return the error
-        res.status(400).end(err.message);
+        res.status(400).send(err.message);
     }
 });
 

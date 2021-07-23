@@ -19,14 +19,14 @@ router.post("/register", async (req, res) => {
 
     // Validate the data against the schema
     const { error } = registerSchema.validate({ username, email, password });
-    if (error) return res.status(400).end(error.details[0].message);
+    if (error) return res.status(400).send(error.details[0].message);
 
     // Check if the username and email are unique
     const exists = await User.findOne({
         where: [{ username }, { email }],
     });
     if (typeof exists !== "undefined")
-        return res.status(400).end("Username or email already taken");
+        return res.status(400).send("Username or email already taken");
 
     // Hash the password
     const salt = await bcrypt.genSalt();
@@ -48,8 +48,8 @@ router.post("/register", async (req, res) => {
     // @ts-ignore
     req.session.userID = user.id;
 
-    // Return the userID
-    res.json({ userID: user.id });
+    // Return success
+    res.sendStatus(200);
 });
 
 // Login a user
@@ -63,16 +63,18 @@ router.post("/login", async (req, res) => {
     // Get the user if they exist
     const user = await User.findOne({ where: { username } });
     if (typeof user === "undefined")
-        return res.status(400).end("User does not exist");
+        return res.status(400).send("User does not exist");
 
     // Check that the passwords match
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.sendStatus(400);
 
-    // Set the session and the userID
+    // Set the session
     // @ts-ignore
     req.session.userID = user.id;
-    res.json({ userID: user.id });
+
+    // Return success
+    res.sendStatus(200);
 });
 
 // Provide a way for the user to edit their account
@@ -101,11 +103,11 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
     )
         return res
             .status(400)
-            .end("At least one parameter to modify is required");
+            .send("At least one parameter to modify is required");
 
     // Verify the data against the schema
     const { error } = updateSchema.validate({ username, email, password });
-    if (error) return res.status(400).end(error.details[0].message);
+    if (error) return res.status(400).send(error.details[0].message);
 
     // Set the data to update
     const updateData: any = {};

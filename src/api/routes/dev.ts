@@ -91,7 +91,7 @@ router.post("/app/create", async (req, res) => {
 
     // Check that the user has a dev account
     if (typeof user.dev === "undefined")
-        return res.status(400).end("A dev account is required");
+        return res.status(400).send("A dev account is required");
 
     // Get the data for the app
     const {
@@ -119,12 +119,12 @@ router.post("/app/create", async (req, res) => {
         ghRepoOwner,
         ghRepoName,
     });
-    if (error) return res.status(400).end(error.details[0].message);
+    if (error) return res.status(400).send(error.details[0].message);
 
     // Check that an app with the same name does not exist
     const exists = await App.findOne({ where: { name } });
     if (typeof exists !== "undefined")
-        return res.status(400).end("An app with that name already exists");
+        return res.status(400).send("An app with that name already exists");
 
     // Create a new app and assign it to the dev account
     const app = App.create({
@@ -153,7 +153,7 @@ router.patch("/app/edit", async (req, res) => {
 
     // Check that the user has a dev account
     if (typeof user.dev === "undefined")
-        return res.status(400).end("A dev account is required");
+        return res.status(400).send("A dev account is required");
 
     // Get the data for the app
     const {
@@ -181,14 +181,14 @@ router.patch("/app/edit", async (req, res) => {
         ghRepoOwner,
         ghRepoName,
     });
-    if (error) return res.status(400).end(error.details[0].message);
+    if (error) return res.status(400).send(error.details[0].message);
 
     // Find the app with the existing name **** There is probably a better way of doing this
     const existingApp = await App.findOne({ where: { name } });
     if (typeof existingApp === "undefined")
-        return res.status(400).end("No app with this name exists");
+        return res.status(400).send("No app with this name exists");
     if (existingApp.dev.id !== user.dev.id)
-        return res.status(403).end("You are not able to edit this app");
+        return res.status(403).send("You are not able to edit this app");
 
     // Set the data to update
     const updateData: any = {};
