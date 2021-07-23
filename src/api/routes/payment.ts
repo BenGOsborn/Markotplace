@@ -53,7 +53,7 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     // Get the data from the request
     const { appID }: { appID: number } = req.body;
 
-    // **** Check the list of the users apps to see if that game already exists (might be a bad temporary solution)
+    // Check the list of the users apps to see if that game already exists
     if (typeof user.apps !== "undefined") {
         for (const app of user.apps) {
             if (app.id === appID)
@@ -84,11 +84,18 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         });
     }
 
+    // *** I also need to check that a card has already been created, if so the user can just accept the make a purchase without the need for their card OR can make a new one ?
+    const paymentMethods = await stripe.paymentMethods.list({
+        customer: user.stripeCustomerID,
+        type: "card",
+    });
+    // How do I just find a single one though ?
+    paymentMethods.data[0].card;
+
     // Create a payment intent for the customer
     const paymentIntent = await stripe.paymentIntents.create({
         amount: app.price,
         currency: "usd",
-        // setup_future_usage: "on_session", // How does this work exactly ? (how does it work with the customer ?)
         customer: user.stripeCustomerID,
         metadata: {
             userID: user.id,
@@ -106,13 +113,6 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
 
 // On payment success
 router.post("/purchase/success", async (req, res) => {
-    // When a payment has been made, verify the intent and add the item to the users account
-    // **** This article also has a section on replay attacks
-
-    // Check that these webhooks are indeed secure ? (it shouldnt matter because the construct event WILL make them secure)
-
-    // Verify the request was valid from Stripe and only occured once ? https://stripe.com/docs/webhooks/signatures
-
     // Get the Stripe signature
     const signature = req.headers["stripe-signature"];
 
@@ -131,7 +131,7 @@ router.post("/purchase/success", async (req, res) => {
 
             // Get the metadata from the payment intent
             // @ts-ignore
-            const { userID, appID }: { userID: string; appID: number } =
+            const { userID, appID }: { userID: number; appID: number } =
                 paymentIntent.metadata;
 
             // Get the app
