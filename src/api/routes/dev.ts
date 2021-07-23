@@ -55,24 +55,37 @@ router.get("/authorize/github/callback", async (req, res) => {
         headers: { Authorization: `token ${access_token}` },
     });
 
-    // *** I also need to READD the option for a user to reconnect their account which would instead simply update their dev account - if a new user, then create a Stripe account
+    // Check if the user already has a dev account
+    if (typeof user.dev === "undefined") {
+        // Create a new Stripe Connect account for the dev account
+        const stripeConnectID = (
+            await stripe.accounts.create({
+                type: "express",
+            })
+        ).id;
 
-    // Make a new dev account for the user
-    const dev = Dev.create({
-        token: access_token,
-        ghUsername: username,
-        user,
-    });
-    await dev.save();
+        // Make a new dev account for the user
+        const dev = Dev.create({
+            token: access_token,
+            ghUsername: username,
+            stripeConnectID,
+            user,
+        });
+        await dev.save();
 
-    // Update the users dev account
-    await User.update(user.id, { dev });
+        // Update the users dev account
+        await User.update(user.id, { dev });
+    } else {
+        // Update the users existing dev account
+        await Dev.update(user.dev.id, {
+            token: access_token,
+            ghUsername: username,
+        });
+    }
 
     // Return success **** I SHOULD ALSO REDIRECT BACK TO THE CORRECT PAGE
     return res.sendStatus(200);
 });
-
-// **** Come up with a better system of allowing a user to connect their accounts (whats wrong with letting them reset ?)
 
 // Add an app
 router.post("/app/create", async (req, res) => {
