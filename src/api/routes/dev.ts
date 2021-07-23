@@ -87,7 +87,8 @@ router.post("/app/create", async (req, res) => {
         title,
         description,
         price,
-    }: { name: string; title: string; description: string; price: number } =
+    }: // Add an option for the repo
+    { name: string; title: string; description: string; price: number } =
         req.body;
 
     // Validate the app data
@@ -132,7 +133,8 @@ router.patch("/app/edit", async (req, res) => {
         title,
         description,
         price,
-    }: {
+    }: // Edit the repo
+    {
         name: string;
         title: string | undefined;
         description: string | undefined;
@@ -153,7 +155,6 @@ router.patch("/app/edit", async (req, res) => {
     if (typeof existingApp === "undefined")
         return res.status(400).end("No app with this name exists");
     if (existingApp.dev.id !== user.dev.id)
-        // **** Check that this logic even makes sense ?
         return res.status(403).end("You are not able to edit this app");
 
     // Set the data to update
@@ -165,8 +166,6 @@ router.patch("/app/edit", async (req, res) => {
 
     // Update the app
     await App.update(existingApp.id, updateData);
-
-    // **** Dont forget to remove the caches USING the pulled data
 
     // Edit an app
     res.sendStatus(200);
