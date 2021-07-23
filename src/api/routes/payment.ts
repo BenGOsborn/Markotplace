@@ -64,6 +64,10 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     const app = await App.findOne(appID);
     if (typeof app == "undefined") return res.status(400).send("Invalid app")
 
+    // **** If the app is free, then automatically allow the user to make the purchase without the need for the payment intent
+    // ******* Rounding point errors are going to ruin this for sure
+    if (app.price === 0) return res.status(200).send("Game purchased for free!");
+
     // Create a payment intent for the customer
     const paymentIntent = await stripe.paymentIntents.create({
         amount: app.price * 100,
@@ -109,7 +113,16 @@ router.post("/purchase/success", async (req, res) => {
             // @ts-ignore
             const { userID, appID }: { userID: string; appID: number } = paymentIntent.metadata;
 
+            // Get the app
+            const app = await App.findOne(appID);
+
             // Update the users apps
+            const user = await User.findOne(userID);
+            if (typeof user?.apps === "undefined") {
+                await User.update(userID, { apps: [app as App] })
+            } else {
+                await User.update(userID, { apps: [...user.apps as App[], app as App] })
+            }
 
             // Return success
             res.sendStatus(200);
