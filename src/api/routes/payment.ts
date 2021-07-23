@@ -93,7 +93,9 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         })
     ).data;
 
-    // Make the payment intent
+    // ***** I have forgotten to pay out my customers
+
+    // Create the payment intent
     const paymentIntent = await stripe.paymentIntents.create({
         amount: app.price,
         currency: "usd",
