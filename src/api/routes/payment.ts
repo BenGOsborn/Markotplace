@@ -1,4 +1,5 @@
 import express from "express";
+import Stripe from "stripe";
 import { User } from "../entities/user";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
@@ -54,11 +55,35 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
 // On payment success
 router.post("/purchase/success", async (req, res) => {
     // When a payment has been made, verify the intent and add the item to the users account
-    // Also make sure this can only occur once ?
+    // **** This article also has a section on replay attacks
+
+    // Check that these webhooks are indeed secure ? (it shouldnt matter because the construct event WILL make them secure)
 
     // Verify the request was valid from Stripe and only occured once ? https://stripe.com/docs/webhooks/signatures
 
-    res.sendStatus(200);
+    // Get the Stripe signature
+    const signature = req.headers["stripe-signature"];
+
+    try {
+        // Get the webhook event
+        const event = stripe.webhooks.constructEvent(
+            req.body,
+            signature,
+            process.env.STRIPE_WEBOOK_SECRET_PURCHASE as string
+        );
+
+        // Check that the payment succeeded
+        if (event.type === "payment_intent.succeeded") {
+            // Get the payment intent
+            const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+            // Return success
+            res.sendStatus(200);
+        }
+    } catch (err) {
+        // Return the error
+        res.status(400).end(err.message);
+    }
 });
 
 // Export the router
