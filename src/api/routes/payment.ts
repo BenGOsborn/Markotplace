@@ -19,15 +19,7 @@ router.get("/profile", async (req, res) => {
     const detailsSubmitted = (
         await stripe.accounts.retrieve(user.dev.stripeConnectID)
     ).details_submitted;
-    if (detailsSubmitted) {
-        // Redirect the user to their Stripe dashboard
-        const dashbordLink = (
-            await stripe.accounts.createLoginLink(user.dev.stripeConnectID)
-        ).url;
-
-        // Redirect the user to it
-        res.redirect(dashbordLink);
-    } else {
+    if (!detailsSubmitted) {
         // Create an onboarding link for the dev
         const onboardingLink = (
             await stripe.accountLinks.create({
@@ -37,12 +29,16 @@ router.get("/profile", async (req, res) => {
         ).url;
 
         // Redirect the user to it
-        res.redirect(onboardingLink);
+        return res.redirect(onboardingLink);
     }
 
-    // HOW WILL I HANDLE DEVELOPERS NOT GETTING PAID UNLESS THEY VERIFY THEIR ACCOUNT
+    // Redirect the user to their Stripe dashboard
+    const dashbordLink = (
+        await stripe.accounts.createLoginLink(user.dev.stripeConnectID)
+    ).url;
 
-    res.sendStatus(200);
+    // Redirect the user to it
+    res.redirect(dashbordLink);
 });
 
 // Allow a user to purchase an app
