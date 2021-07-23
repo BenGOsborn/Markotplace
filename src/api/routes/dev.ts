@@ -149,12 +149,15 @@ router.patch("/app/edit", async (req, res) => {
         title,
         description,
         price,
-    }: // Edit the repo
-    {
+        ghRepoOwner,
+        ghRepoName,
+    }: {
         name: string;
         title: string | undefined;
         description: string | undefined;
         price: number | undefined;
+        ghRepoOwner: string | undefined;
+        ghRepoName: string | undefined;
     } = req.body;
 
     // Validate the edit app data
@@ -163,10 +166,12 @@ router.patch("/app/edit", async (req, res) => {
         title,
         description,
         price,
+        ghRepoOwner,
+        ghRepoName,
     });
     if (error) return res.status(400).end(error.details[0].message);
 
-    // Find the app with the existing name - **** MAYBE I SHOULDNT CACHE THIS ONE ? (I could also do this WITHOUT checking the ID)
+    // Find the app with the existing name **** There is probably a better way of doing this
     const existingApp = await App.findOne({ where: { name } });
     if (typeof existingApp === "undefined")
         return res.status(400).end("No app with this name exists");
@@ -179,6 +184,9 @@ router.patch("/app/edit", async (req, res) => {
     if (typeof description !== "undefined")
         updateData.description = description;
     if (typeof price !== "undefined") updateData.price = price;
+    if (typeof ghRepoOwner !== "undefined")
+        updateData.ghRepoOwner = ghRepoOwner;
+    if (typeof ghRepoName !== "undefined") updateData.ghRepoName = ghRepoName;
 
     // Update the app
     await App.update(existingApp.id, updateData);
