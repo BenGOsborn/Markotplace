@@ -20,6 +20,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Implement a better system for user accounts (including deletion) and GitHub authentication ?
 -   Implement payment system ?
 -   Reimplement caching
+-   I need to create a stripe account and a stripe connect account for the user on signup with regular account and dev accounts
 -   Add type checking for some of the undefined values on the database (e.g. the connected fields)
 
 ### New dev system
