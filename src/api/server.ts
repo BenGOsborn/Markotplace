@@ -46,7 +46,7 @@ app.use(
 // Initialize the routes
 app.use("/api/user", userRoute);
 app.use("/api/dev", protectedMiddleware, devRoute);
-app.use("/api/payment", protectedMiddleware, paymentRoute);
+app.use("/api/payment", paymentRoute);
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 4000;

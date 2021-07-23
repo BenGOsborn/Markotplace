@@ -1,12 +1,13 @@
 import express from "express";
 import { User } from "../entities/user";
+import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
 
 // Initialize the router
 const router = express.Router();
 
 // Allow a dev to view their Stripe account
-router.get("/profile", async (req, res) => {
+router.get("/profile", protectedMiddleware, async (req, res) => {
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -42,10 +43,20 @@ router.get("/profile", async (req, res) => {
 });
 
 // Allow a user to purchase an app
-router.post("/purchase", async (req, res) => {
+router.post("/purchase", protectedMiddleware, async (req, res) => {
     // Get the details about the user
     // How do I do this with the payment intents (or even charges ?)
     // Transfer an amount to the user as well
+
+    res.sendStatus(200);
+});
+
+// On payment success
+router.post("/purchase/success", async (req, res) => {
+    // When a payment has been made, verify the intent and add the item to the users account
+    // Also make sure this can only occur once ?
+
+    // Verify the request was valid from Stripe and only occured once ? https://stripe.com/docs/webhooks/signatures
 
     res.sendStatus(200);
 });
