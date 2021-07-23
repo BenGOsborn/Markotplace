@@ -20,6 +20,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Implement a better system for user accounts (including deletion) and GitHub authentication ?
 -   Implement payment system ?
 -   The apps will require their own GitHub repository link (or repo name to be deployed)
+-   Reimplement caching
 
 ### New dev system
 

@@ -1,6 +1,5 @@
 import express from "express";
 import { User } from "../entities/user";
-import { cacheData, clearCache } from "../utils/cache";
 import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
 import { protectedMiddleware } from "../utils/middleware";
