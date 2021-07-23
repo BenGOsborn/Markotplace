@@ -21,7 +21,7 @@ export class App extends BaseEntity {
     @Column()
     description!: string;
 
-    @Column({ default: 0 })
+    @Column({ default: 0, type: "int" })
     price!: number;
 
     @Column()

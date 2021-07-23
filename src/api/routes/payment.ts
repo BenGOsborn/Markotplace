@@ -32,7 +32,7 @@ router.get("/profile", protectedMiddleware, async (req, res) => {
         ).url;
 
         // Return the url
-        return res.json({url: onboardingLink, connected: false});
+        return res.json({ url: onboardingLink, connected: false });
     }
 
     // Redirect the user to their Stripe dashboard
@@ -41,7 +41,7 @@ router.get("/profile", protectedMiddleware, async (req, res) => {
     ).url;
 
     // Return the url
-    res.json({url: dashbordLink, connected: true});
+    res.json({ url: dashbordLink, connected: true });
 });
 
 // Allow a user to purchase an app
@@ -56,32 +56,52 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     // **** Check the list of the users apps to see if that game already exists (might be a bad temporary solution)
     if (typeof user.apps !== "undefined") {
         for (const app of user.apps) {
-            if (app.id === appID) return res.status(400).send("You already own this app");
+            if (app.id === appID)
+                return res.status(400).send("You already own this app");
         }
     }
 
     // Get the app from the database
     const app = await App.findOne(appID);
-    if (typeof app == "undefined") return res.status(400).send("Invalid app")
+    if (typeof app == "undefined") return res.status(400).send("Invalid app");
 
-    // **** If the app is free, then automatically allow the user to make the purchase without the need for the payment intent
-    // ******* Rounding point errors are going to ruin this for sure
-    if (app.price === 0) return res.status(200).send("Game purchased for free!");
+    // If the app is free, add the app to the users account
+    if (app.price === 0) {
+        // Add the app to the users account
+        if (typeof user?.apps === "undefined") {
+            await User.update(user.id, { apps: [app as App] });
+        } else {
+            await User.update(user.id, {
+                apps: [...(user.apps as App[]), app as App],
+            });
+        }
+
+        // Return success
+        return res.json({
+            clientSecret: null,
+            free: true,
+            message: "Game purchased for free!",
+        });
+    }
 
     // Create a payment intent for the customer
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: app.price * 100,
+        amount: app.price,
         currency: "usd",
         // setup_future_usage: "on_session", // How does this work exactly ? (how does it work with the customer ?)
         customer: user.stripeCustomerID,
         metadata: {
             userID: user.id,
-            appID
+            appID,
         },
-    })
+    });
 
     // Return the payment intent
-    res.json({ clientSecret: paymentIntent.client_secret })
+    res.json({
+        clientSecret: paymentIntent.client_secret,
+        free: false,
+        message: null,
+    });
 });
 
 // On payment success
@@ -111,7 +131,8 @@ router.post("/purchase/success", async (req, res) => {
 
             // Get the metadata from the payment intent
             // @ts-ignore
-            const { userID, appID }: { userID: string; appID: number } = paymentIntent.metadata;
+            const { userID, appID }: { userID: string; appID: number } =
+                paymentIntent.metadata;
 
             // Get the app
             const app = await App.findOne(appID);
@@ -119,9 +140,11 @@ router.post("/purchase/success", async (req, res) => {
             // Update the users apps
             const user = await User.findOne(userID);
             if (typeof user?.apps === "undefined") {
-                await User.update(userID, { apps: [app as App] })
+                await User.update(userID, { apps: [app as App] });
             } else {
-                await User.update(userID, { apps: [...user.apps as App[], app as App] })
+                await User.update(userID, {
+                    apps: [...(user.apps as App[]), app as App],
+                });
             }
 
             // Return success

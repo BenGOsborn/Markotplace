@@ -25,7 +25,7 @@ export const createAppSchema = Joi.object({
         .regex(/^[a-zA-Z0-9_-]{3,20}$/),
     title: Joi.string().required().min(1).max(50),
     description: Joi.string().required().min(1).max(500),
-    price: Joi.number().required().min(0).max(999),
+    price: Joi.number().required().integer().min(0).max(999),
     ghRepoOwner: Joi.string().required(),
     ghRepoName: Joi.string().required(),
 });
@@ -35,7 +35,7 @@ export const editAppSchema = Joi.object({
     name: Joi.string().required(),
     title: Joi.string().min(1).max(50),
     description: Joi.string().min(1).max(500),
-    price: Joi.number().min(0).max(999),
+    price: Joi.number().integer().min(0).max(999),
     ghRepoOwner: Joi.string(),
     ghRepoName: Joi.string(),
 });
