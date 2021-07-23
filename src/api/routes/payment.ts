@@ -1,6 +1,7 @@
 import express from "express";
 import Stripe from "stripe";
 import { App } from "../entities/app";
+import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
@@ -65,6 +66,9 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     const app = await App.findOne(appID);
     if (typeof app == "undefined") return res.status(400).send("Invalid app");
 
+    // Get the dev account who created the app
+    const { dev } = app;
+
     // If the app is free, add the app to the users account
     if (app.price === 0) {
         // Add the app to the users account
@@ -81,7 +85,7 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
             clientSecret: null,
             existingCard: null,
             free: true,
-            message: "Game purchased for free!",
+            message: "App purchase was successful!",
         });
     }
 
@@ -93,9 +97,7 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         })
     ).data;
 
-    // ***** I have forgotten to pay out my developers
-
-    // Create the payment intent
+    // Create the payment intent and pay out the developer
     const paymentIntent = await stripe.paymentIntents.create({
         amount: app.price,
         currency: "usd",
@@ -103,6 +105,10 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         metadata: {
             userID: user.id,
             appID,
+        },
+        application_fee_amount: 0.2 * app.price,
+        transfer_data: {
+            destination: dev.stripeConnectID,
         },
     });
 

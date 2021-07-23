@@ -13,11 +13,12 @@ An online marketplace that allows developers to monetize their online web apps.
 -   \*\*\*\* Some things that are not necessary SHOULD not do any caching (especially if it is dangerous)
 -   Instead of using Nginx as a main load balancer, use DNS for different servers on the network via stuff like user.website.com instead of website.com
 -   Limit Docker resources - also maybe use Docker pause instead of kill and start all the time - https://docs.docker.com/config/containers/resource_constraints/
+-   Maybe rebrand the entire app for gamers specifically
 
 ## Immediate
 
 -   Reimplement caching
--   HOW WILL I HANDLE DEVELOPERS NOT GETTING PAID UNLESS THEY VERIFY THEIR ACCOUNT (maybe just inform them they wont get paid for any purchases they make OR block them from making apps ?)
+-   Developers will not be able to set the price of their app above 0 if they have not paid
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
 -   Prevent the user for paying for something that is free OR that they already own
 
