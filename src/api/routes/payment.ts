@@ -24,7 +24,7 @@ router.get("/profile", async (req, res) => {
         const onboardingLink = (
             await stripe.accountLinks.create({
                 account: user.dev.stripeConnectID,
-                type: "account_onboarding", // What is account update ?
+                type: "account_onboarding",
             })
         ).url;
 
