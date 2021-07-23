@@ -21,15 +21,9 @@ router.post("/user/register", async (req, res) => {
     if (error) return res.status(400).end(error.details[0].message);
 
     // Check if the username and email are unique
-    const exists = await cacheData(
-        `user-register:${username}${email}`,
-        async () => {
-            const existingUser = await User.findOne({
-                where: [{ username }, { email }],
-            });
-            return existingUser;
-        }
-    );
+    const exists = await User.findOne({
+        where: [{ username }, { email }],
+    });
     if (typeof exists !== "undefined")
         return res.status(400).end("Username or email already taken");
 
@@ -62,12 +56,7 @@ router.post("/user/login", async (req, res) => {
     }: { username: string; email: string; password: string } = req.body;
 
     // Get the user if they exist
-    const user = await cacheData(`user-login:${username}`, async () => {
-        const existingUser = await User.findOne({
-            where: { username },
-        });
-        return existingUser;
-    });
+    const user = await User.findOne({ where: { username } });
     if (typeof user === "undefined")
         return res.status(400).end("User does not exist");
 
@@ -135,11 +124,6 @@ router.patch("/user/edit", protectedMiddleware, async (req, res) => {
 
     // Get the old username and email
     const { username: oldUsername, email: oldEmail } = user;
-
-    // Clear the cached data for the user
-    await clearCache(`user-register:${oldUsername}${oldEmail}`);
-    await clearCache(`user-login:${oldUsername}`);
-    await clearCache(`user-authorized:${oldUsername}`);
 
     // Return success
     return res.sendStatus(200);
