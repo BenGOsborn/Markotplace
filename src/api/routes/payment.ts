@@ -31,8 +31,8 @@ router.get("/profile", protectedMiddleware, async (req, res) => {
             })
         ).url;
 
-        // Redirect the user to it
-        return res.redirect(onboardingLink);
+        // Return the url
+        return res.json({url: onboardingLink, connected: false});
     }
 
     // Redirect the user to their Stripe dashboard
@@ -40,32 +40,44 @@ router.get("/profile", protectedMiddleware, async (req, res) => {
         await stripe.accounts.createLoginLink(user.dev.stripeConnectID)
     ).url;
 
-    // Redirect the user to it
-    res.redirect(dashbordLink);
+    // Return the url
+    res.json({url: dashbordLink, connected: true});
 });
 
 // Allow a user to purchase an app
 router.post("/purchase", protectedMiddleware, async (req, res) => {
-    // Get the details about the user
-    // How do I do this with the payment intents (or even charges ?)
-    // Transfer an amount to the user as well
-
-    // How am I going to pass through the ID of the app to be purchased
-
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
     // Get the data from the request
-    const { appName }: { appName: string } = req.body;
+    const { appID }: { appID: number } = req.body;
+
+    // **** Check the list of the users apps to see if that game already exists (might be a bad temporary solution)
+    if (typeof user.apps !== "undefined") {
+        for (const app of user.apps) {
+            if (app.id === appID) return res.status(400).send("You already own this app");
+        }
+    }
 
     // Get the app from the database
-    const app = await App.findOne({ where: { name: appName } });
+    const app = await App.findOne(appID);
     if (typeof app == "undefined") return res.status(400).send("Invalid app")
 
-    // Otherwise make a new payment intent for the customer
+    // Create a payment intent for the customer
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: app.price * 100,
+        currency: "usd",
+        // setup_future_usage: "on_session", // How does this work exactly ? (how does it work with the customer ?)
+        customer: user.stripeCustomerID,
+        metadata: {
+            userID: user.id,
+            appID
+        },
+    })
 
-    res.sendStatus(200);
+    // Return the payment intent
+    res.json({ clientSecret: paymentIntent.client_secret })
 });
 
 // On payment success
@@ -92,6 +104,12 @@ router.post("/purchase/success", async (req, res) => {
         if (event.type === "payment_intent.succeeded") {
             // Get the payment intent
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+            // Get the metadata from the payment intent
+            // @ts-ignore
+            const { userID, appID }: { userID: string; appID: number } = paymentIntent.metadata;
+
+            // Update the users apps
 
             // Return success
             res.sendStatus(200);
