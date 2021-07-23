@@ -79,7 +79,7 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         // Return success
         return res.json({
             clientSecret: null,
-            existingCard: false,
+            existingCard: null,
             free: true,
             message: "Game purchased for free!",
         });
