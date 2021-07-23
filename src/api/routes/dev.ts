@@ -4,6 +4,7 @@ import { App } from "../entities/app";
 import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
+import { stripe } from "../utils/stripe";
 
 // Initialize the router
 const router = express.Router();
@@ -53,6 +54,8 @@ router.get("/authorize/github/callback", async (req, res) => {
     } = await axios.get("https://api.github.com/user", {
         headers: { Authorization: `token ${access_token}` },
     });
+
+    // *** I also need to READD the option for a user to reconnect their account which would instead simply update their dev account - if a new user, then create a Stripe account
 
     // Make a new dev account for the user
     const dev = Dev.create({

@@ -3,6 +3,7 @@ import { User } from "../entities/user";
 import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
 import { protectedMiddleware } from "../utils/middleware";
+import { stripe } from "../utils/stripe";
 
 // Initialize the router
 const router = express.Router();
@@ -31,11 +32,15 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Create a new Stripe customer for the user
+    const stripeCustomerID = (await stripe.customers.create()).id;
+
     // Create the new user
     const user = User.create({
         username,
         email,
         password: hashedPassword,
+        stripeCustomerID,
     });
     await user.save();
 
