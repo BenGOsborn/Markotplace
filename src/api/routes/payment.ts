@@ -79,20 +79,21 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         // Return success
         return res.json({
             clientSecret: null,
+            existingCard: false,
             free: true,
             message: "Game purchased for free!",
         });
     }
 
-    // *** I also need to check that a card has already been created, if so the user can just accept the make a purchase without the need for their card OR can make a new one ?
-    const paymentMethods = await stripe.paymentMethods.list({
-        customer: user.stripeCustomerID,
-        type: "card",
-    });
-    // How do I just find a single one though ?
-    paymentMethods.data[0].card;
+    // Check if the user already has a card
+    const paymentMethods = (
+        await stripe.paymentMethods.list({
+            customer: user.stripeCustomerID,
+            type: "card",
+        })
+    ).data;
 
-    // Create a payment intent for the customer
+    // Make the payment intent
     const paymentIntent = await stripe.paymentIntents.create({
         amount: app.price,
         currency: "usd",
@@ -103,9 +104,20 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         },
     });
 
+    if (paymentMethods.length > 0) {
+        // Return the payment intent
+        return res.json({
+            clientSecret: paymentIntent.client_secret,
+            existingCard: true,
+            free: false,
+            message: null,
+        });
+    }
+
     // Return the payment intent
     res.json({
         clientSecret: paymentIntent.client_secret,
+        existingCard: false,
         free: false,
         message: null,
     });
