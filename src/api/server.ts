@@ -43,8 +43,8 @@ app.use(
 );
 
 // Initialize the routes
-app.use("/user", userRoute);
-app.use("/dev", protectedMiddleware, devRoute);
+app.use("/api/user", userRoute);
+app.use("/api/dev", protectedMiddleware, devRoute);
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 4000;

@@ -8,7 +8,7 @@ import { protectedMiddleware } from "../utils/middleware";
 const router = express.Router();
 
 // Register a new user
-router.post("/user/register", async (req, res) => {
+router.post("/register", async (req, res) => {
     // Get data from request
     const {
         username,
@@ -48,7 +48,7 @@ router.post("/user/register", async (req, res) => {
 });
 
 // Login a user
-router.post("/user/login", async (req, res) => {
+router.post("/login", async (req, res) => {
     // Get data from request
     const {
         username,
@@ -71,7 +71,7 @@ router.post("/user/login", async (req, res) => {
 });
 
 // Provide a way for the user to edit their account
-router.patch("/user/edit", protectedMiddleware, async (req, res) => {
+router.patch("/edit", protectedMiddleware, async (req, res) => {
     // Get the user and extract the userID
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -118,8 +118,6 @@ router.patch("/user/edit", protectedMiddleware, async (req, res) => {
     // Return success
     return res.sendStatus(200);
 });
-
-// Allow a user to view their apps
 
 // Export the router
 export default router;
