@@ -93,7 +93,7 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
         })
     ).data;
 
-    // ***** I have forgotten to pay out my customers
+    // ***** I have forgotten to pay out my developers
 
     // Create the payment intent
     const paymentIntent = await stripe.paymentIntents.create({
