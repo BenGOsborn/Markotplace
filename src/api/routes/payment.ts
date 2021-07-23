@@ -1,5 +1,6 @@
 import express from "express";
 import Stripe from "stripe";
+import { App } from "../entities/app";
 import { User } from "../entities/user";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
@@ -48,6 +49,21 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     // Get the details about the user
     // How do I do this with the payment intents (or even charges ?)
     // Transfer an amount to the user as well
+
+    // How am I going to pass through the ID of the app to be purchased
+
+    // Get the user
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
+
+    // Get the data from the request
+    const { appName }: { appName: string } = req.body;
+
+    // Get the app from the database
+    const app = await App.findOne({ where: { name: appName } });
+    if (typeof app == "undefined") return res.status(400).send("Invalid app")
+
+    // Otherwise make a new payment intent for the customer
 
     res.sendStatus(200);
 });

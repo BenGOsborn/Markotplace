@@ -19,6 +19,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Implement payment system ?
 -   Reimplement caching
 -   HOW WILL I HANDLE DEVELOPERS NOT GETTING PAID UNLESS THEY VERIFY THEIR ACCOUNT (maybe just inform them they wont get paid for any purchases they make OR block them from making apps ?)
+- How do I set up customers for future payments too ? - https://stripe.com/docs/payments/payment-intents
 
 ### New dev system
 
