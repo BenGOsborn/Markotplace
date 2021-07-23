@@ -70,13 +70,6 @@ router.post("/user/login", async (req, res) => {
     res.json({ userID: user.id });
 });
 
-// Validate a users session
-router.get("/user/authorized", protectedMiddleware, async (req, res) => {
-    // Return the userID
-    // @ts-ignore
-    return res.json({ userID: req.locals.user.id });
-});
-
 // Provide a way for the user to edit their account
 router.patch("/user/edit", protectedMiddleware, async (req, res) => {
     // Get the user and extract the userID
@@ -127,8 +120,6 @@ router.patch("/user/edit", protectedMiddleware, async (req, res) => {
 });
 
 // Allow a user to view their apps
-
-// Authenticate a user for accessing an ap
 
 // Export the router
 export default router;
