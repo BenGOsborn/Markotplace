@@ -4,6 +4,7 @@ import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
+import { cacheData, clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -22,9 +23,7 @@ router.post("/register", async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     // Check if the username and email are unique
-    const exists = await User.findOne({
-        where: [{ username }, { email }],
-    });
+    const exists = await User.findOne({ where: [{ username }, { email }] });
     if (typeof exists !== "undefined")
         return res.status(400).send("Username or email already taken");
 
@@ -119,6 +118,9 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
 
     // Update the user
     await User.update(userID, updateData);
+
+    // Delete the cached data for the user
+    await clearCache(`user:${user.id}`);
 
     // Return success
     return res.sendStatus(200);
