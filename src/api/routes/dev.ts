@@ -206,7 +206,21 @@ router.patch("/app/edit", async (req, res) => {
     if (typeof title !== "undefined") updateData.title = title;
     if (typeof description !== "undefined")
         updateData.description = description;
-    if (typeof price !== "undefined") updateData.price = price;
+    if (typeof price !== "undefined") {
+        // Check that the dev has submitted their payment details if they wish to charge for their app
+        const detailsSubmitted = (
+            await stripe.accounts.retrieve(user.dev.stripeConnectID)
+        ).details_submitted;
+        if (!detailsSubmitted && price > 0)
+            return res
+                .status(400)
+                .send(
+                    "To charge more than $0 for your app you must finish setting up your Stripe account"
+                );
+
+        // Set the new price for the app
+        updateData.price = price * 100;
+    }
     if (typeof ghRepoOwner !== "undefined")
         updateData.ghRepoOwner = ghRepoOwner;
     if (typeof ghRepoName !== "undefined") updateData.ghRepoName = ghRepoName;
