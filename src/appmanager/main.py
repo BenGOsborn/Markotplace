@@ -1,3 +1,5 @@
+# https://github.com/rushter/socks5/blob/master/server.py
+
 import logging
 import select
 import socket
