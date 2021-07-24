@@ -1,5 +1,7 @@
 # https://github.com/rushter/socks5/blob/master/server.py
 
+# Is this even needed ? Couldnt I just use some sort of premade reverse proxy to handle this ?
+
 import socket
 import threading
 import select
