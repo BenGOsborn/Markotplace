@@ -115,8 +115,22 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
 
     // Set the data to update
     const updateData: any = {};
-    if (typeof username !== "undefined") updateData.username = username;
-    if (typeof email !== "undefined") updateData.email = email;
+    if (typeof username !== "undefined") {
+        // Check that the new username is unique
+        const existingUser = await User.findOne({ where: { username } });
+        if (existingUser) return res.status(400).send("This username is taken");
+
+        // Set the new username
+        updateData.username = username;
+    }
+    if (typeof email !== "undefined") {
+        // Check that the new email is unique
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) return res.status(400).send("This email is taken");
+
+        // Set the new email
+        updateData.email = email;
+    }
     if (typeof password !== "undefined") {
         const hashedPassword = await bcrypt.hash(password, 10);
         updateData.password = hashedPassword;
@@ -124,6 +138,10 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
 
     // Update the user
     await User.update(userID, updateData);
+
+    // Update the users Stripe customer email if there is a new email
+    if (typeof email !== "undefined")
+        await stripe.customers.update(user.stripeCustomerID, { email });
 
     // Delete the cached data for the user
     await clearCache(`user:${user.id}`);

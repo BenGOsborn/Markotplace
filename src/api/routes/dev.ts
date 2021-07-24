@@ -59,7 +59,6 @@ router.get("/authorize/github/callback", async (req, res) => {
         const stripeConnectID = (
             await stripe.accounts.create({
                 type: "express",
-                email: user.email,
             })
         ).id;
 
