@@ -59,6 +59,7 @@ router.get("/authorize/github/callback", async (req, res) => {
         const stripeConnectID = (
             await stripe.accounts.create({
                 type: "express",
+                email: user.email,
             })
         ).id;
 
@@ -132,9 +133,13 @@ router.post("/app/create", async (req, res) => {
         return res.status(400).send("An app with that name already exists");
 
     // Check that the dev has submitted their payment details if they wish to charge for their app
-    const detailsSubmitted = (
-        await stripe.accounts.retrieve(user.dev.stripeConnectID)
-    ).details_submitted;
+    const detailsSubmitted = await cacheData(
+        `onboarded:${user.dev.id}`,
+        async () =>
+            (
+                await stripe.accounts.retrieve(user.dev.stripeConnectID)
+            ).details_submitted
+    );
     if (!detailsSubmitted && price > 0)
         return res
             .status(400)
@@ -226,9 +231,13 @@ router.patch("/app/edit", async (req, res) => {
         updateData.description = description;
     if (typeof price !== "undefined") {
         // Check that the dev has submitted their payment details if they wish to charge for their app
-        const detailsSubmitted = (
-            await stripe.accounts.retrieve(user.dev.stripeConnectID)
-        ).details_submitted;
+        const detailsSubmitted = await cacheData(
+            `onboarded:${user.dev.id}`,
+            async () =>
+                (
+                    await stripe.accounts.retrieve(user.dev.stripeConnectID)
+                ).details_submitted
+        );
         if (!detailsSubmitted && price > 0)
             return res
                 .status(400)

@@ -33,6 +33,9 @@ router.get("/profile", protectedMiddleware, async (req, res) => {
             })
         ).url;
 
+        // Clear the onboarded cache
+        await clearCache(`onboarded:${user.dev.id}`);
+
         // Return the url
         return res.json({ url: onboardingLink, connected: false });
     }

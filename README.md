@@ -21,6 +21,7 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   Reimplement caching (AND DELETION OF CACHES) (cache some of the stripe stuff probably AND the app stuff) (maybe cache the check details submitted too ?)
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
+-   When updating a users account, update their Stripe account emails too (dev and user)
 
 ### New dev system
 

@@ -6,10 +6,10 @@ export const DEFAULT_EXPIRY = 60 * 60 * 12;
 // Cache the data if it doesnt match the excluded value
 export const cacheData = <T>(
     key: string,
-    callback: () => Promise<T | undefined>,
+    callback: () => Promise<T>,
     expiry?: number
 ) => {
-    return new Promise<T | undefined>((resolve, reject) => {
+    return new Promise<T>((resolve, reject) => {
         redisClient.get(key, async (error, cachedData) => {
             // Reject if there was an error
             if (error) reject(error);
