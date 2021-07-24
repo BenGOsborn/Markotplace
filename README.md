@@ -15,6 +15,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Limit Docker resources - also maybe use Docker pause instead of kill and start all the time - https://docs.docker.com/config/containers/resource_constraints/
 -   Maybe rebrand the entire app for gamers specifically
 -   Add support for Unity and other game engines that make web apps
+-   FIx up redirect URL in github app
 
 ## Immediate
 

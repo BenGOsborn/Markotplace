@@ -4,7 +4,7 @@ import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
-import { cacheData, clearCache } from "../utils/cache";
+import { clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
