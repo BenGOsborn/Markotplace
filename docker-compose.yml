@@ -1,17 +1,22 @@
 version: "3"
 
 services:
-    # db:
-    #     image: postgres:latest-alpine
-    #     environment:
-    #         - POSTGRES_USER="${POSTGRES_USER}"
-    #         - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
-    #         - POSTGRES_DB="${POSTGRES_DB}"
-    #     ports:
-    #         - "5432:5432"
-    appengine:
-        build: src/appengine/
+    db:
+        image: postgres:latest
+        environment:
+            - POSTGRES_USER="${POSTGRES_USER}"
+            - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
+            - POSTGRES_DB="${POSTGRES_DB}"
         ports:
-            - "4000:4000" # Fix this up eventually
-        # depends_on:
-        #     - db # Needs to be last to execute as it can assign random ports
+            - "5432:5432"
+    redis:
+        image: redis:latest
+        command: redis-server --requirepass ${REDIS_PASSWORD}
+        ports:
+            - "6379:6379"
+    api:
+        build: src/api/
+        ports:
+            - "3000:3000"
+        environment:
+            - "Allmyenvironmentvariables=here"
