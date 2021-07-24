@@ -134,7 +134,7 @@ router.post("/app/create", async (req, res) => {
         return res
             .status(400)
             .send(
-                "To charge more than $0 for your app you must finish setting up your Stripe account"
+                "To charge more than $0 for your app you must first finish setting up your Stripe account"
             );
 
     // Create a new app and assign it to the dev account
@@ -215,7 +215,7 @@ router.patch("/app/edit", async (req, res) => {
             return res
                 .status(400)
                 .send(
-                    "To charge more than $0 for your app you must finish setting up your Stripe account"
+                    "To charge more than $0 for your app you must first finish setting up your Stripe account"
                 );
 
         // Set the new price for the app
