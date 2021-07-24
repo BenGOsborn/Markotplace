@@ -17,9 +17,8 @@ An online marketplace that allows developers to monetize their online web apps.
 
 ## Immediate
 
--   Reimplement caching
+-   Reimplement caching (AND DELETION OF CACHES)
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
--   Unique identification hash for each app / image ?
 
 ### New dev system
 
