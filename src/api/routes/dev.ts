@@ -126,12 +126,23 @@ router.post("/app/create", async (req, res) => {
     if (typeof exists !== "undefined")
         return res.status(400).send("An app with that name already exists");
 
+    // Check that the dev has submitted their payment details if they wish to charge for their app
+    const detailsSubmitted = (
+        await stripe.accounts.retrieve(user.dev.stripeConnectID)
+    ).details_submitted;
+    if (!detailsSubmitted && price > 0)
+        return res
+            .status(400)
+            .send(
+                "To charge more than $0 for your app you must finish setting up your Stripe account"
+            );
+
     // Create a new app and assign it to the dev account
     const app = App.create({
         name,
         title,
         description,
-        price,
+        price: price * 100,
         ghRepoOwner,
         ghRepoName,
     });

@@ -18,9 +18,9 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Immediate
 
 -   Reimplement caching
--   \***\* Developers will not be able to set the price of their app above 0 if they have not paid \*\***
+-   \***\* Developers will not be able to set the price of their app above 0 if they have not paid (and shouldnt be able to update it either) \*\***
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
--   Prevent the user for paying for something that is free OR that they already own
+-   Unique identification hash for each app / image ?
 
 ### New dev system
 
