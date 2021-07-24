@@ -28,6 +28,9 @@ export class App extends BaseEntity {
     ghRepoOwner!: string;
 
     @Column()
+    containerID!: string;
+
+    @Column()
     ghRepoName!: string;
 
     @ManyToOne(() => Dev, (dev) => dev.apps)

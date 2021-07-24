@@ -29,8 +29,7 @@ router.post("/register", async (req, res) => {
         return res.status(400).send("Username or email already taken");
 
     // Hash the password
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new Stripe customer for the user
     const stripeCustomerID = (await stripe.customers.create({ email })).id;
@@ -114,8 +113,7 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
     if (typeof username !== "undefined") updateData.username = username;
     if (typeof email !== "undefined") updateData.email = email;
     if (typeof password !== "undefined") {
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, 10);
         updateData.password = hashedPassword;
     }
 

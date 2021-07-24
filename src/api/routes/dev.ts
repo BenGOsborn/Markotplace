@@ -5,6 +5,7 @@ import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 import { stripe } from "../utils/stripe";
+import bcrypt from "bcrypt";
 
 // Initialize the router
 const router = express.Router();
@@ -12,7 +13,7 @@ const router = express.Router();
 // Authorize user with GitHub
 router.get("/authorize/github", async (req, res) => {
     // Declare the rediret URL
-    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:5000/dev/authorize/github/callback&scope=repo`;
+    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo`;
 
     // Redirect the user to GitHub
     res.redirect(redirectURL);
@@ -79,7 +80,7 @@ router.get("/authorize/github/callback", async (req, res) => {
         });
     }
 
-    // Return success **** I SHOULD ALSO REDIRECT BACK TO THE CORRECT PAGE
+    // Return success
     return res.sendStatus(200);
 });
 
@@ -137,6 +138,12 @@ router.post("/app/create", async (req, res) => {
                 "To charge more than $0 for your app you must first finish setting up your Stripe account"
             );
 
+    // Create an identifier for the app container
+    const containerID = await bcrypt.hash(
+        name + title + description + price + ghRepoOwner + ghRepoName,
+        10
+    );
+
     // Create a new app and assign it to the dev account
     const app = App.create({
         name,
@@ -145,6 +152,7 @@ router.post("/app/create", async (req, res) => {
         price: price * 100,
         ghRepoOwner,
         ghRepoName,
+        containerID,
     });
     await app.save();
 
