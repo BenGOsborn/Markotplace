@@ -4,7 +4,7 @@ import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
-import { clearCache } from "../utils/cache";
+import { cacheData, clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -42,6 +42,9 @@ router.post("/register", async (req, res) => {
     });
     await user.save();
 
+    // Cache the user
+    await cacheData(`user:${user.id}`, async () => user);
+
     // Set the ID of the user in the session
     // @ts-ignore
     req.session.userID = user.id;
@@ -66,6 +69,9 @@ router.post("/login", async (req, res) => {
     // Check that the passwords match
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.sendStatus(400);
+
+    // Cache the user
+    await cacheData(`user:${user.id}`, async () => user);
 
     // Set the session
     // @ts-ignore

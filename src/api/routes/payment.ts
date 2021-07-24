@@ -5,6 +5,7 @@ import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
+import { cacheData, clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -63,7 +64,10 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     }
 
     // Get the app from the database
-    const app = await App.findOne(appID);
+    const app = await cacheData(
+        `app:${appID}`,
+        async () => await App.findOne(appID)
+    );
     if (typeof app == "undefined") return res.status(400).send("Invalid app");
 
     // Get the dev account who created the app
@@ -72,13 +76,16 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     // If the app is free, add the app to the users account
     if (app.price === 0) {
         // Add the app to the users account
-        if (typeof user?.apps === "undefined") {
+        if (typeof user.apps === "undefined") {
             await User.update(user.id, { apps: [app as App] });
         } else {
             await User.update(user.id, {
                 apps: [...(user.apps as App[]), app as App],
             });
         }
+
+        // Clear the cache for the user
+        await clearCache(`user:${user.id}`);
 
         // Return success
         return res.json({
@@ -155,17 +162,20 @@ router.post("/purchase/success", async (req, res) => {
                 paymentIntent.metadata;
 
             // Get the app
-            const app = await App.findOne(appID);
+            const app = (await App.findOne(appID)) as App;
 
             // Update the users apps
-            const user = await User.findOne(userID);
-            if (typeof user?.apps === "undefined") {
-                await User.update(userID, { apps: [app as App] });
+            const user = (await User.findOne(userID)) as User;
+            if (typeof user.apps === "undefined") {
+                await User.update(userID, { apps: [app] });
             } else {
                 await User.update(userID, {
-                    apps: [...(user.apps as App[]), app as App],
+                    apps: [...user.apps, app],
                 });
             }
+
+            // Clear the cache for the user
+            await clearCache(`user:${userID}`);
 
             // Return success
             res.sendStatus(200);

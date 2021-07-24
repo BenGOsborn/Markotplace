@@ -6,6 +6,7 @@ import { User } from "../entities/user";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 import { stripe } from "../utils/stripe";
 import bcrypt from "bcrypt";
+import { cacheData, clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -80,8 +81,11 @@ router.get("/authorize/github/callback", async (req, res) => {
         });
     }
 
+    // Clear the cached user
+    await clearCache(`user:${user.id}`);
+
     // Return success
-    return res.sendStatus(200);
+    res.sendStatus(200);
 });
 
 // Add an app
@@ -156,9 +160,15 @@ router.post("/app/create", async (req, res) => {
     });
     await app.save();
 
+    // Cache the new app
+    await cacheData(`app:${app.id}`, async () => app);
+
     let newApps: App[] = [app];
     if (typeof user.apps !== "undefined") newApps = [...user.apps, ...newApps];
     await User.update(user.id, { apps: newApps });
+
+    // Clear the cached user
+    await clearCache(`user:${user.id}`);
 
     // Add an app
     res.sendStatus(200);
@@ -235,6 +245,10 @@ router.patch("/app/edit", async (req, res) => {
 
     // Update the app
     await App.update(existingApp.id, updateData);
+
+    // Clear the cached data
+    await clearCache(`user:${user.id}`);
+    await clearCache(`app:${existingApp.id}`);
 
     // Edit an app
     res.sendStatus(200);
