@@ -67,7 +67,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if the specified path is valid
-	container, err := containerutils.GetContainer(ctx, appID, &containers)
+	container, err := containerutils.GetContainer(ctx, fmt.Sprintf("markotplace/%s", appID), &containers)
 	if err != nil {
 		w.WriteHeader(500)
 		return
