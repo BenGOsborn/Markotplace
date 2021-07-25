@@ -27,6 +27,8 @@ export class App extends BaseEntity {
     @Column()
     ghRepoOwner!: string;
 
+    // **** PERHAPS WE SHOULD HAVE A BRANCH AS WELL ?
+
     @Column()
     ghRepoName!: string;
 
