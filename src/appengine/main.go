@@ -29,6 +29,7 @@ var containers = []containerutils.Container{}
 
 func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	// I also need some level of authentication and app checking here too
+	// How can I make admin verified state transfer ?
 
 	// Only allow get requests
 	if r.Method != http.MethodGet {
