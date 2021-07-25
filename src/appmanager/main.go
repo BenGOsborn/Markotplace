@@ -19,8 +19,7 @@ var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
 func proxyHandler(w http.ResponseWriter, r *http.Request) {
-	// I also need some level of authentication and app checking here too
-	// How can I make admin verified state transfer ? (maybe I can have some type of admin password which gets shared between states via server secret ?)
+	// **** I also need some level of authentication and app checking here too
 
 	var appID string
 
