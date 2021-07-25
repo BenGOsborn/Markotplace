@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -14,13 +15,13 @@ import (
 // Initialize default values
 const PORT = 4000
 const STATE_COOKIE = "appmanager.state.appname"
+const SITE_URL = "http://0.0.0.0:4000"
 
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
 func proxyHandler(w http.ResponseWriter, r *http.Request) {
-	// **** I also need some level of authentication and app checking here too
-
+	// Initialize the string
 	var appID string
 
 	// Get the AppID from the query or the state cookie
@@ -37,6 +38,21 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		appID = appIDs[0]
 	}
+
+	// Check if the user owns the app
+	res, err := http.Get(fmt.Sprintf("%s/api/user/data", SITE_URL))
+	if err != nil {
+		w.WriteHeader(403)
+		return
+	}
+
+	// Parse the body
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+	// I need to get the JSON from this
 
 	// Check that the app is indeed valid and that the user is authenticated here to access the app
 

@@ -146,12 +146,6 @@ router.post("/app/create", async (req, res) => {
                 "To charge more than $0 for your app you must first finish setting up your Stripe account"
             );
 
-    // Create an identifier for the app container
-    const containerID = await bcrypt.hash(
-        name + title + description + price + ghRepoOwner + ghRepoName,
-        10
-    );
-
     // Create a new app and assign it to the dev account
     const app = App.create({
         name,
@@ -160,7 +154,6 @@ router.post("/app/create", async (req, res) => {
         price: price * 100,
         ghRepoOwner,
         ghRepoName,
-        containerID,
     });
     await app.save();
 

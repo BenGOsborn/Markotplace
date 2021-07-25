@@ -151,14 +151,19 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
 });
 
 // Verify that a user is authorized and return their data
-router.get("/data", serverMiddleware, protectedMiddleware, async (req, res) => {
+router.post("/owns-app", serverMiddleware, protectedMiddleware, async (req, res) => {
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
+    // Check that the users apps are not undefined
+    if (typeof user.apps === "undefined") return res.sendStatus(403);
+
+    // Check that the user owns the app
+
     // Return the user
     res.json(user);
-})
+});
 
 // Export the router
 export default router;
