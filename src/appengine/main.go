@@ -48,8 +48,6 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		appID = appIDs[0]
 	}
 
-	fmt.Println(appID)
-
 	// // Check if the specified path is valid
 	// container, err := containerutils.GetContainer(ctx, appID, &containers)
 	// if err != nil {
@@ -85,6 +83,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		return nil
 	}
 
+	// Serve the proxy
 	proxy.ServeHTTP(w, r)
 }
 
