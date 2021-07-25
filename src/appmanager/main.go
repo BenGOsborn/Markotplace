@@ -38,6 +38,8 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		appID = appIDs[0]
 	}
 
+	// **** Instead of accessing the container by their name directly it has to interact via the specified name
+
 	// // Check if the specified path is valid
 	// container, err := containerutils.GetContainer(ctx, appID, &containers)
 	// if err != nil {
