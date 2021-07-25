@@ -2,8 +2,8 @@
 
 An online marketplace that allows developers to monetize their online web apps.
 
-- EXAMPLE: https://api.github.com/repos/BenGOsborn/WASM-Bird/tarball 
-- ALSO: curl -v  -H "Accept: application/vnd.github.v3+json"   https://api.github.com/repos/BenGOsborn/WASM-Bird/tarball (look at the redirect location - it has the download (I wonder if this works for private repos too))
+-   EXAMPLE: https://api.github.com/repos/BenGOsborn/WASM-Bird/tarball
+-   ALSO: curl -v -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/BenGOsborn/WASM-Bird/tarball (look at the redirect location - it has the download (I wonder if this works for private repos too))
 
 ## Todo
 
@@ -22,10 +22,11 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
-- Make sure that Docker CANNOT build from an existing image (Im probably just going to do a basic regex check on all of the loading statements)
-- Automatically add the app to the dev's users account on creation
+-   Make sure that Docker CANNOT build from an existing image (Im probably just going to do a basic regex check on all of the loading statements)
+-   Automatically add the app to the dev's users account on creation
 
-- Just like Heroku - I need a way where my app can create webhooks in users repositories
+-   Just like Heroku - I need a way where my app can create webhooks in users repositories
+-   ???? Do cookies work with webhooks ?
 
 ### New dev system
 

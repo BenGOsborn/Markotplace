@@ -162,12 +162,14 @@ router.post("/app/create", async (req, res) => {
 
     // Add the new app to the users account
     let newUserApps: App[] = [app];
-    if (typeof user.apps !== "undefined") newUserApps = [...user.apps, ...newUserApps];
+    if (typeof user.apps !== "undefined")
+        newUserApps = [...user.apps, ...newUserApps];
     await User.update(user.id, { apps: newUserApps });
 
     // Add the new app to the users dev account
     let newDevApps: App[] = [app];
-    if (typeof user.dev.apps !== "undefined") newDevApps = [...user.dev.apps, ...newDevApps]
+    if (typeof user.dev.apps !== "undefined")
+        newDevApps = [...user.dev.apps, ...newDevApps];
     await Dev.update(user.dev.id, { apps: newDevApps });
 
     // Clear the cached user
