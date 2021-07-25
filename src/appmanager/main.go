@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"time"
 
 	"appmanager/containerutils"
@@ -19,6 +20,7 @@ const PORT = 4000
 const STATE_COOKIE = "appmanager.state.appname"
 const SITE_URL = "http://0.0.0.0:4000"
 
+var containerPrefix = os.Getenv("CONTAINER_PREFIX")
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
@@ -67,7 +69,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if the specified path is valid
-	container, err := containerutils.GetContainer(ctx, fmt.Sprintf("local-containers-markotplace/%s", appID), &containers)
+	container, err := containerutils.GetContainer(ctx, fmt.Sprintf("%s/%s", containerPrefix, appID), &containers)
 	if err != nil {
 		w.WriteHeader(500)
 		return
