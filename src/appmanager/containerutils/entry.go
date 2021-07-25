@@ -1,10 +1,5 @@
 package containerutils
 
-// Bind ports: https://stackoverflow.com/questions/41789083/set-portbindings-config-for-containercreate-function-in-golang-sdk-for-docker-ap
-
-// ******* I WANT ALL OF THE FUNCTIONS TO TAKE IN A REFERENCE TO THE ORIGINAL CONTAINERS
-// ******* I ALSO NEED A WAY TO SPIN UP A CONTAINER
-
 import (
 	"context"
 	"errors"
@@ -21,11 +16,11 @@ import (
 )
 
 type Container struct {
-	AppID string
+	AppID       string
 	ContainerID string
-	LastHit time.Time
-	Port int
-	Active bool
+	LastHit     time.Time
+	Port        int
+	Active      bool
 }
 
 func (ctr *Container) Expired() bool {
@@ -80,7 +75,7 @@ func (ctr *Container) StopContainer(ctx context.Context) error {
 	if !ctr.Active {
 		return errors.New("no active container to stop")
 	}
-	
+
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -125,7 +120,7 @@ func GetContainer(ctx context.Context, appID string, containers *[]Container) (*
 			return &(*containers)[i], nil
 		}
 	}
-	
+
 	// Initialize the Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -151,12 +146,12 @@ func GetContainer(ctx context.Context, appID string, containers *[]Container) (*
 			*containers = append(*containers, *newContainer)
 
 			// Return the container
-			return &((*containers)[len(*containers) - 1]), nil
+			return &((*containers)[len(*containers)-1]), nil
 		}
 	}
 
 	// Return false if no app ID matches
-	return nil, nil 
+	return nil, nil
 }
 
 func GetPort() int {
@@ -167,7 +162,7 @@ func GetPort() int {
 	// Generate a random port until it is correct
 	for {
 		// Generate a new random port within the range
-		port := portMin + rand.Int() % (portMax - portMin + 1)
+		port := portMin + rand.Int()%(portMax-portMin+1)
 
 		// Check that the port is not used by the rest of the system
 		server, err := net.Listen("tcp", fmt.Sprintf(":%d", port))

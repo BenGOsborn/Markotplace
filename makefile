@@ -40,9 +40,9 @@ dev-redis:
 dev-redis-access:
 	docker exec -it redis redis-cli -a ${REDIS_PASSWORD}
 
-# Start the development application engine
+# Start the development app manager
 dev-appengine:
-	cd src/appengine; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
+	cd src/appmanager; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
 
 # Start the api
 dev-api:
@@ -50,10 +50,10 @@ dev-api:
 
 # ---------- Run images ----------
 
-# Build the app engine image and start it
-# appengine-start:
-# 	docker build -t bengosborn/markotplace/appengine src/appengine
-# 	docker run -dp 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/markotplace/appengine
+# Build the app manager image and start it
+appengine-start:
+	docker build -t bengosborn/markotplace/appmanager src/appmanager
+	docker run -dp 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/markotplace/appmanager
 
 # Build the API image and start it
 api-start:
