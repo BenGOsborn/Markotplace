@@ -42,7 +42,7 @@ dev-redis-access:
 
 # Start the development app manager
 dev-appengine:
-	cd src/appmanager; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'go run main.go'
+	cd src/appmanager; nodemon --watch ../appengine/ --ext '*' --signal SIGTERM --exec 'godotenv -f ../../.env go run main.go'
 
 # Start the api
 dev-api:

@@ -32,7 +32,7 @@ createConnection({
 app.use(
     session({
         store: new (connectRedis(session))({ client: redisClient }),
-        secret: process.env.SECRET || "secret",
+        secret: process.env.SERVER_SECRET || "secret",
         saveUninitialized: false,
         resave: false,
         cookie: {
