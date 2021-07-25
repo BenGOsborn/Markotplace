@@ -160,11 +160,15 @@ router.post("/app/create", async (req, res) => {
     // Cache the new app
     await cacheData(`app:${app.id}`, async () => app);
 
-    // **** Wait, arent we meant to add the app to the dev account as well ? (WHAT IS HAPPENING AAAAH)
+    // Add the new app to the users account
+    let newUserApps: App[] = [app];
+    if (typeof user.apps !== "undefined") newUserApps = [...user.apps, ...newUserApps];
+    await User.update(user.id, { apps: newUserApps });
 
-    let newApps: App[] = [app];
-    if (typeof user.apps !== "undefined") newApps = [...user.apps, ...newApps];
-    await User.update(user.id, { apps: newApps });
+    // Add the new app to the users dev account
+    let newDevApps: App[] = [app];
+    if (typeof user.dev.apps !== "undefined") newDevApps = [...user.dev.apps, ...newDevApps]
+    await Dev.update(user.dev.id, { apps: newDevApps });
 
     // Clear the cached user
     await clearCache(`user:${user.id}`);
