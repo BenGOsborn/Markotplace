@@ -39,6 +39,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// **** Instead of accessing the container by their name directly it has to interact via the specified name
+	// **** Maybe instead of storing the names of containers and their ID's, we should store them by their names ??? (this could also be more of a mess but check it out)
 
 	// // Check if the specified path is valid
 	// container, err := containerutils.GetContainer(ctx, appID, &containers)
