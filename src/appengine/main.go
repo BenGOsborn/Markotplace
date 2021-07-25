@@ -14,6 +14,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"time"
 
 	"appengine/containerutils"
@@ -21,10 +23,11 @@ import (
 
 // Initialize default values
 const PORT = 4000
+const STATE_COOKIE = "ctr.state"
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
-func redirectHandler(w http.ResponseWriter, r *http.Request) {
+func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	// Only allow get requests
 	if r.Method != http.MethodGet {
 		fmt.Println("Called")
@@ -32,9 +35,15 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Print the state cookie if it exists
+	stateCookie, err := r.Cookie(STATE_COOKIE);
+	if err == nil {
+		fmt.Println(stateCookie)
+	}
+
 	// Get the AppID from the query
 	appIDs, ok := r.URL.Query()["appID"]
-	if !ok || len(appIDs) < 1 {
+	if !ok || len(appIDs) < 1 { // Instead of sending an error, instead attempt to get the state cookie
 		w.WriteHeader(400)
 		return
 	}
@@ -65,9 +74,17 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 		container.LastHit = time.Now()
 	}
 
-	// Redirect to the correct server - *** I might have to change this to the proxy system later on if I have a firewall
-	redirectURL := fmt.Sprintf("http://0.0.0.0:%d", forwardPort)
-	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	// Proxy pass to the correct route
+	remote, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 3000))
+	proxy := httputil.NewSingleHostReverseProxy(remote);
+
+	// Set a cookie for maintaining the container connection
+	proxy.ModifyResponse = func(r *http.Response) error {
+		r.Header.Set("Set-Cookie", "appName=hahahaha")
+		return nil
+	}
+
+	proxy.ServeHTTP(w, r)
 } 
 
 func main() {
@@ -75,8 +92,9 @@ func main() {
 	go containerutils.CleanupContainers(ctx, &containers)
 
 	// Handle the main container redirect route
-	http.HandleFunc("/", redirectHandler)
+	http.HandleFunc("/", proxyHandler)
 
 	// Start the server and log error
+	log.Println(fmt.Sprintf("App engine listening on port %d...", PORT));
 	log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))
 }

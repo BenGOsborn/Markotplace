@@ -4,10 +4,7 @@ An online marketplace that allows developers to monetize their online web apps.
 
 ## Todo
 
--   Change name appengine to containermanager AND move to a Python (with types) SOCKS5 reverse proxy (that or explore NAT / PAT options)
--   SECURITY PROBLEM: if someone draws from my base image, they can start their own version of it and copy the source code for it (SECURE THESE APPS) (I should use a hash for the docker images and run them that way ?)
 -   Maybe add a subscription payment system in the future ?
--   \*\*\*\*Problem with current setup - ANYONE can just access the game on the port WITHOUT authentication
 -   **I reckon that a simple reverse proxy will work if the user specifies the absolute path to their request each time even with different protocols**
 -   App engine can probably be changed so that it sets the name of the container instead of using the container ID
 -   \*\*\*\* Some things that are not necessary SHOULD not do any caching (especially if it is dangerous)
