@@ -1,9 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -39,25 +40,30 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		appID = appIDs[0]
 	}
 
-	// Check if the user owns the app
-	res, err := http.Get(fmt.Sprintf("%s/api/user/data", SITE_URL))
+	// Get the session cookie to forward
+	sessionCookie, err := r.Cookie("connect.sid")
 	if err != nil {
 		w.WriteHeader(403)
 		return
 	}
 
-	// Parse the body
-	body, err := ioutil.ReadAll(res.Body)
+	// Initialize the POST data
+	jsonStr, _ := json.Marshal(map[string]string{"appName": appID})
+
+	// Initialize the http client
+	client := &http.Client{}
+
+	// Initialize the request
+	req, _ := http.NewRequest("POST", fmt.Sprintf("%s/api/user/owns-app", SITE_URL), bytes.NewBuffer(jsonStr))
+	req.Header.Set("Cookie", fmt.Sprintf("connect.sid=%s", sessionCookie))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Make the request
+	_, err = client.Do(req)
 	if err != nil {
-		w.WriteHeader(500)
+		w.WriteHeader(403)
 		return
 	}
-	// I need to get the JSON from this
-
-	// Check that the app is indeed valid and that the user is authenticated here to access the app
-
-	// **** Instead of accessing the container by their name directly it has to interact via the specified name
-	// **** Maybe instead of storing the names of containers and their ID's, we should store them by their names ??? (this could also be more of a mess but check it out)
 
 	// // Check if the specified path is valid
 	// container, err := containerutils.GetContainer(ctx, appID, &containers)
