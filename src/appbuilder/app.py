@@ -4,6 +4,7 @@
 # This will need access to the users dev account details, how will I integrate that ?
 # Set the deployment status as the current deployed branch on Markotplace
 
+# **** Maybe I need to store the webhook secret somewhere too ???
 # **** Im pretty sure that if a user gives full repo permissions I can write webhooks without asking for permission ? (YES IT DOES!)
 
 from flask import Flask
