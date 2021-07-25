@@ -28,19 +28,3 @@ export const protectedMiddleware = async (
     // Call next
     next();
 };
-
-// Used for verifying that a request was made by the server
-export const serverMiddleware = async (
-    req: express.Request,
-    res: express.Response,
-    next: NextFunction
-) => {
-    // Verify that the request came from the server
-    const serverSecret = req.headers["Server-Secret"];
-
-    // Check that the server secret is valid
-    if (!serverSecret || serverSecret !== process.env.SERVER_SECRET) return res.sendStatus(403);
-
-    // Call next
-    next();
-};

@@ -2,7 +2,7 @@ import express from "express";
 import { User } from "../entities/user";
 import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
-import { protectedMiddleware, serverMiddleware } from "../utils/middleware";
+import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
 import { cacheData, clearCache } from "../utils/cache";
 
@@ -151,10 +151,13 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
 });
 
 // Verify that a user is authorized and return their data
-router.post("/owns-app", serverMiddleware, protectedMiddleware, async (req, res) => {
+router.post("/owns-app", protectedMiddleware, async (req, res) => {
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
+
+    // Get the name of the app
+    const { appName }: { appName: string } = req.body;
 
     // Check that the users apps are not undefined
     if (typeof user.apps === "undefined") return res.sendStatus(403);
