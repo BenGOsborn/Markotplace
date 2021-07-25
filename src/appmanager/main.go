@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 
 	"appmanager/containerutils"
 )
@@ -65,33 +66,33 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// // Check if the specified path is valid
-	// container, err := containerutils.GetContainer(ctx, appID, &containers)
-	// if err != nil {
-	// 	w.WriteHeader(500)
-	// 	return
-	// } else if container == nil {
-	// 	w.WriteHeader(404)
-	// 	return
-	// }
+	// Check if the specified path is valid
+	container, err := containerutils.GetContainer(ctx, appID, &containers)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	} else if container == nil {
+		w.WriteHeader(404)
+		return
+	}
 
-	// // Initialize the forward URL
-	// var forwardPort int
+	// Initialize the forward URL
+	var forwardPort int
 
-	// // Start the container if it does not exist, otherwise get the port for the container and log a hit
-	// if !container.Active {
-	// 	forwardPort = containerutils.GetPort()
-	// 	if err := container.StartContainer(ctx, forwardPort); err != nil {
-	// 		w.WriteHeader(500)
-	// 		return
-	// 	}
-	// } else {
-	// 	forwardPort = container.Port
-	// 	container.LastHit = time.Now()
-	// }
+	// Start the container if it does not exist, otherwise get the port for the container and log a hit
+	if !container.Active {
+		forwardPort = containerutils.GetPort()
+		if err := container.StartContainer(ctx, forwardPort); err != nil {
+			w.WriteHeader(500)
+			return
+		}
+	} else {
+		forwardPort = container.Port
+		container.LastHit = time.Now()
+	}
 
 	// Proxy pass to the correct route
-	remote, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", 3000))
+	remote, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 
 	// Set a cookie for maintaining the container connection
