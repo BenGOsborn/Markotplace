@@ -20,6 +20,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
 - Make sure that Docker CANNOT build from an existing image
+- Automatically add the app to the dev's users account on creation
 
 ### New dev system
 
