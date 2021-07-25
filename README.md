@@ -2,6 +2,9 @@
 
 An online marketplace that allows developers to monetize their online web apps.
 
+- EXAMPLE: https://api.github.com/repos/BenGOsborn/WASM-Bird/tarball 
+- ALSO: curl -v  -H "Accept: application/vnd.github.v3+json"   https://api.github.com/repos/BenGOsborn/WASM-Bird/tarball (look at the redirect location - it has the download (I wonder if this works for private repos too))
+
 ## Todo
 
 -   Maybe add a subscription payment system in the future ?
