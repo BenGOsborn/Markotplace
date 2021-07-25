@@ -163,9 +163,11 @@ router.post("/owns-app", protectedMiddleware, async (req, res) => {
     if (typeof user.apps === "undefined") return res.sendStatus(403);
 
     // Check that the user owns the app
+    const filtered = user.apps.filter(app => app.name === appName);
+    if (filtered.length === 0) return res.sendStatus(403);
 
-    // Return the user
-    res.json(user);
+    // Return success
+    res.sendStatus(200);
 });
 
 // Export the router
