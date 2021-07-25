@@ -2,7 +2,7 @@ import express from "express";
 import { User } from "../entities/user";
 import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
-import { protectedMiddleware } from "../utils/middleware";
+import { protectedMiddleware, serverMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
 import { cacheData, clearCache } from "../utils/cache";
 
@@ -149,6 +149,16 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
     // Return success
     return res.sendStatus(200);
 });
+
+// Verify that a user is authorized and return their data
+router.get("/data", serverMiddleware, protectedMiddleware, async (req, res) => {
+    // Get the user
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
+
+    // Return the user
+    res.json(user);
+})
 
 // Export the router
 export default router;
