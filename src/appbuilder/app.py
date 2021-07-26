@@ -15,17 +15,24 @@ import requests
 # Initialize Flask
 app = Flask(__name__)
 
+
 @app.route("/hook", methods=["POST"])
 def hook():
     # Get the data from the hook
-    data = request.json
+    body = request.json
+    headers = request.headers
 
-    # Get the ID from the hook
+    # Get the ID and branch from the hook
+    hook_id = headers["X-GitHub-Hook-ID"]
+    branch = body["ref"].split("/")[-1]
+
+    print(hook_id, branch)
 
     # Make a request to the server to get the app that has the specified hook (I wonder if I can do this without some form of authentication ???)
 
-    return None
+    return "Hello"
+
 
 # Run the app
 if __name__ == "__main__":
-    app.run(port=3000)
+    app.run(port=3000, debug=True)
