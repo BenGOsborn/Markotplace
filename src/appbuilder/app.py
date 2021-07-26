@@ -14,31 +14,33 @@ import requests
 from dotenv import load_dotenv
 import os
 
-# load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
+# Load the variables from the env (local only)
+load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
 
-# print(os.getenv("SERVER_SECRET"))
+print(os.getenv("SERVER_SECRET"))
 
-# Initialize Flask
-app = Flask(__name__)
+# # Initialize Flask
+# app = Flask(__name__)
 
 
-@app.route("/hook", methods=["POST"])
-def hook():
-    # Get the data from the hook
-    body = request.json
-    headers = request.headers
+# @app.route("/hook", methods=["POST"])
+# def hook():
+#     # Get the data from the hook
+#     body = request.json
+#     headers = request.headers
 
-    # Get the ID and branch from the hook
-    hook_id = headers["X-GitHub-Hook-ID"]
-    branch = body["ref"].split("/")[-1]
+#     # Get the ID and branch from the hook
+#     hook_id = headers["X-GitHub-Hook-ID"]
+#     branch = body["ref"].split("/")[-1]
 
-    print(hook_id, branch)
+#     print(hook_id, branch)
 
-    # Make a request to the server to get the app that has the specified hook (I wonder if I can do this without some form of authentication ???)
+#     # Make a request to the server to get the app that has the specified hook (I wonder if I can do this without some form of authentication ???)
 
-    return "Hello"
+#     return "Hello"
 
 
 # Run the app
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    # app.run(port=3000, debug=True)
+    print("Hello world")
