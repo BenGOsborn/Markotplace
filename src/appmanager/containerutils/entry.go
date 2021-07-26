@@ -41,7 +41,7 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 	}
 
 	// Create a new container
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
+	resp, err := cli.ContainerCreate(ctx, &container.Config{ // **** I also need to set the name here too for easier usage ? (reconfigure how the container is saved)
 		Image: ctr.AppID,
 		ExposedPorts: nat.PortSet{
 			nat.Port(fmt.Sprintf("%d/tcp", port)): {},
@@ -51,6 +51,8 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 		PortBindings: nat.PortMap{
 			nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "0.0.0.0", HostPort: fmt.Sprintf("%d", port)}},
 		},
+		AutoRemove: true,
+		Resources: container.Resources{ Memory: 3e+7 }, // **** Needs to be tested further
 	}, nil, nil, "")
 	if err != nil {
 		return err
