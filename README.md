@@ -22,4 +22,5 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Change ALL of the URL's embedded in the apps to their Docker compose versions
 -   CORS in Python and Go ???
 
-- When the app is added, auto deploy the app
+- When the app is added / repo is edited, auto deploy the app
+- Custom URL for the appmanager proxy ?

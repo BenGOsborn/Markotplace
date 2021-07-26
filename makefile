@@ -19,7 +19,7 @@ dc-start:
 	docker-compose up --build
 
 # Kill all Docker containers
-d-kill:
+docker-kill:
 	docker rm -f $$(docker ps -q)
 
 # Kill all instances of Ngrok
@@ -53,7 +53,7 @@ dev-appbuilder:
 	ngrok http 3000 > /dev/null &
 	sleep 1
 	curl http://localhost:4040/api/tunnels
-	cd src/appbuilder/; python3 /home/ben/Code/Markotplace/src/appbuilder/app.py 
+	python3 /home/ben/Code/Markotplace/src/appbuilder/app.py 
 
 # Start the dev api
 dev-api:

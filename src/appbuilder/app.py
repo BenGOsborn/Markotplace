@@ -14,6 +14,8 @@ import requests
 from dotenv import load_dotenv
 import os
 import docker  # This service will require access to the Docker server as well
+import tarfile
+import uuid
 
 # Load the variables from the env (local only)
 load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
@@ -57,12 +59,19 @@ def deploy():
                         headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
 
     # Write the data to the file
-    file_name = "test" + ".tar.gz"
-    with open(file_name, "wb") as file:
+    tar_path = os.path.join(os.getcwd(), "test" + ".tar.gz")
+    with open(tar_path, "wb") as file:
         for chunk in resp.iter_content(chunk_size=256):
             file.write(chunk)
 
     # Extract the content from the file, build the image, and then delete the files
+
+    # Extract the contents from the file (HOW CAN I RENAME THE CONTENTS)
+    extract_path = os.path.join(os.getcwd(), )
+
+    tar = tarfile.open(tar_path, "r:gz")
+    tar.extractall()
+    tar.close()
 
     return "Deploy"
 
