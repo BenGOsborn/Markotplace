@@ -44,6 +44,11 @@ dev-redis-access:
 dev-appmanager:
 	cd src/appmanager; nodemon --watch ../appmanager/ --ext '*' --signal SIGTERM --exec 'godotenv -f ../../.env go run main.go'
 
+# Start the dev app builder
+dev-appbuilder:
+	ngrok http 3000
+	cd src/appbuilder; python3 app.py
+
 # Start the dev api
 dev-api:
 	npm run --prefix src/api dev
