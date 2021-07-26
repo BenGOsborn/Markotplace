@@ -28,7 +28,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Just like Heroku - I need a way where my app can create webhooks in users repositories
 -   ???? Do cookies work with webhooks ?
 
--   Attach some sort of metadata to the webhook allowing it to know what repository was fired (maybe I should make the repositories with the respective user unique ?)
+- Make the owner and the repo unique and then we will parse according to that OR have a single string
 -   \*\*\*\* Use the octokit/core.js INSTEAD of the regular requests via axios (REMOVE AXIOS)
 
 ### New dev system
