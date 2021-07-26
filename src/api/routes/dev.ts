@@ -106,7 +106,7 @@ router.post("/app/create", async (req, res) => {
         price,
         ghRepoOwner,
         ghRepoName,
-        ghRepoBranch
+        ghRepoBranch,
     }: {
         name: string;
         title: string;
@@ -125,7 +125,7 @@ router.post("/app/create", async (req, res) => {
         price,
         ghRepoOwner,
         ghRepoName,
-        ghRepoBranch
+        ghRepoBranch,
     });
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -134,9 +134,7 @@ router.post("/app/create", async (req, res) => {
         where: { name },
     });
     if (typeof exists !== "undefined")
-        return res
-            .status(400)
-            .send("An app with that name already exists");
+        return res.status(400).send("An app with that name already exists");
 
     // Check that the dev has submitted their payment details if they wish to charge for their app
     const detailsSubmitted = await cacheData(
@@ -153,8 +151,24 @@ router.post("/app/create", async (req, res) => {
                 "To charge more than $0 for your app you must first finish setting up your Stripe account"
             );
 
-    // ***** Initialize a new webhook in the repository for the user (WILL THIS SET ITS URL ???)
-    const data = await axios.post(`https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`, {}, {headers: { Authorization: `token ${user.dev.ghAccessToken}`, Accept: "application/vnd.github.v3+json" }})
+    // Initialize a new webhook in the repository for the user
+    const {
+        data: { id: ghWebhookID },
+    } = await axios.post<{ id: string }>(
+        `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
+        {
+            config: {
+                url: `${process.env.SITE_NAME}/appbuilder/hook`,
+                content_type: "json",
+            },
+        },
+        {
+            headers: {
+                Authorization: `token ${user.dev.ghAccessToken}`,
+                Accept: "application/vnd.github.v3+json",
+            },
+        }
+    );
 
     // Create a new app and assign it to the dev account
     const app = App.create({
@@ -164,8 +178,8 @@ router.post("/app/create", async (req, res) => {
         price: price * 100,
         ghRepoOwner,
         ghRepoName,
-        ghRepoBranch
-        // **** I am missing the GitHub webhook ID
+        ghRepoBranch,
+        ghWebhookID,
     });
     await app.save();
 
@@ -209,6 +223,7 @@ router.patch("/app/edit", async (req, res) => {
         price,
         ghRepoOwner,
         ghRepoName,
+        ghRepoBranch,
     }: {
         name: string;
         title: string | undefined;
@@ -216,6 +231,7 @@ router.patch("/app/edit", async (req, res) => {
         price: number | undefined;
         ghRepoOwner: string | undefined;
         ghRepoName: string | undefined;
+        ghRepoBranch: string | undefined;
     } = req.body;
 
     // Validate the edit app data
@@ -226,6 +242,7 @@ router.patch("/app/edit", async (req, res) => {
         price,
         ghRepoOwner,
         ghRepoName,
+        ghRepoBranch,
     });
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -265,9 +282,37 @@ router.patch("/app/edit", async (req, res) => {
     if (typeof ghRepoOwner !== "undefined")
         updateData.ghRepoOwner = ghRepoOwner;
     if (typeof ghRepoName !== "undefined") updateData.ghRepoName = ghRepoName;
+    if (typeof ghRepoBranch !== "undefined")
+        updateData.ghRepoBranch = ghRepoBranch;
 
     // Update the app
     await App.update(existingApp.id, updateData);
+
+    // Update the webhook if the repo was changed
+    if (
+        typeof ghRepoOwner !== "undefined" ||
+        typeof ghRepoName !== "undefined"
+    ) {
+        const {
+            data: { id: ghWebhookID },
+        } = await axios.post<{ id: string }>(
+            `https://api.github.com/repos/${
+                ghRepoOwner || existingApp.ghRepoOwner
+            }/${ghRepoName || existingApp.ghRepoName}/hooks`,
+            {
+                config: {
+                    url: `${process.env.SITE_NAME}/appbuilder/hook`,
+                    content_type: "json",
+                },
+            },
+            {
+                headers: {
+                    Authorization: `token ${user.dev.ghAccessToken}`,
+                    Accept: "application/vnd.github.v3+json",
+                },
+            }
+        );
+    }
 
     // Clear the cached data
     await clearCache(`user:${user.id}`);

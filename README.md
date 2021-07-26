@@ -27,4 +27,5 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Find a way to have the same repo accross different apps ? (maybe when we register a webhook, the ID of the hook will be returned to us on creation AND when a webhook is sent for identification) (this would remove the unique problem)
 -   Add the branch option to the app
 
-- Change NODE_ENV to PRODUCTION
+- Change NODE_ENV to ENVIRONMENT
+- Change all listings of site url to the env variable
