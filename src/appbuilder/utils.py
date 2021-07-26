@@ -13,7 +13,7 @@ def connect_db():
     """
     Establish and return the connection to PostgreSQL server
     """
-    conn = psycopg2.connect(host="localhost", port="5432", user=os.getenv(
+    conn = psycopg2.connect(host="db", port="5432", user=os.getenv(
         "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
 
     return conn

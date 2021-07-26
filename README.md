@@ -19,13 +19,8 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
 -   Make sure that Docker CANNOT build from an existing image (Im probably just going to do a basic regex check on all of the loading statements)
--   \*\*\*\* Use the octokit/core.js INSTEAD of the regular requests via axios (REMOVE AXIOS)
--   Move some common functions into their own library and misc utils file
 -   Change ALL of the URL's embedded in the apps to their Docker compose versions
 -   CORS in Python and Go ???
-
--   Find a way to have the same repo accross different apps ? (maybe when we register a webhook, the ID of the hook will be returned to us on creation AND when a webhook is sent for identification) (this would remove the unique problem)
--   Add the branch option to the app
 
 - Change NODE_ENV to ENVIRONMENT
 - Change all listings of site url to the env variable

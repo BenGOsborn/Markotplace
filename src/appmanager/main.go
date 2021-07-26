@@ -18,8 +18,8 @@ import (
 // Initialize default values
 const PORT = 5000
 const STATE_COOKIE = "appmanager.state.appname"
-const SITE_URL = "http://0.0.0.0:4000"
 
+var siteURL = os.Getenv("SITE_URL")
 var containerPrefix = os.Getenv("CONTAINER_PREFIX")
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
@@ -57,7 +57,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 
 	// Initialize the request
-	req, _ := http.NewRequest("POST", fmt.Sprintf("%s/api/user/owns-app", SITE_URL), bytes.NewBuffer(jsonStr))
+	req, _ := http.NewRequest("POST", fmt.Sprintf("%s/api/user/owns-app", siteURL), bytes.NewBuffer(jsonStr))
 	req.Header.Set("Cookie", fmt.Sprintf("connect.sid=%s", sessionCookie))
 	req.Header.Set("Content-Type", "application/json")
 

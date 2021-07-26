@@ -20,7 +20,7 @@ app.use(cors());
 // Initialize ORM
 createConnection({
     type: "postgres",
-    host: process.env.NODE_ENV !== "production" ? "localhost" : "db",
+    host: "db",
     database: process.env.POSTGRES_DB,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
@@ -36,7 +36,7 @@ app.use(
         saveUninitialized: false,
         resave: false,
         cookie: {
-            secure: process.env.NODE_ENV === "production",
+            secure: process.env.ENVIRONMENT === "production",
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 7,
         },

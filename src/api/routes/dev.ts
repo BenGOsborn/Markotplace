@@ -158,7 +158,7 @@ router.post("/app/create", async (req, res) => {
         `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
         {
             config: {
-                url: `${process.env.SITE_NAME}/appbuilder/hook`,
+                url: `${process.env.SITE_URL}/appbuilder/hook`,
                 content_type: "json",
             },
         },
@@ -284,15 +284,11 @@ router.patch("/app/edit", async (req, res) => {
     if (typeof ghRepoName !== "undefined") updateData.ghRepoName = ghRepoName;
     if (typeof ghRepoBranch !== "undefined")
         updateData.ghRepoBranch = ghRepoBranch;
-
-    // Update the app
-    await App.update(existingApp.id, updateData);
-
-    // Update the webhook if the repo was changed
     if (
         typeof ghRepoOwner !== "undefined" ||
         typeof ghRepoName !== "undefined"
     ) {
+        // Update the webhook if the repo was changed
         const {
             data: { id: ghWebhookID },
         } = await axios.post<{ id: string }>(
@@ -301,7 +297,7 @@ router.patch("/app/edit", async (req, res) => {
             }/${ghRepoName || existingApp.ghRepoName}/hooks`,
             {
                 config: {
-                    url: `${process.env.SITE_NAME}/appbuilder/hook`,
+                    url: `${process.env.SITE_URL}/appbuilder/hook`,
                     content_type: "json",
                 },
             },
@@ -312,7 +308,11 @@ router.patch("/app/edit", async (req, res) => {
                 },
             }
         );
+        updateData.ghWebhookID = ghWebhookID;
     }
+
+    // Update the app
+    await App.update(existingApp.id, updateData);
 
     // Clear the cached data
     await clearCache(`user:${user.id}`);
