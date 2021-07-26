@@ -126,10 +126,14 @@ router.post("/app/create", async (req, res) => {
     });
     if (error) return res.status(400).send(error.details[0].message);
 
-    // Check that an app with the same name does not exist
-    const exists = await App.findOne({ where: { name } });
+    // Check that an app with the same name or repo does not exist
+    const exists = await App.findOne({
+        where: [{ name }, { ghRepoOwner, ghRepoName }],
+    });
     if (typeof exists !== "undefined")
-        return res.status(400).send("An app with that name already exists");
+        return res
+            .status(400)
+            .send("An app with that name or repository already exists");
 
     // Check that the dev has submitted their payment details if they wish to charge for their app
     const detailsSubmitted = await cacheData(
@@ -217,10 +221,21 @@ router.patch("/app/edit", async (req, res) => {
     });
     if (error) return res.status(400).send(error.details[0].message);
 
-    // Find the app with the existing name **** There is probably a better way of doing this
+    // Find the app with the existing name
     const existingApp = await App.findOne({ where: { name } });
     if (typeof existingApp === "undefined")
         return res.status(400).send("No app with this name exists");
+
+    // Check that an app with the same repo does not exist
+    const existingRepo = await App.findOne({
+        where: { ghRepoOwner, ghRepoName },
+    });
+    if (typeof existingRepo !== "undefined")
+        return res
+            .status(400)
+            .send("An app with that repository already exists");
+
+    // Check that the dev owns the app
     if (existingApp.dev.id !== user.dev.id)
         return res.status(403).send("You are not able to edit this app");
 
