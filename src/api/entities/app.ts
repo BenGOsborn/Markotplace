@@ -27,10 +27,13 @@ export class App extends BaseEntity {
     @Column()
     ghRepoOwner!: string;
 
-    // **** PERHAPS WE SHOULD HAVE A BRANCH AS WELL ?
-
     @Column()
     ghRepoName!: string;
+
+    // **** PERHAPS WE SHOULD HAVE A BRANCH AS WELL ?
+
+    // **** Also need some way of identifying the app so that the app knows from the webhook
+    // **** If I update the repository, I will have to update the webhook to the new repository as well
 
     @ManyToOne(() => Dev, (dev) => dev.apps)
     dev!: Dev;
