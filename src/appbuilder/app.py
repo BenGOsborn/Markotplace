@@ -14,7 +14,7 @@ import requests
 from dotenv import load_dotenv
 import os
 import docker  # This service will require access to the Docker server as well
-import tarfile
+import shutil
 import uuid
 
 # Load the variables from the env (local only)
@@ -58,20 +58,26 @@ def deploy():
     resp = requests.get("https://api.github.com/repos/BenGOsborn/Webhook-Test/tarball/",
                         headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
 
+    # Initialize a UUID
+    temp_id = uuid.uuid4().hex
+
     # Write the data to the file
-    tar_path = os.path.join(os.getcwd(), "test" + ".tar.gz")
+    tar_path = os.path.join(os.getcwd(), temp_id + ".tar.gz")
     with open(tar_path, "wb") as file:
         for chunk in resp.iter_content(chunk_size=256):
             file.write(chunk)
 
     # Extract the content from the file, build the image, and then delete the files
 
-    # Extract the contents from the file (HOW CAN I RENAME THE CONTENTS)
-    extract_path = os.path.join(os.getcwd(), )
+    # Extract the contents from the file
+    extract_path = os.path.join(os.getcwd(), temp_id)
+    os.mkdir(extract_path)
+    shutil.unpack_archive(tar_path, extract_path)
+    contents_path = [f.path for f in os.scandir(extract_path)][0]
 
-    tar = tarfile.open(tar_path, "r:gz")
-    tar.extractall()
-    tar.close()
+    # Delete the temp files
+    os.remove(tar_path)
+    shutil.rmtree(extract_path, ignore_errors=True)
 
     return "Deploy"
 
