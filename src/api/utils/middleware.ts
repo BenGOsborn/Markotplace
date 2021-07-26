@@ -28,23 +28,3 @@ export const protectedMiddleware = async (
     // Call next
     next();
 };
-
-// Server authenticated middleware
-export const serverMiddleware = async (
-    req: express.Request,
-    res: express.Response,
-    next: NextFunction
-) => {
-    // Get the server secret from the header
-    const serverSecret = req.headers["Server-Secret"];
-
-    // Make sure that the server secret is valid
-    if (
-        typeof serverSecret === "undefined" ||
-        serverSecret !== process.env.SERVER_SECRET
-    )
-        return res.sendStatus(403);
-
-    // Call next
-    next();
-};
