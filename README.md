@@ -12,6 +12,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe rebrand the entire app for gamers specifically
 -   Add support for Unity and other game engines that make web apps
 -   Make a blog helping developers to make apps for our site
+-   Make some sort of API for other developers where they can add their own payment option on their server which is embedded on their website
 
 ## Immediate
 
