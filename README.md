@@ -29,6 +29,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   ???? Do cookies work with webhooks ?
 
 -   Attach some sort of metadata to the webhook allowing it to know what repository was fired (maybe I should make the repositories with the respective user unique ?)
+-   \*\*\*\* Use the octokit/core.js INSTEAD of the regular requests via axios (REMOVE AXIOS)
 
 ### New dev system
 
