@@ -7,4 +7,25 @@
 # **** Maybe I need to store the webhook secret somewhere too ???
 # **** Im pretty sure that if a user gives full repo permissions I can write webhooks without asking for permission ? (YES IT DOES!)
 
-from flask import Flask
+# How do I use the .env in Python using the CLI ?
+
+from flask import Flask, request, jsonify
+import requests
+
+# Initialize Flask
+app = Flask(__name__)
+
+@app.route("/hook", methods=["POST"])
+def hook():
+    # Get the data from the hook
+    data = request.json
+
+    # Get the ID from the hook
+
+    # Make a request to the server to get the app that has the specified hook (I wonder if I can do this without some form of authentication ???)
+
+    return None
+
+# Run the app
+if __name__ == "__main__":
+    app.run(port=3000)

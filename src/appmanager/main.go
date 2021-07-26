@@ -16,7 +16,7 @@ import (
 )
 
 // Initialize default values
-const PORT = 4000
+const PORT = 5000
 const STATE_COOKIE = "appmanager.state.appname"
 const SITE_URL = "http://0.0.0.0:4000"
 
