@@ -11,6 +11,12 @@
 
 from flask import Flask, request, jsonify
 import requests
+from dotenv import load_dotenv
+import os
+
+# load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
+
+# print(os.getenv("SERVER_SECRET"))
 
 # Initialize Flask
 app = Flask(__name__)
