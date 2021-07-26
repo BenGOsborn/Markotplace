@@ -49,7 +49,7 @@ dev-appbuilder:
 	ngrok http 3000 > /dev/null &
 	sleep 1
 	curl http://localhost:4040/api/tunnels
-	cd src/appbuilder/; python3 -m app.py
+	cd src/appbuilder/; python3 /home/ben/Code/Markotplace/src/appbuilder/app.py 
 
 # Start the dev api
 dev-api:

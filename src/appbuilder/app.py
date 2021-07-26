@@ -17,8 +17,6 @@ import os
 # Load the variables from the env (local only)
 load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
 
-print(os.getenv("SERVER_SECRET"))
-
 # Initialize Flask
 app = Flask(__name__)
 
