@@ -64,7 +64,7 @@ router.get("/authorize/github/callback", async (req, res) => {
 
         // Make a new dev account for the user
         const dev = Dev.create({
-            token: access_token,
+            ghAccessToken: access_token,
             ghUsername: username,
             stripeConnectID,
             user,
@@ -76,7 +76,7 @@ router.get("/authorize/github/callback", async (req, res) => {
     } else {
         // Update the users existing dev account
         await Dev.update(user.dev.id, {
-            token: access_token,
+            ghAccessToken: access_token,
             ghUsername: username,
         });
     }
@@ -106,6 +106,7 @@ router.post("/app/create", async (req, res) => {
         price,
         ghRepoOwner,
         ghRepoName,
+        ghRepoBranch
     }: {
         name: string;
         title: string;
@@ -113,6 +114,7 @@ router.post("/app/create", async (req, res) => {
         price: number;
         ghRepoOwner: string;
         ghRepoName: string;
+        ghRepoBranch: string;
     } = req.body;
 
     // Validate the app data
@@ -123,17 +125,18 @@ router.post("/app/create", async (req, res) => {
         price,
         ghRepoOwner,
         ghRepoName,
+        ghRepoBranch
     });
     if (error) return res.status(400).send(error.details[0].message);
 
-    // Check that an app with the same name or repo does not exist
+    // Check that an app with the same name does not exist
     const exists = await App.findOne({
-        where: [{ name }, { ghRepoOwner, ghRepoName }],
+        where: { name },
     });
     if (typeof exists !== "undefined")
         return res
             .status(400)
-            .send("An app with that name or repository already exists");
+            .send("An app with that name already exists");
 
     // Check that the dev has submitted their payment details if they wish to charge for their app
     const detailsSubmitted = await cacheData(
@@ -150,6 +153,9 @@ router.post("/app/create", async (req, res) => {
                 "To charge more than $0 for your app you must first finish setting up your Stripe account"
             );
 
+    // ***** Initialize a new webhook in the repository for the user (WILL THIS SET ITS URL ???)
+    const data = await axios.post(`https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`, {}, {headers: { Authorization: `token ${user.dev.ghAccessToken}`, Accept: "application/vnd.github.v3+json" }})
+
     // Create a new app and assign it to the dev account
     const app = App.create({
         name,
@@ -158,6 +164,8 @@ router.post("/app/create", async (req, res) => {
         price: price * 100,
         ghRepoOwner,
         ghRepoName,
+        ghRepoBranch
+        // **** I am missing the GitHub webhook ID
     });
     await app.save();
 
@@ -225,15 +233,6 @@ router.patch("/app/edit", async (req, res) => {
     const existingApp = await App.findOne({ where: { name } });
     if (typeof existingApp === "undefined")
         return res.status(400).send("No app with this name exists");
-
-    // Check that an app with the same repo does not exist
-    const existingRepo = await App.findOne({
-        where: { ghRepoOwner, ghRepoName },
-    });
-    if (typeof existingRepo !== "undefined")
-        return res
-            .status(400)
-            .send("An app with that repository already exists");
 
     // Check that the dev owns the app
     if (existingApp.dev.id !== user.dev.id)

@@ -27,6 +27,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Find a way to have the same repo accross different apps ? (maybe when we register a webhook, the ID of the hook will be returned to us on creation AND when a webhook is sent for identification) (this would remove the unique problem)
 -   Add the branch option to the app
 
--   Is authentication on some routes REALLY required as the server will sit behind a firewall anyway ?
--   I should just connect to the database from Python
 - Change NODE_ENV to PRODUCTION
