@@ -11,10 +11,9 @@ def is_safe():
 
 def connect_db():
     """
-    Establish connection to PostgreSQL server
+    Establish and return the connection to PostgreSQL server
     """
-    # Load these from environment variables
     conn = psycopg2.connect(
-        host="localhost", database="db", user="", password="")
+        host="localhost", port="5432", user=os.getenv("POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
 
     return conn
