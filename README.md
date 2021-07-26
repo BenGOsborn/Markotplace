@@ -28,6 +28,8 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Just like Heroku - I need a way where my app can create webhooks in users repositories
 -   ???? Do cookies work with webhooks ?
 
+-   Attach some sort of metadata to the webhook allowing it to know what repository was fired (maybe I should make the repositories with the respective user unique ?)
+
 ### New dev system
 
 -   Each user has a single github account connected
