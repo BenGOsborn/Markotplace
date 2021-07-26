@@ -22,5 +22,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Change ALL of the URL's embedded in the apps to their Docker compose versions
 -   CORS in Python and Go ???
 
-- Change NODE_ENV to ENVIRONMENT
-- Change all listings of site url to the env variable
+- When the app is added, auto deploy the app

@@ -13,6 +13,7 @@ from flask import Flask, request, jsonify
 import requests
 from dotenv import load_dotenv
 import os
+import docker  # This service will require access to the Docker server as well
 
 # Load the variables from the env (local only)
 load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
@@ -21,7 +22,7 @@ load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
 app = Flask(__name__)
 
 
-@app.route("/hook", methods=["POST"])
+@app.route("/appbuilder/hook", methods=["POST"])
 def hook():
     # Get the data from the hook
     body = request.json
@@ -31,7 +32,39 @@ def hook():
     hook_id = headers["X-GitHub-Hook-ID"]
     branch = body["ref"].split("/")[-1]
 
-    return "Hello"
+    # Get the app data for the webhook
+
+    # Download, extract, and verify the app from GitHub
+
+    # Build the container image with an appropriate name
+
+    return "Hook"
+
+
+@app.route("/appbuilder/build", methods=["GET"])  # Change to POST
+def deploy():
+    # Follow the same steps as the deploy on the hook EXCEPT we should specify the app to be deployed
+
+    # **** Provide some level of authentication for this so random users cant deploy other peoples apps super easy
+
+    # Get the name of the app to build
+    # app_name = request.json["appName"]
+
+    # Find the app that matches the name
+
+    # Try and manually make the ref using ref/head/branch
+    resp = requests.get("https://api.github.com/repos/BenGOsborn/Webhook-Test/tarball/",
+                        headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
+
+    # Write the data to the file
+    file_name = "test" + ".tar.gz"
+    with open(file_name, "wb") as file:
+        for chunk in resp.iter_content(chunk_size=256):
+            file.write(chunk)
+
+    # Extract the content from the file, build the image, and then delete the files
+
+    return "Deploy"
 
 
 # Run the app

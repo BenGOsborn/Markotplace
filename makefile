@@ -22,6 +22,10 @@ dc-start:
 d-kill:
 	docker rm -f $$(docker ps -q)
 
+# Kill all instances of Ngrok
+ngrok-kill:
+	killall ngrok
+
 # ---------- Dev ----------
 
 # Start PostgreSQL
