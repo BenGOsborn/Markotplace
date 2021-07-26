@@ -10,10 +10,12 @@
 # How do I use the .env in Python using the CLI ?
 
 from flask import Flask, request, jsonify
+from flask_ngrok import run_with_ngrok
 import requests
 
 # Initialize Flask
 app = Flask(__name__)
+run_with_ngrok(app)
 
 @app.route("/hook", methods=["POST"])
 def hook():
