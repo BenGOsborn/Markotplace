@@ -29,3 +29,4 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   Is authentication on some routes REALLY required as the server will sit behind a firewall anyway ?
 -   I should just connect to the database from Python
+- Change NODE_ENV to PRODUCTION
