@@ -75,8 +75,12 @@ def build_image_from_repo(docker_client: DockerClient, gh_owner: str, gh_repo: s
     # **** MAKE SURE THAT IT WORKS WITH DIFFERENT BRANCHES
 
     # Get the repository
-    resp = requests.get(f"https://api.github.com/repos/{gh_owner}/{gh_repo}/tarball/{gh_branch}",
-                        headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
+    # resp = requests.get(f"https://api.github.com/repos/{gh_owner}/{gh_repo}/tarball/{gh_branch}",
+    #                     headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
+
+    # Will this work properly (even with authorization) ???
+    repo = requests.get(f"https://github.com/{gh_owner}/{gh_repo}/archive/{gh_branch}.tar.gz",
+                        headers={"Authorization": "lol"}, stream=True)
 
     try:
         # Initialize a UUID
