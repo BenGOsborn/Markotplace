@@ -26,8 +26,8 @@ class DB:
     Connect and use the database
     """
 
-    def __init__(self):
-        self.__conn = psycopg2.connect(host="db", port="5432", user=os.getenv(
+    def __init__(self, production=False):
+        self.__conn = psycopg2.connect(host="db" if production else "localhost", port="5432", user=os.getenv(
             "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
         self.__cursor = self.__conn.cursor()
 

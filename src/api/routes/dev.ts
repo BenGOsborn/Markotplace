@@ -5,7 +5,6 @@ import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 import { stripe } from "../utils/stripe";
-import bcrypt from "bcrypt";
 import { cacheData, clearCache } from "../utils/cache";
 
 // Initialize the router

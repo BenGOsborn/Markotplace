@@ -18,7 +18,7 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
-- How can I prevent exposed ports for the ones I dont want ?
+-   How can I prevent exposed ports for the ones I dont want ? - https://stackoverflow.com/questions/45100370/prevent-publishing-ports-defined-in-compose-file
 
 - ALLOW THE OPTION TO LOCALHOST WHEN PRODUCTION NOT ENABLED
 - SET NODE_ENV AND REPLACE ENVIRONMENT WITH NODE_ENV IN THE API SERVER

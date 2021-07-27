@@ -43,6 +43,7 @@ services:
             - STRIPE_WEBOOK_SECRET_PURCHASE=${STRIPE_WEBOOK_SECRET_PURCHASE}
             - SITE_URL=${SITE_URL}
             - ENVIRONMENT=${ENVIRONMENT}
+            - NODE_ENV=${NODE_ENV}
     appmanager:
         build: src/appmanager/
         ports:
