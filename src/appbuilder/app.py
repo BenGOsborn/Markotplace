@@ -67,30 +67,35 @@ def deploy():
     resp = requests.get(f"https://api.github.com/repos/{gh_owner}/{gh_repo}/tarball/{gh_branch}",
                         headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
 
-    # Initialize a UUID
-    temp_id = uuid.uuid4().hex
+    try:
+        # Initialize a UUID
+        temp_id = uuid.uuid4().hex
 
-    # Write the data to the file
-    tar_path = os.path.join(os.getcwd(), temp_id + ".tar.gz")
-    with open(tar_path, "wb") as file:
-        for chunk in resp.iter_content(chunk_size=256):
-            file.write(chunk)
+        # Write the data to the file
+        tar_path = os.path.join(os.getcwd(), temp_id + ".tar.gz")
+        with open(tar_path, "wb") as file:
+            for chunk in resp.iter_content(chunk_size=256):
+                file.write(chunk)
 
-    # Extract the content from the file, build the image, and then delete the files
+        # Extract the contents from the file
+        extract_path = os.path.join(os.getcwd(), temp_id)
+        os.mkdir(extract_path)
+        shutil.unpack_archive(tar_path, extract_path)
+        contents_path = [f.path for f in os.scandir(extract_path)][0]
 
-    # Extract the contents from the file
-    extract_path = os.path.join(os.getcwd(), temp_id)
-    os.mkdir(extract_path)
-    shutil.unpack_archive(tar_path, extract_path)
-    contents_path = [f.path for f in os.scandir(extract_path)][0]
+        # Get the Dockerfile and clean it
+        dockerfile = [f.path for f in os.scandir(
+            contents_path) if f.name == "Dockerfile"][0]
 
-    # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds ?)
-    client.images.build(
-        path=contents_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True)
+        # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds ?)
+        client.images.build(
+            path=contents_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True)
 
-    # Delete the temp files
-    os.remove(tar_path)
-    shutil.rmtree(extract_path, ignore_errors=True)
+    finally:
+        # Cleanup the files
+        os.remove(tar_path) if os.path.exists(tar_path) else None
+        shutil.rmtree(extract_path, ignore_errors=True) if os.path.exists(
+            extract_path) else None
 
     return "Deploy"
 
