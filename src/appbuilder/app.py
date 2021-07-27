@@ -13,9 +13,10 @@ from flask import Flask, request, jsonify
 import requests
 from dotenv import load_dotenv
 import os
-import docker  # This service will require access to the Docker server as well
+import docker
 import shutil
 import uuid
+from utils import is_safe
 
 # Load the variables from the env (local only)
 load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
@@ -83,9 +84,10 @@ def deploy():
         shutil.unpack_archive(tar_path, extract_path)
         contents_path = [f.path for f in os.scandir(extract_path)][0]
 
-        # Get the Dockerfile and clean it
+        # Get the Dockerfile and check that is is safe
         dockerfile = [f.path for f in os.scandir(
             contents_path) if f.name == "Dockerfile"][0]
+        assert is_safe(dockerfile)
 
         # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds ?)
         client.images.build(

@@ -1,12 +1,20 @@
 import psycopg2
 import os
+import re
+import mmap
 
 
-def is_safe():
+def is_safe(dockerfile: str) -> bool:
     """
     Runs security checks on the downloaded repository to make sure that it is safe to be built.
     """
-    pass
+
+    with open(dockerfile, "r+") as file:
+        data = mmap.mmap(file.fileno(), 0)
+        # Explore the different ways that hackers could break this regex
+        match = re.search(os.getenv("CONTAINER_PREFIX").encode(), data)
+
+    return not match
 
 
 def connect_db():
