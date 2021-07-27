@@ -14,8 +14,10 @@ import os
 import docker
 import utils
 
+production = os.getenv("ENVIRONMENT") == "production"
+
 # Load the environment variables if in development mode
-if os.getenv("ENVIRONMENT") != "production":
+if not production:
     from dotenv import load_dotenv
     load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
 
@@ -70,4 +72,4 @@ def deploy():
 
 # Run the app
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    app.run(port=3000, debug=(not production))
