@@ -4,9 +4,7 @@ include .env
 
 # Build images and start them up
 dc-start:
-	set -a
-	source .env
-	docker-compose up --build -d
+	docker-compose up --build
 
 # Shutdown Docker Compose
 dc-stop:
@@ -58,7 +56,7 @@ dev-api:
 # Build the app builder image and start it
 appbuilder-start:
 	docker build -t bengosborn/markotplace/appbuilder src/appbuilder
-	docker run -dp 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/markotplace/appbuilder
+	docker run -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker bengosborn/markotplace/appbuilder
 
 # Build the app manager image and start it
 appmanager-start:
