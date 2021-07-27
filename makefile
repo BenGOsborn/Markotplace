@@ -16,6 +16,8 @@ dc-build:
 
 # Build images and start them up
 dc-start:
+	set -a
+	source .env
 	docker-compose up --build
 
 # Kill all Docker containers
