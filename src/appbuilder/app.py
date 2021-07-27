@@ -10,13 +10,14 @@
 # How do I use the .env in Python using the CLI ?
 
 from flask import Flask, request, jsonify
-from dotenv import load_dotenv
 import os
 import docker
 import utils
 
-# Load the variables from the env (local only)
-load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
+# Load the environment variables if in development mode
+if os.getenv("ENVIRONMENT") != "production":
+    from dotenv import load_dotenv
+    load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
 
 # Initialize Flask
 app = Flask(__name__)
