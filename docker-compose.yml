@@ -4,9 +4,9 @@ services:
     db:
         image: postgres:latest
         environment:
-            - POSTGRES_USER="${POSTGRES_USER}"
-            - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
-            - POSTGRES_DB="${POSTGRES_DB}"
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
         ports:
             - "5432:5432"
     redis:
@@ -19,10 +19,10 @@ services:
         ports:
             - "3000:3000"
         environment:
-            - POSTGRES_USER="${POSTGRES_USER}"
-            - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
-            - POSTGRES_DB="${POSTGRES_DB}"
-            - ENVIRONMENT="${ENVIRONMENT}"
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+            - ENVIRONMENT=${ENVIRONMENT}
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - /usr/bin/docker:/usr/bin/docker
@@ -31,25 +31,25 @@ services:
         ports:
             - "4000:4000"
         environment:
-            - POSTGRES_USER="${POSTGRES_USER}"
-            - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
-            - POSTGRES_DB="${POSTGRES_DB}"
-            - REDIS_PASSWORD="${REDIS_PASSWORD}"
-            - SERVER_SECRET="${SERVER_SECRET}"
-            - GITHUB_CLIENT_ID="${GITHUB_CLIENT_ID}
-            - GITHUB_CLIENT_SECRET="${GITHUB_CLIENT_SECRET}"
-            - STRIPE_SECRET="${STRIPE_SECRET}"
-            - STRIPE_SECRET_TEST="${STRIPE_SECRET_TEST}"
-            - STRIPE_WEBOOK_SECRET_PURCHASE="${STRIPE_WEBOOK_SECRET_PURCHASE}"
-            - SITE_URL="${SITE_URL}"
-            - ENVIRONMENT="${ENVIRONMENT}"
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+            - SERVER_SECRET=${SERVER_SECRET}
+            - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+            - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+            - STRIPE_SECRET=${STRIPE_SECRET}
+            - STRIPE_SECRET_TEST=${STRIPE_SECRET_TEST}
+            - STRIPE_WEBOOK_SECRET_PURCHASE=${STRIPE_WEBOOK_SECRET_PURCHASE}
+            - SITE_URL=${SITE_URL}
+            - ENVIRONMENT=${ENVIRONMENT}
     appmanager:
         build: src/appmanager/
         ports:
             - "5000:5000"
         environment:
-            - CONTAINER_PREFIX="${CONTAINER_PREFIX}"
-            - ENVIRONMENT="${ENVIRONMENT}"
+            - CONTAINER_PREFIX=${CONTAINER_PREFIX}
+            - ENVIRONMENT=${ENVIRONMENT}
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - /usr/bin/docker:/usr/bin/docker
