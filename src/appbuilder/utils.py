@@ -35,8 +35,8 @@ class DB:
             "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
 
     def __label_appdata_columns(self, row: tuple) -> dict:
-        labels = ["ghRepoOwner", "ghRepoName",
-                  "ghRepoBranch", "ghAccessToken"]
+        labels = ["gh_repo_owner", "gh_repo_name",
+                  "gh_repo_branch", "gh_access_token"]
         return {label: data for label, data in zip(labels, row)}
 
     def find_app_by_webhook(self, webhook_id: str):
@@ -71,16 +71,14 @@ class DB:
         self.__conn.close()
 
 
-def build_image_from_repo(docker_client: DockerClient, gh_owner: str, gh_repo: str, gh_branch: str, app_name: str):
-    # **** MAKE SURE THAT IT WORKS WITH DIFFERENT BRANCHES
-
+def build_image_from_repo(docker_client: DockerClient, gh_repo_owner: str, gh_repo_name: str, gh_repo_branch: str, app_name: str, gh_access_token: str):
     # Get the repository
     # resp = requests.get(f"https://api.github.com/repos/{gh_owner}/{gh_repo}/tarball/{gh_branch}",
     #                     headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
 
     # Will this work properly (even with authorization) ???
-    repo = requests.get(f"https://github.com/{gh_owner}/{gh_repo}/archive/{gh_branch}.tar.gz",
-                        headers={"Authorization": "lol"}, stream=True)
+    resp = requests.get(f"https://github.com/{gh_repo_owner}/{gh_repo_name}/archive/{gh_repo_branch}.tar.gz",
+                        headers={"Authorization": gh_access_token}, stream=True)
 
     try:
         # Initialize a UUID
@@ -96,6 +94,7 @@ def build_image_from_repo(docker_client: DockerClient, gh_owner: str, gh_repo: s
         extract_path = os.path.join(os.getcwd(), temp_id)
         os.mkdir(extract_path)
         shutil.unpack_archive(tar_path, extract_path)
+        # IM PRETTY SURE THIS IS NOT NECESSARY WITH SOME OF THE OTHERS
         contents_path = [f.path for f in os.scandir(extract_path)][0]
 
         # Get the Dockerfile and check that is is safe

@@ -54,25 +54,22 @@ def hook():
 
 @app.route("/appbuilder/build", methods=["GET"])  # Change to POST
 def deploy():
-    # Follow the same steps as the deploy on the hook EXCEPT we should specify the app to be deployed
-
-    # **** Provide some level of authentication for this so random users cant deploy other peoples apps super easy
-
     # Get the name of the app to build
-    # app_name = request.json["appName"]
+    app_name = request.json["appName"]
 
     # Find the app that matches the name in the database
+    app_data = db.find_app_by_appname(app_name)
 
-    # **** TEST DATA
-    gh_owner = "BenGOsborn"
-    gh_repo = "Webhook-Test"
-    gh_branch = "main"
-    app_name = "test"
+    gh_repo_owner = app_data["gh_repo_owner"]
+    gh_repo_name = app_data["gh_repo_name"]
+    gh_repo_branch = app_data["gh_repo_branch"]
+    gh_access_token = app_data["gh_access_token"]
 
     # Build the local Docker image from the GitHub repo
-    utils.build_image_from_repo(client, gh_owner, gh_repo, gh_branch, app_name)
+    utils.build_image_from_repo(
+        client, gh_repo_owner, gh_repo_name, gh_repo_branch, app_name, gh_access_token)
 
-    return "Deploy"
+    return "OK", 200
 
 
 # Run the app
