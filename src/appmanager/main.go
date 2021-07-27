@@ -20,6 +20,7 @@ const PORT = 5000
 const STATE_COOKIE = "appmanager.state.appname"
 
 var containerPrefix = os.Getenv("CONTAINER_PREFIX")
+var environment = os.Getenv("ENVIRONMENT")
 var ctx context.Context = context.Background()
 var containers = []containerutils.Container{}
 
@@ -64,7 +65,13 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 
 	// Initialize the request
-	req, _ := http.NewRequest("POST", "http://api:4000/api/user/owns-app", bytes.NewBuffer(jsonStr))
+	var apiURL string;
+	if environment == "production" {
+		apiURL = "http://api:4000/api/user/owns-app"
+	} else {
+		apiURL = "http://localhost:4000/api/user/owns-app"
+	}
+	req, _ := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonStr))
 	req.Header.Set("Cookie", fmt.Sprintf("connect.sid=%s", sessionCookie))
 	req.Header.Set("Content-Type", "application/json")
 
