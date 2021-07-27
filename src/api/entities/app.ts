@@ -33,7 +33,7 @@ export class App extends BaseEntity {
     @Column()
     ghRepoBranch!: string;
 
-    @Column()
+    @Column({ unique: true })
     ghWebhookID!: string;
 
     @ManyToOne(() => Dev, (dev) => dev.apps)

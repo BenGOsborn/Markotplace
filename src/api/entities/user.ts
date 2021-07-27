@@ -25,7 +25,7 @@ export class User extends BaseEntity {
     @Column()
     password!: string;
 
-    @Column()
+    @Column({ unique: true })
     stripeCustomerID!: string;
 
     @OneToOne(() => Dev)

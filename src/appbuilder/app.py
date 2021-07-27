@@ -30,7 +30,7 @@ CORS(app)
 client = docker.from_env()
 
 # Initialize the DB
-db = utils.DB()
+db = utils.DB(production=production)
 
 
 @app.route("/appbuilder/hook", methods=["POST"])

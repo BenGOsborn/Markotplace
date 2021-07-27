@@ -20,7 +20,7 @@ export class Dev extends BaseEntity {
     @Column({ unique: true })
     ghUsername!: string;
 
-    @Column()
+    @Column({ unique: true })
     stripeConnectID!: string;
 
     @OneToOne(() => User)

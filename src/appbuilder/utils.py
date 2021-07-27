@@ -26,13 +26,23 @@ class DB:
     Connect and use the database
     """
 
-    def __init__(self, production=False):
+    def __init__(self, production: bool = False):
         self.__conn = psycopg2.connect(host="db" if production else "localhost", port="5432", user=os.getenv(
             "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
-        self.__cursor = self.__conn.cursor()
 
-    def find_app_by_webhook(self):
-        pass
+    def find_app_by_webhook(self, webhook_id: str):
+        # Initialize the cursor
+        cur = self.__conn.cursor()
+
+        # Find the app that has the same GitHub webhook ID
+        cur.execute("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.ghWebhookID = %s", (webhook_id,))
+        row = cur.fetchone()
+
+        # Close the cursor
+        cur.close()
+
+        # Return the app data
+        return row
 
     def find_app_by_appname(self):
         # I need to get the repo owner, name, and branch for the app, as well as the access token for the app
