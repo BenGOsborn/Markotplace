@@ -34,6 +34,11 @@ class DB:
         self.__conn = psycopg2.connect(host="db" if production else "localhost", port="5432", user=os.getenv(
             "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
 
+    def __label_appdata_columns(self, row: tuple) -> dict:
+        labels = ["ghRepoOwner", "ghRepoName",
+                  "ghRepoBranch", "ghAccessToken"]
+        return {label: data for label, data in zip(labels, row)}
+
     def find_app_by_webhook(self, webhook_id: str):
         # Initialize the cursor
         cur = self.__conn.cursor()
@@ -45,8 +50,8 @@ class DB:
         # Close the cursor
         cur.close()
 
-        # Return the app data
-        return row
+        # Return the labeled app data
+        return self.__label_appdata_columns(row)
 
     def find_app_by_appname(self, app_name: str):
         # Initialize the cursor
@@ -59,8 +64,8 @@ class DB:
         # Close the cursor
         cur.close()
 
-        # Return the app data
-        return row
+        # Return the labeled app data
+        return self.__label_appdata_columns(row)
 
     def close_connection(self):
         self.__conn.close()
