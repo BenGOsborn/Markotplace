@@ -14,11 +14,14 @@ services:
         command: redis-server --requirepass ${REDIS_PASSWORD}
         ports:
             - "6379:6379"
-    appmanager:
-        build: src/appmanager/
+    appbuilder:
+        build: src/appbuilder/
         ports:
-            - "3000:3000"
+            "3000:3000"
         environment:
+            - POSTGRES_USER="${POSTGRES_USER}"
+            - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
+            - POSTGRES_DB="${POSTGRES_DB}"
     api:
         build: src/api/
         ports:
@@ -34,7 +37,11 @@ services:
             - STRIPE_SECRET="${STRIPE_SECRET}"
             - STRIPE_SECRET_TEST="${STRIPE_SECRET_TEST}"
             - STRIPE_WEBOOK_SECRET_PURCHASE="${STRIPE_WEBOOK_SECRET_PURCHASE}"
-            - CONTAINER_PREFIX="${CONTAINER_PREFIX}"
             - SITE_URL="${SITE_URL}"
             - ENVIRONMENT="${ENVIRONMENT}"
-    
+    appmanager:
+        build: src/appmanager/
+        ports:
+            - "5000:5000"
+        environment:
+            - CONTAINER_PREFIX="${CONTAINER_PREFIX}"
