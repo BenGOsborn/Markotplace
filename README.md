@@ -21,6 +21,7 @@ An online marketplace that allows developers to monetize their online web apps.
 - How can I prevent exposed ports for the ones I dont want ?
 
 - ALLOW THE OPTION TO LOCALHOST WHEN PRODUCTION NOT ENABLED
+- SET NODE_ENV AND REPLACE ENVIRONMENT WITH NODE_ENV IN THE API SERVER
 
 - When the app is added / repo is edited, auto deploy the app
 - Custom URL for the appmanager proxy ?
