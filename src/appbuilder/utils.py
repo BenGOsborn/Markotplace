@@ -36,6 +36,10 @@ class DB:
 
     def find_app_by_appname(self):
         # I need to get the repo owner, name, and branch for the app, as well as the access token for the app
+
+        # 'app' table: id | name | title | description | price | ghRepoOwner | ghRepoName | ghRepoBranch | ghWebhookID | devId
+        # 'dev' table: id | ghAccessToken | ghUsername | stripeConnectID
+        # 'user' table: id | username | email |  password  | stripeCustomerID | devId
         pass
 
     def close_connection(self):
