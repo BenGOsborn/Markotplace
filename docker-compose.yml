@@ -23,6 +23,9 @@ services:
             - POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
             - POSTGRES_DB="${POSTGRES_DB}"
             - ENVIRONMENT="${ENVIRONMENT}"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /usr/bin/docker:/usr/bin/docker
     api:
         build: src/api/
         ports:
@@ -47,3 +50,6 @@ services:
         environment:
             - CONTAINER_PREFIX="${CONTAINER_PREFIX}"
             - ENVIRONMENT="${ENVIRONMENT}"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /usr/bin/docker:/usr/bin/docker
