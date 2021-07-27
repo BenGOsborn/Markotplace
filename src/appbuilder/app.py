@@ -13,7 +13,7 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import os
 import docker
-from utils import is_safe
+import utils
 
 # Load the variables from the env (local only)
 load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
@@ -53,13 +53,16 @@ def deploy():
     # Get the name of the app to build
     # app_name = request.json["appName"]
 
-    # Find the app that matches the name
+    # Find the app that matches the name in the database
 
     # **** TEST DATA
     gh_owner = "BenGOsborn"
     gh_repo = "Webhook-Test"
     gh_branch = "main"
     app_name = "test"
+
+    # Build the local Docker image from the GitHub repo
+    utils.build_image_from_repo(client, gh_owner, gh_repo, gh_branch, app_name)
 
     return "Deploy"
 

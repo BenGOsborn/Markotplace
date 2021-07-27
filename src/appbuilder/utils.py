@@ -31,7 +31,7 @@ def connect_db():
     return conn
 
 
-def build_repo(client: DockerClient, gh_owner: str, gh_repo: str, gh_branch: str, app_name: str):
+def build_image_from_repo(docker_client: DockerClient, gh_owner: str, gh_repo: str, gh_branch: str, app_name: str):
     # **** MAKE SURE THAT IT WORKS WITH DIFFERENT BRANCHES
 
     # Get the repository
@@ -60,7 +60,7 @@ def build_repo(client: DockerClient, gh_owner: str, gh_repo: str, gh_branch: str
         assert is_safe(dockerfile)
 
         # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds ?)
-        client.images.build(
+        docker_client.images.build(
             path=contents_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True)
 
     finally:
