@@ -11,7 +11,7 @@ import { cacheData, clearCache } from "../utils/cache";
 const router = express.Router();
 
 // Allow a dev to view their Stripe account
-router.get("/profile", protectedMiddleware, async (req, res) => {
+router.get("/stripe-dashboard", protectedMiddleware, async (req, res) => {
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
