@@ -23,6 +23,9 @@ load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
 # Initialize Flask
 app = Flask(__name__)
 
+# Initializer Docker
+client = docker.from_env()
+
 
 @app.route("/appbuilder/hook", methods=["POST"])
 def hook():
@@ -54,8 +57,14 @@ def deploy():
 
     # Find the app that matches the name
 
+    # **** TEST DATA
+    gh_owner = "BenGOsborn"
+    gh_repo = "Webhook-Test"
+    gh_branch = "main"
+    app_name = "test"
+
     # Try and manually make the ref using ref/head/branch
-    resp = requests.get("https://api.github.com/repos/BenGOsborn/Webhook-Test/tarball/",
+    resp = requests.get(f"https://api.github.com/repos/{gh_owner}/{gh_repo}/tarball/{gh_branch}",
                         headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
 
     # Initialize a UUID
@@ -74,6 +83,10 @@ def deploy():
     os.mkdir(extract_path)
     shutil.unpack_archive(tar_path, extract_path)
     contents_path = [f.path for f in os.scandir(extract_path)][0]
+
+    # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds ?)
+    client.images.build(
+        path=contents_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True)
 
     # Delete the temp files
     os.remove(tar_path)
