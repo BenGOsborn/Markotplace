@@ -8,7 +8,7 @@ import uuid
 import requests
 
 
-def is_safe(dockerfile: str) -> bool:
+def dockerfile_is_valid(dockerfile: str) -> bool:
     """
     Runs security checks on the downloaded repository to make sure that it is safe to be built.
     """
@@ -23,7 +23,11 @@ def is_safe(dockerfile: str) -> bool:
 
 class DB:
     """
-    Connect and use the database
+    Connect to and use the database
+
+    'app' table: id | name | title | description | price | ghRepoOwner | ghRepoName | ghRepoBranch | ghWebhookID | devId
+    'dev' table: id | ghAccessToken | ghUsername | stripeConnectID
+    'user' table: id | username | email |  password  | stripeCustomerID | devId
     """
 
     def __init__(self, production: bool = False):
@@ -44,13 +48,19 @@ class DB:
         # Return the app data
         return row
 
-    def find_app_by_appname(self):
-        # I need to get the repo owner, name, and branch for the app, as well as the access token for the app
+    def find_app_by_appname(self, app_name: str):
+        # Initialize the cursor
+        cur = self.__conn.cursor()
 
-        # 'app' table: id | name | title | description | price | ghRepoOwner | ghRepoName | ghRepoBranch | ghWebhookID | devId
-        # 'dev' table: id | ghAccessToken | ghUsername | stripeConnectID
-        # 'user' table: id | username | email |  password  | stripeCustomerID | devId
-        pass
+        # Find the app that has the same appname
+        cur.execute("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.name = %s", (app_name,))
+        row = cur.fetchone()
+
+        # Close the cursor
+        cur.close()
+
+        # Return the app data
+        return row
 
     def close_connection(self):
         self.__conn.close()
@@ -82,7 +92,7 @@ def build_image_from_repo(docker_client: DockerClient, gh_owner: str, gh_repo: s
         # Get the Dockerfile and check that is is safe
         dockerfile = [f.path for f in os.scandir(
             contents_path) if f.name == "Dockerfile"][0]
-        assert is_safe(dockerfile)
+        assert dockerfile_is_valid(dockerfile)
 
         # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds ?)
         docker_client.images.build(
