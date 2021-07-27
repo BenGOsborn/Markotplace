@@ -29,6 +29,9 @@ CORS(app)
 # Initializer Docker
 client = docker.from_env()
 
+# Initialize the DB
+db = utils.DB()
+
 
 @app.route("/appbuilder/hook", methods=["POST"])
 def hook():

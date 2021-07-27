@@ -21,14 +21,25 @@ def is_safe(dockerfile: str) -> bool:
     return not match
 
 
-def connect_db():
+class DB:
     """
-    Establish and return the connection to PostgreSQL server
+    Connect and use the database
     """
-    conn = psycopg2.connect(host="db", port="5432", user=os.getenv(
-        "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
 
-    return conn
+    def __init__(self):
+        self.__conn = psycopg2.connect(host="db", port="5432", user=os.getenv(
+            "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
+        self.__cursor = self.__conn.cursor()
+
+    def find_app_by_webhook(self):
+        pass
+
+    def find_app_by_appname(self):
+        # I need to get the repo owner, name, and branch for the app, as well as the access token for the app
+        pass
+
+    def close_connection(self):
+        self.__conn.close()
 
 
 def build_image_from_repo(docker_client: DockerClient, gh_owner: str, gh_repo: str, gh_branch: str, app_name: str):

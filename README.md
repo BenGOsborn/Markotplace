@@ -18,8 +18,9 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
--   CORS in Python and Go ???
 - How can I prevent exposed ports for the ones I dont want ?
+
+- Set up a way of creating test data in the database from the ORM when it is loaded
 
 - When the app is added / repo is edited, auto deploy the app
 - Custom URL for the appmanager proxy ?

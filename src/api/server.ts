@@ -26,7 +26,7 @@ createConnection({
     password: process.env.POSTGRES_PASSWORD,
     synchronize: true,
     entities: [User, Dev, App],
-});
+}).then(connection => connection.synchronize());
 
 // Initialize sessions with redis
 app.use(
