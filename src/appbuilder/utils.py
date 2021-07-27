@@ -94,7 +94,7 @@ def build_image_from_repo(docker_client: DockerClient, gh_repo_owner: str, gh_re
         extract_path = os.path.join(os.getcwd(), temp_id)
         os.mkdir(extract_path)
         shutil.unpack_archive(tar_path, extract_path)
-        # IM PRETTY SURE THIS IS NOT NECESSARY WITH SOME OF THE OTHERS
+        # **** IM PRETTY SURE THIS IS NOT NECESSARY WITH THE NEW WAY OF ARCHIVING IF IT WORKS ??? (the files will be automatically extracted to the named file)
         contents_path = [f.path for f in os.scandir(extract_path)][0]
 
         # Get the Dockerfile and check that is is safe
