@@ -10,6 +10,7 @@
 # How do I use the .env in Python using the CLI ?
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import docker
 import utils
@@ -23,6 +24,7 @@ if not production:
 
 # Initialize Flask
 app = Flask(__name__)
+CORS(app)
 
 # Initializer Docker
 client = docker.from_env()
