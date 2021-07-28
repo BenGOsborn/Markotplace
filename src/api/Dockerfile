@@ -1,12 +1,12 @@
 # Compile TypeScript
-FROM node:latest
+FROM node
 WORKDIR /usr/app
 COPY . .
 RUN npm install
 RUN npm run build
 
 # Copy the files to the new environment
-FROM node:latest
+FROM node
 WORKDIR /usr/app
 COPY package*.json ./
 RUN npm install --production
