@@ -44,7 +44,7 @@ dev-appmanager:
 dev-appbuilder:
 	ngrok http 3000 > /dev/null &
 	sleep 1
-	curl http://localhost:4040/api/tunnels
+	curl http://0.0.0.0:4040/api/tunnels
 	dotenv run python3 /home/ben/Code/Markotplace/src/appbuilder/app.py 
 
 # Start the dev api

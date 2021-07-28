@@ -10,9 +10,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe add a subscription payment system in the future ?
 -   Limit Docker resources - also maybe use Docker pause instead of kill and start all the time - https://docs.docker.com/config/containers/resource_constraints/
 -   Maybe rebrand the entire app for gamers specifically
--   Add support for Unity and other game engines that make web apps
--   Make a blog helping developers to make apps for our site
--   Make some sort of API for other developers where they can add their own payment option on their server which is embedded on their website
+-   Make a blog helping developers to make apps for our site (like Unity and for other game engines)
 
 ## Immediate
 
@@ -20,15 +18,9 @@ An online marketplace that allows developers to monetize their online web apps.
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
 -   How can I prevent exposed ports for the ones I dont want ? - https://stackoverflow.com/questions/45100370/prevent-publishing-ports-defined-in-compose-file
 
-- ALLOW THE OPTION TO LOCALHOST WHEN PRODUCTION NOT ENABLED
-- SET NODE_ENV AND REPLACE ENVIRONMENT WITH NODE_ENV IN THE API SERVER
-
 - When the app is added / repo is edited, auto deploy the app
-- Custom URL for the appmanager proxy ?
-- How am I going to handle images
 - Dont hard code all of the ports ?
-- DONT GO LOOKING AT THE OS LEVEL FOR THE DOCKER IMAGES IN THE APPMANAGER
-- Specify versions of my base Docker images
+- DONT GO LOOKING AT THE OS LEVEL FOR THE DOCKER IMAGES IN THE APPMANAGER (yeah its gonna sort of be required at some point though ?)
 - Use Gunicorn
 
 - For the Golang app proxy (first of all try and just use the ports on Docker first) but secondly if I set a custom URL prefix like /appmanager/ I can simply just set the forwarded URL to be the part that comes after the URL prefix

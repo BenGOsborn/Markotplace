@@ -69,7 +69,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	if environment == "production" {
 		apiURL = "http://api:4000/api/user/owns-app"
 	} else {
-		apiURL = "http://localhost:4000/api/user/owns-app"
+		apiURL = "http://0.0.0.0:4000/api/user/owns-app"
 	}
 	req, _ := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonStr))
 	req.Header.Set("Cookie", fmt.Sprintf("connect.sid=%s", sessionCookie))

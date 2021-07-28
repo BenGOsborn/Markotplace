@@ -31,7 +31,7 @@ class DB:
     """
 
     def __init__(self, production: bool = False):
-        self.__conn = psycopg2.connect(host="db" if production else "localhost", port="5432", user=os.getenv(
+        self.__conn = psycopg2.connect(host="db" if production else "0.0.0.0", port="5432", user=os.getenv(
             "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
 
     def __label_row(self, row: tuple, labels: tuple) -> dict:
