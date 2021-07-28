@@ -197,6 +197,14 @@ router.post("/app/create", async (req, res) => {
         newDevApps = [...user.dev.apps, ...newDevApps];
     await Dev.update(user.dev.id, { apps: newDevApps });
 
+    // Build the new app
+    axios.post(
+        process.env.ENVIRONMENT === "production"
+            ? "http://appbuilder:3000/appbuilder/build"
+            : "http://0.0.0.0:3000/appbuilder/build",
+        { appName: name }
+    );
+
     // Clear the cached user
     await clearCache(`user:${user.id}`);
 
@@ -308,6 +316,19 @@ router.patch("/app/edit", async (req, res) => {
             }
         );
         updateData.ghWebhookID = ghWebhookID;
+    }
+    if (
+        typeof ghRepoOwner !== "undefined" ||
+        typeof ghRepoName !== "undefined" ||
+        typeof ghRepoName !== "undefined"
+    ) {
+        // Rebuild the app
+        axios.post(
+            process.env.ENVIRONMENT === "production"
+                ? "http://appbuilder:3000/appbuilder/build"
+                : "http://0.0.0.0:3000/appbuilder/build",
+            { appName: name }
+        );
     }
 
     // Update the app
