@@ -97,7 +97,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Start the container if it does not exist, otherwise get the port for the container and log a hit
 	if !container.Active {
-		forwardPort = containerutils.GetPort()
+		forwardPort = containerutils.GetPort(&containers)
 		if err := container.StartContainer(ctx, forwardPort); err != nil {
 			w.WriteHeader(500)
 			return
