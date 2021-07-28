@@ -106,6 +106,7 @@ router.post("/app/create", async (req, res) => {
         ghRepoOwner,
         ghRepoName,
         ghRepoBranch,
+        env,
     }: {
         name: string;
         title: string;
@@ -114,6 +115,7 @@ router.post("/app/create", async (req, res) => {
         ghRepoOwner: string;
         ghRepoName: string;
         ghRepoBranch: string;
+        env: string;
     } = req.body;
 
     // Validate the app data
@@ -125,6 +127,7 @@ router.post("/app/create", async (req, res) => {
         ghRepoOwner,
         ghRepoName,
         ghRepoBranch,
+        env,
     });
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -179,6 +182,7 @@ router.post("/app/create", async (req, res) => {
         ghRepoName,
         ghRepoBranch,
         ghWebhookID,
+        env,
     });
     await app.save();
 
@@ -231,6 +235,7 @@ router.patch("/app/edit", async (req, res) => {
         ghRepoOwner,
         ghRepoName,
         ghRepoBranch,
+        env,
     }: {
         name: string;
         title: string | undefined;
@@ -239,6 +244,7 @@ router.patch("/app/edit", async (req, res) => {
         ghRepoOwner: string | undefined;
         ghRepoName: string | undefined;
         ghRepoBranch: string | undefined;
+        env: string | undefined;
     } = req.body;
 
     // Validate the edit app data
@@ -250,6 +256,7 @@ router.patch("/app/edit", async (req, res) => {
         ghRepoOwner,
         ghRepoName,
         ghRepoBranch,
+        env,
     });
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -291,6 +298,7 @@ router.patch("/app/edit", async (req, res) => {
     if (typeof ghRepoName !== "undefined") updateData.ghRepoName = ghRepoName;
     if (typeof ghRepoBranch !== "undefined")
         updateData.ghRepoBranch = ghRepoBranch;
+    if (typeof env !== "undefined") updateData.env = env;
     if (
         typeof ghRepoOwner !== "undefined" ||
         typeof ghRepoName !== "undefined"
@@ -325,7 +333,8 @@ router.patch("/app/edit", async (req, res) => {
     if (
         typeof ghRepoOwner !== "undefined" ||
         typeof ghRepoName !== "undefined" ||
-        typeof ghRepoName !== "undefined"
+        typeof ghRepoName !== "undefined" ||
+        typeof env !== "undefined"
     ) {
         // Rebuild the app
         axios.post(

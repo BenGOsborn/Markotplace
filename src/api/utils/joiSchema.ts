@@ -28,7 +28,8 @@ export const createAppSchema = Joi.object({
     price: Joi.number().required().integer().min(0).max(999),
     ghRepoOwner: Joi.string().required(),
     ghRepoName: Joi.string().required(),
-    ghRepoBranch: Joi.string().required()
+    ghRepoBranch: Joi.string().required(),
+    env: Joi.string().required()
 });
 
 // Initialize the schema for the app edit process
@@ -39,5 +40,6 @@ export const editAppSchema = Joi.object({
     price: Joi.number().integer().min(0).max(999),
     ghRepoOwner: Joi.string(),
     ghRepoName: Joi.string(),
-    ghRepoBranch: Joi.string()
+    ghRepoBranch: Joi.string(),
+    env: Joi.string()
 });

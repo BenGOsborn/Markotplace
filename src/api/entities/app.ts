@@ -36,7 +36,6 @@ export class App extends BaseEntity {
     @Column({ unique: true })
     ghWebhookID!: string;
 
-    // How do I make it so that the build args are ALWAYS a valid JSON object
     @Column()
     env!: string;
 
