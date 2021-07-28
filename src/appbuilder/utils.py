@@ -42,7 +42,7 @@ class DB:
         cur = self.__conn.cursor()
 
         # Find the app that has the same GitHub webhook ID
-        cur.execute("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.ghWebhookID = %s", (webhook_id,))
+        cur.execute("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken, app.env FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.ghWebhookID = %s", (webhook_id,))
         row = cur.fetchone()
 
         # Close the cursor
@@ -50,7 +50,7 @@ class DB:
 
         # Return the labeled app data
         labels = ["app_name", "gh_repo_owner", "gh_repo_name",
-                  "gh_repo_branch", "gh_access_token"]
+                  "gh_repo_branch", "gh_access_token", "env"]
         return self.__label_row(row, labels)
 
     def find_app_by_appname(self, app_name: str):
@@ -58,7 +58,7 @@ class DB:
         cur = self.__conn.cursor()
 
         # Find the app that has the same appname
-        cur.execute("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.name = %s", (app_name,))
+        cur.execute("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken, app.env FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.name = %s", (app_name,))
         row = cur.fetchone()
 
         # Close the cursor
@@ -66,14 +66,14 @@ class DB:
 
         # Return the labeled app data
         labels = ["gh_repo_owner", "gh_repo_name",
-                  "gh_repo_branch", "gh_access_token"]
+                  "gh_repo_branch", "gh_access_token", "env"]
         return self.__label_row(row, labels)
 
     def close_connection(self):
         self.__conn.close()
 
 
-def build_image_from_repo(docker_client: DockerClient, gh_repo_owner: str, gh_repo_name: str, gh_repo_branch: str, app_name: str, gh_access_token: str):
+def build_image_from_repo(docker_client: DockerClient, gh_repo_owner: str, gh_repo_name: str, gh_repo_branch: str, app_name: str, gh_access_token: str, env: dict):
     # Get the repository
     # resp = requests.get(f"https://api.github.com/repos/{gh_owner}/{gh_repo}/tarball/{gh_branch}",
     #                     headers={"Accept": "application/vnd.github.v3+json", "Authorization": "lol"}, stream=True)
@@ -106,7 +106,7 @@ def build_image_from_repo(docker_client: DockerClient, gh_repo_owner: str, gh_re
 
         # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds in the future ?)
         docker_client.images.build(
-            path=extract_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True, buildargs={})
+            path=extract_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True, buildargs=env)
 
     finally:
         # Cleanup the files

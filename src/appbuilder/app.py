@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+import json
+from flask import Flask, request
 from flask_cors import CORS
 import os
 import docker
@@ -36,13 +37,14 @@ def hook():
     gh_repo_name = app_data["gh_repo_name"]
     gh_repo_branch = app_data["gh_repo_branch"]
     gh_access_token = app_data["gh_access_token"]
+    env = json.loads(app_data["env"])
 
     # Make sure that pushed branch is the same as the specified deploy branch
     assert app_data["gh_repo_branch"] == branch
 
     # Build the local Docker image from the GitHub repo
     utils.build_image_from_repo(
-        client, gh_repo_owner, gh_repo_name, gh_repo_branch, app_name, gh_access_token)
+        client, gh_repo_owner, gh_repo_name, gh_repo_branch, app_name, gh_access_token, env)
 
     return "OK", 200
 
@@ -59,10 +61,11 @@ def build():
     gh_repo_name = app_data["gh_repo_name"]
     gh_repo_branch = app_data["gh_repo_branch"]
     gh_access_token = app_data["gh_access_token"]
+    env = json.loads(app_data["env"])
 
     # Build the local Docker image from the GitHub repo
     utils.build_image_from_repo(
-        client, gh_repo_owner, gh_repo_name, gh_repo_branch, app_name, gh_access_token)
+        client, gh_repo_owner, gh_repo_name, gh_repo_branch, app_name, gh_access_token, env)
 
     return "OK", 200
 
