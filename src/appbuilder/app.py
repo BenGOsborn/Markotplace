@@ -48,7 +48,7 @@ def hook():
 
 
 @app.route("/appbuilder/build", methods=["POST"])  # Change to POST
-def deploy():
+def build():
     # Get the name of the app to build
     app_name = request.json["appName"]
 
