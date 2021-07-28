@@ -317,6 +317,11 @@ router.patch("/app/edit", async (req, res) => {
         );
         updateData.ghWebhookID = ghWebhookID;
     }
+
+    // Update the app
+    await App.update(existingApp.id, updateData);
+
+    // Rebuild the app
     if (
         typeof ghRepoOwner !== "undefined" ||
         typeof ghRepoName !== "undefined" ||
@@ -330,9 +335,6 @@ router.patch("/app/edit", async (req, res) => {
             { appName: name }
         );
     }
-
-    // Update the app
-    await App.update(existingApp.id, updateData);
 
     // Clear the cached data
     await clearCache(`user:${user.id}`);
