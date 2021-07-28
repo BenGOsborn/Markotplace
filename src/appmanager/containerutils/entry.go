@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"net"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -116,45 +115,23 @@ func CleanupContainers(ctx context.Context, containers *[]Container) {
 	}
 }
 
-func GetContainer(ctx context.Context, appID string, containers *[]Container) (*Container, error) {
+func GetContainer(ctx context.Context, appID string, containers *[]Container) *Container {
 	// Check if the image is in the list of containers and return that container
 	for i, ctr := range *containers {
 		if ctr.AppID == appID {
-			return &(*containers)[i], nil
+			return &(*containers)[i]
 		}
 	}
 
-	// Initialize the Docker client
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		return nil, err
-	}
+	// Make a new instance of the container
+	newContainer := new(Container)
+	newContainer.AppID = appID
 
-	// Get a list of images
-	images, err := cli.ImageList(ctx, types.ImageListOptions{})
-	if err != nil {
-		return nil, err
-	}
+	// Add the container to the list
+	*containers = append(*containers, *newContainer)
 
-	// Check if the image exists
-	for _, image := range images {
-		// This requires some modification - it should only allow for images that contain a slash in them OR a custom start - users spinning up base images
-		imageID := strings.Split(image.RepoTags[0], ":")[0]
-		if imageID == appID {
-			// Make a new instance of the container
-			newContainer := new(Container)
-			newContainer.AppID = appID
-
-			// Add the container to the list
-			*containers = append(*containers, *newContainer)
-
-			// Return the container
-			return &((*containers)[len(*containers)-1]), nil
-		}
-	}
-
-	// Return false if no app ID matches
-	return nil, nil
+	// Return the container
+	return &((*containers)[len(*containers)-1])
 }
 
 func GetPort(containers *[]Container) int {

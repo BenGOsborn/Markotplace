@@ -82,15 +82,8 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if the specified path is valid
-	container, err := containerutils.GetContainer(ctx, fmt.Sprintf("%s/%s", containerPrefix, appID), &containers)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	} else if container == nil {
-		w.WriteHeader(404)
-		return
-	}
+	// Get the container
+	container := containerutils.GetContainer(ctx, fmt.Sprintf("%s/%s", containerPrefix, appID), &containers)
 
 	// Initialize the forward URL
 	var forwardPort int
