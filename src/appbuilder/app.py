@@ -1,26 +1,11 @@
-# https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps (write:repo_hook) - when a user connects their repo, set a webhook in their account which will auto fire to my server on request
-# When a webhook is fired for a change to the deploy branch, we should download that repo, check the dockerfile for any problems, build the image, and then delete it
-# This should also be called on a successful app creation (ill have to integrate with my own server for that) AND we should have a manual deploy option for the app (user authenticated of course)
-# This will need access to the users dev account details, how will I integrate that ?
-# Set the deployment status as the current deployed branch on Markotplace
-
-# **** Maybe I need to store the webhook secret somewhere too ???
-# **** Im pretty sure that if a user gives full repo permissions I can write webhooks without asking for permission ? (YES IT DOES!)
-
-# How do I use the .env in Python using the CLI ?
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import docker
 import utils
 
+# Determine if the app is in a production environment
 production = os.getenv("ENVIRONMENT") == "production"
-
-# Load the environment variables if in development mode
-if not production:
-    from dotenv import load_dotenv
-    load_dotenv(dotenv_path=os.path.join(os.getcwd(), "..", "..", ".env"))
 
 # Initialize Flask
 app = Flask(__name__)
@@ -44,15 +29,25 @@ def hook():
     branch = body["ref"].split("/")[-1]
 
     # Get the app data for the webhook
+    app_data = db.find_app_by_webhook(hook_id)
 
-    # Download, extract, and verify the app from GitHub
+    app_name = app_data["app_name"]
+    gh_repo_owner = app_data["gh_repo_owner"]
+    gh_repo_name = app_data["gh_repo_name"]
+    gh_repo_branch = app_data["gh_repo_branch"]
+    gh_access_token = app_data["gh_access_token"]
 
-    # Build the container image with an appropriate name
+    # Make sure that pushed branch is the same as the specified deploy branch
+    assert app_data["gh_repo_branch"] == branch
 
-    return "Hook"
+    # Build the local Docker image from the GitHub repo
+    utils.build_image_from_repo(
+        client, gh_repo_owner, gh_repo_name, gh_repo_branch, app_name, gh_access_token)
+
+    return "OK", 200
 
 
-@app.route("/appbuilder/build", methods=["GET"])  # Change to POST
+@app.route("/appbuilder/build", methods=["POST"])  # Change to POST
 def deploy():
     # Get the name of the app to build
     app_name = request.json["appName"]

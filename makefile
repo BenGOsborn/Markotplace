@@ -45,7 +45,7 @@ dev-appbuilder:
 	ngrok http 3000 > /dev/null &
 	sleep 1
 	curl http://localhost:4040/api/tunnels
-	python3 /home/ben/Code/Markotplace/src/appbuilder/app.py 
+	dotenv run python3 /home/ben/Code/Markotplace/src/appbuilder/app.py 
 
 # Start the dev api
 dev-api:

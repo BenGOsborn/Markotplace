@@ -34,9 +34,7 @@ class DB:
         self.__conn = psycopg2.connect(host="db" if production else "localhost", port="5432", user=os.getenv(
             "POSTGRES_USER"), password=os.getenv("POSTGRES_PASSWORD"), database=os.getenv("POSTGRES_DB"))
 
-    def __label_appdata_columns(self, row: tuple) -> dict:
-        labels = ["gh_repo_owner", "gh_repo_name",
-                  "gh_repo_branch", "gh_access_token"]
+    def __label_row(self, row: tuple, labels: tuple) -> dict:
         return {label: data for label, data in zip(labels, row)}
 
     def find_app_by_webhook(self, webhook_id: str):
@@ -44,14 +42,16 @@ class DB:
         cur = self.__conn.cursor()
 
         # Find the app that has the same GitHub webhook ID
-        cur.execute("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.ghWebhookID = %s", (webhook_id,))
+        cur.execute("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, dev.ghAccessToken FROM app INNER JOIN dev ON app.devID = dev.id WHERE app.ghWebhookID = %s", (webhook_id,))
         row = cur.fetchone()
 
         # Close the cursor
         cur.close()
 
         # Return the labeled app data
-        return self.__label_appdata_columns(row)
+        labels = ["app_name", "gh_repo_owner", "gh_repo_name",
+                  "gh_repo_branch", "gh_access_token"]
+        return self.__label_row(row, labels)
 
     def find_app_by_appname(self, app_name: str):
         # Initialize the cursor
@@ -65,7 +65,9 @@ class DB:
         cur.close()
 
         # Return the labeled app data
-        return self.__label_appdata_columns(row)
+        labels = ["gh_repo_owner", "gh_repo_name",
+                  "gh_repo_branch", "gh_access_token"]
+        return self.__label_row(row, labels)
 
     def close_connection(self):
         self.__conn.close()
