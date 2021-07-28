@@ -17,6 +17,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update
 -   How do I set up customers for future payments too ? - https://stripe.com/docs/payments/save-during-payment (default payment source on card ?)
 -   How can I prevent exposed ports for the ones I dont want ? - https://stackoverflow.com/questions/45100370/prevent-publishing-ports-defined-in-compose-file
+- Add an option for environment variables in the container (can I add these during build ? (that would be best))
 
 - When the app is added / repo is edited, auto deploy the app
 - Dont hard code all of the ports ?

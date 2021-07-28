@@ -18,7 +18,7 @@ import (
 
 type Container struct {
 	AppID       string
-	ContainerID string // Maybe I can just use a --name with the appID instead of this ?
+	ContainerID string
 	LastHit     time.Time
 	Port        int
 	Active      bool

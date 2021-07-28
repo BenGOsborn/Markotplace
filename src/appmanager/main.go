@@ -65,6 +65,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 
 	// Initialize the request
+	// **** MAYBE INSTEAD OF THIS THIS SHOULD BE CONTAINED WITHIN THE MICROSERVICE ITSELF BY CONNECTING TO POSTGRES
 	var apiURL string;
 	if environment == "production" {
 		apiURL = "http://api:4000/api/user/owns-app"
@@ -111,6 +112,9 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	remote, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 
+	// Reset the requested path
+	req.URL.Path = req.URL.Path[:len("/appmanager/reverse-proxy")]
+
 	// Set a cookie for maintaining the container connection
 	proxy.ModifyResponse = func(r *http.Response) error {
 		r.Header.Set("Set-Cookie", fmt.Sprintf("%s=%s", STATE_COOKIE, appID))
@@ -126,7 +130,7 @@ func main() {
 	go containerutils.CleanupContainers(ctx, &containers)
 
 	// Handle the main container redirect route
-	http.HandleFunc("/", proxyHandler)
+	http.HandleFunc("/appmanager/reverse-proxy", proxyHandler)
 
 	// Start the server and log error
 	log.Println(fmt.Sprintf("App manager listening on port %d...", PORT))
