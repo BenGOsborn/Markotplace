@@ -42,7 +42,7 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 	}
 
 	// Create a new container
-	resp, err := cli.ContainerCreate(ctx, &container.Config{ // **** I also need to set the name here too for easier usage ? (reconfigure how the container is saved)
+	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: ctr.AppID,
 		ExposedPorts: nat.PortSet{
 			nat.Port(fmt.Sprintf("%d/tcp", port)): {},

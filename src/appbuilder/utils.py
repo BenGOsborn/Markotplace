@@ -106,7 +106,7 @@ def build_image_from_repo(docker_client: DockerClient, gh_repo_owner: str, gh_re
 
         # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds in the future ?)
         docker_client.images.build(
-            path=extract_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True)
+            path=extract_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True, buildargs={})
 
     finally:
         # Cleanup the files

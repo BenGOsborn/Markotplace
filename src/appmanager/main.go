@@ -65,7 +65,6 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 
 	// Initialize the request
-	// **** MAYBE INSTEAD OF THIS THIS SHOULD BE CONTAINED WITHIN THE MICROSERVICE ITSELF BY CONNECTING TO POSTGRES
 	var apiURL string;
 	if environment == "production" {
 		apiURL = "http://api:4000/api/user/owns-app"
