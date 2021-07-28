@@ -95,16 +95,16 @@ def build_image_from_repo(docker_client: DockerClient, gh_repo_owner: str, gh_re
         os.mkdir(extract_path)
         shutil.unpack_archive(tar_path, extract_path)
         # **** IM PRETTY SURE THIS IS NOT NECESSARY WITH THE NEW WAY OF ARCHIVING IF IT WORKS ??? (the files will be automatically extracted to the named file)
-        contents_path = [f.path for f in os.scandir(extract_path)][0]
+        # contents_path = [f.path for f in os.scandir(extract_path)][0]
 
         # Get the Dockerfile and check that is is safe
         dockerfile = [f.path for f in os.scandir(
-            contents_path) if f.name == "Dockerfile"][0]
+            extract_path) if f.name == "Dockerfile"][0]
         assert dockerfile_is_valid(dockerfile)
 
-        # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds ?)
+        # Build the Docker image (maybe later there will be versions for the different apps to avoid bad builds in the future ?)
         docker_client.images.build(
-            path=contents_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True)
+            path=extract_path, tag=f"{os.getenv('CONTAINER_PREFIX')}/{app_name}", pull=True)
 
     finally:
         # Cleanup the files
