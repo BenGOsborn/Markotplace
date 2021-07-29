@@ -1,13 +1,17 @@
 import { GetServerSideProps, NextPage } from "next";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import cookie from "cookie";
 import axios, { AxiosError } from "axios";
 import { Status, StatusMessage } from "../../utils/status";
 import { useRouter } from "next/dist/client/router";
+import { authenticatedCtx } from "../../utils/context";
 
 interface Props {} // How can I make this work with TypeScript getserversideprops
 
 const Login: NextPage<Props> = () => {
+    // Initialize the context
+    const [isAuthenticated, setIsAuthenticated] = useContext(authenticatedCtx);
+
     // Declare the states
     const [username, setUsername] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
@@ -39,16 +43,22 @@ const Login: NextPage<Props> = () => {
                                 message: "Login successful",
                             });
 
+                            // Update the context
+                            setIsAuthenticated(true);
+
                             // Redirect
                             router.push("/");
                         })
-                        .catch((err: AxiosError) =>
+                        .catch((err: AxiosError) => {
                             // Set the status
                             setStatus({
                                 success: false,
                                 message: err.response?.data,
-                            })
-                        );
+                            });
+
+                            // Update the context
+                            setIsAuthenticated(true);
+                        });
                 }}
             >
                 <input

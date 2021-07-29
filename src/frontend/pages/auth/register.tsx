@@ -2,12 +2,16 @@ import { GetServerSideProps, NextPage } from "next";
 import cookie from "cookie";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/dist/client/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Status, StatusMessage } from "../../utils/status";
+import { authenticatedCtx } from "../../utils/context";
 
 interface Props {}
 
 const Register: NextPage<Props> = () => {
+    // Initialize the context
+    const [isAuthenticated, setIsAuthenticated] = useContext(authenticatedCtx);
+
     // Declare the states
     const [username, setUsername] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
@@ -40,16 +44,22 @@ const Register: NextPage<Props> = () => {
                                 message: "Registration successful",
                             });
 
+                            // Update the context
+                            setIsAuthenticated(true);
+
                             // Redirect
                             router.push("/");
                         })
-                        .catch((err: AxiosError) =>
+                        .catch((err: AxiosError) => {
                             // Set the status
                             setStatus({
                                 success: false,
                                 message: err.response?.data,
-                            })
-                        );
+                            });
+
+                            // Update the context
+                            setIsAuthenticated(false);
+                        });
                 }}
             >
                 <input

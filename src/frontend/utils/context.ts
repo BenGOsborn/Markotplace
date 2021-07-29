@@ -1,6 +1,6 @@
 import { createContext, Dispatch, SetStateAction } from "react";
 
 // Store the authentication state across the app
-export const authenticated = createContext<
+export const authenticatedCtx = createContext<
     [boolean, Dispatch<SetStateAction<boolean>>]
 >(undefined as any);
