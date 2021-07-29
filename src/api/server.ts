@@ -12,7 +12,15 @@ import cors from "cors";
 // Initialize the app and middleware
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+    cors({
+        credentials: true,
+        origin: (origin, callback) => {
+            // In reality this should be whitelisted to the different routes
+            callback(null, true);
+        },
+    })
+);
 
 // Initialize database
 connectDB();
@@ -25,9 +33,10 @@ app.use(
         saveUninitialized: false,
         resave: false,
         cookie: {
-            // secure: process.env.ENVIRONMENT === "production",
+            secure: process.env.ENVIRONMENT === "production",
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 7,
+            sameSite: "none",
         },
     })
 );

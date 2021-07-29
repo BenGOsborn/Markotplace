@@ -29,7 +29,8 @@ const Login: NextPage<Props> = () => {
                     axios
                         .post<string>(
                             `${process.env.SITE_URL}/api/user/login`,
-                            { username, password }
+                            { username, password },
+                            { withCredentials: true }
                         )
                         .then((res) => {
                             // Set the status
