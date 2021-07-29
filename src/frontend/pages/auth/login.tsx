@@ -1,18 +1,72 @@
 import { GetServerSideProps, NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import cookie from "cookie";
-import axios from "axios";
-import { Status } from "../../utils/status";
+import axios, { AxiosError } from "axios";
+import { Status, StatusMessage } from "../../utils/status";
 import { useRouter } from "next/dist/client/router";
 
-const Login: NextPage<{}> = () => {
-    // Declare the states
-    const username = useState<string | null>(null);
-    const password = useState<string | null>(null);
+interface Props {} // How can I make this work with TypeScript getserversideprops
 
+const Login: NextPage<Props> = () => {
+    // Declare the states
+    const [username, setUsername] = useState<string | null>(null);
+    const [password, setPassword] = useState<string | null>(null);
+    const [status, setStatus] = useState<Status | null>(null);
+
+    // Used for redirecting
     const router = useRouter();
 
-    return <>Hello</>;
+    return (
+        <>
+            <h1>Login</h1>
+            <form
+                onSubmit={(e) => {
+                    // Prevent the page from refreshing
+                    e.preventDefault();
+
+                    // Make the login request
+                    axios
+                        .post<string>(
+                            `${process.env.SITE_URL}/api/user/login`,
+                            { username, password }
+                        )
+                        .then((res) => {
+                            // Set the status
+                            setStatus({
+                                success: true,
+                                message: "Login successful",
+                            });
+
+                            // Redirect
+                            router.push("/");
+                        })
+                        .catch((err: AxiosError) =>
+                            // Set the status
+                            setStatus({
+                                success: false,
+                                message: err.response?.data,
+                            })
+                        );
+                }}
+            >
+                <input
+                    type="text"
+                    required={true}
+                    placeholder="Username"
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <input
+                    type="password"
+                    required={true}
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <input type="submit" value="Login" />
+
+                <StatusMessage status={status} />
+            </form>
+        </>
+    );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
@@ -20,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const cookies = req.headers.cookie;
     if (typeof cookies == "undefined")
         return {
-            props: {},
+            props: {} as Props,
         };
     const parsedCookies = cookie.parse(cookies);
 
@@ -28,13 +82,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const sess = parsedCookies["connect.sid"];
     if (!sess)
         return {
-            props: {},
+            props: {} as Props,
         };
 
     // Verify that the user is logged in
     try {
         await axios.post<string>(
-            "http://0.0.0.0:80/api/user/is-authenticated", // **** Flag for an environment variable thing needs to be set
+            `${process.env.SITE_URL}/api/user/is-authenticated`,
             {},
             { headers: { Cookie: cookies } }
         );
@@ -44,11 +98,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         res.setHeader("Location", "/");
 
         return {
-            props: {},
+            props: {} as Props,
         };
     } catch {
         return {
-            props: {},
+            props: {} as Props,
         };
     }
 };

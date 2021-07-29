@@ -73,7 +73,7 @@ services:
     nginx:
         build: src/nginx/
         ports:
-            - "80:80"
+            - "8000:80"
         depends_on:
             - appbuilder
             - api
