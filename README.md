@@ -18,12 +18,6 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Use Gunicorn
 -   I need to add Nginx for this AND not expose the ports
 -   Set better limits for Docker containers on build
--   How do I get away without setting the port in other files from Docker compose ?
--   How do I host my NextJS container amnd make API calls to my main server ?
--   Remove the URL prefixes from the containers (e.g. api, appbuilder)
--   Add an optional URL host for the different services (e.g. redis, postgres) (and specify their port too for scalability)
--   Remove CORS because they are not needed ?
--   Add dependencies for different containers
 -   Is ts-node required if im running nodemon ?
 -   Reorganize project directories once the project is setup
 
