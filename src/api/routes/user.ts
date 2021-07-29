@@ -158,6 +158,11 @@ router.post("/logout", async (req, res) => {
     });
 });
 
+// Verify that a user is authorized
+router.get("/is-authenticated", protectedMiddleware, async (req, res) => {
+    res.sendStatus(200);
+});
+
 // Verify that a user is authorized and return their data
 router.post("/owns-app", protectedMiddleware, async (req, res) => {
     // Get the user

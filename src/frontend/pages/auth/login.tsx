@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useState } from "react";
 import cookie from "cookie";
+import axios from "axios";
 
 interface Props {
     redirect: boolean;
@@ -27,7 +28,13 @@ export const getServerSideProps: GetServerSideProps = async ({
     const sess = parsedCookies["connect.sid"];
     if (!sess) return { props: { redirect: false } as Props };
 
-    return { props: { redirect: true } as Props };
+    // Verify that the user is logged in
+    try {
+        await axios.post<string>("http://0.0.0.0:80/api/user/is-authenticated");
+        return { props: { redirect: true } as Props };
+    } catch {
+        return { props: { redirect: true } as Props };
+    }
 };
 
 // Export the page
