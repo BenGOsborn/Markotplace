@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     // Verify that the user is logged in
     try {
         await axios.post<string>(
-            "http://0.0.0.0:80/api/user/is-authenticated",
+            "http://0.0.0.0:80/api/user/is-authenticated", // **** Flag for an environment variable thing needs to be set
             {},
             { headers: { Cookie: cookies } }
         );
