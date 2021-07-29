@@ -1,9 +1,8 @@
 {
     "name": "frontend",
-    "version": "0.1.0",
-    "private": true,
+    "version": "1.0.0",
     "scripts": {
-        "dev": "dotenv/config next dev dotenv_config_path=../../.env",
+        "dev": "next dev",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"
@@ -15,7 +14,6 @@
     },
     "devDependencies": {
         "@types/react": "17.0.15",
-        "dotenv": "^10.0.0",
         "eslint": "7.31.0",
         "eslint-config-next": "11.0.1",
         "typescript": "4.3.5"
