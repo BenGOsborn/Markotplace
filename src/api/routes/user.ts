@@ -150,10 +150,11 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
     return res.sendStatus(200);
 });
 
-// Log a user out
+// Log a user out and delete their session cookie
 router.post("/logout", async (req, res) => {
     req.session.destroy((err) => {
         if (err) return res.sendStatus(500);
+        res.clearCookie("connect.sid");
         return res.sendStatus(200);
     });
 });

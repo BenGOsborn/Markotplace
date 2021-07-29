@@ -10,9 +10,8 @@ const Layout: FC<{}> = ({ children }) => {
     useEffect(() => {
         // Check if the user is authenticated then update the context
         axios
-            .post<string>(
+            .get<string>(
                 `${process.env.BACKEND_URL}/api/user/is-authenticated`,
-                {},
                 { withCredentials: true }
             )
             .then((res) => setIsAuthenticated(true))

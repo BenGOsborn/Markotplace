@@ -1,3 +1,4 @@
+import axios from "axios";
 import Link from "next/link";
 import { useContext } from "react";
 import { authenticatedCtx } from "../utils/context";
@@ -14,7 +15,25 @@ const Nav = () => {
                     <Link href="/auth/login">Login</Link>
                     <Link href="/auth/register">Register</Link>
                 </>
-            ) : null}
+            ) : (
+                <>
+                    <Link href="/">
+                        <a
+                            onClick={(e) =>
+                                axios
+                                    .post<string>(
+                                        `${process.env.BACKEND_URL}/api/user/logout`,
+                                        {},
+                                        { withCredentials: true }
+                                    )
+                                    .then((res) => setIsAuthenticated(false))
+                            }
+                        >
+                            Logout
+                        </a>
+                    </Link>
+                </>
+            )}
         </>
     );
 };

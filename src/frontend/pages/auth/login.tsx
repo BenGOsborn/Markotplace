@@ -57,7 +57,7 @@ const Login: NextPage<Props> = () => {
                             });
 
                             // Update the context
-                            setIsAuthenticated(true);
+                            setIsAuthenticated(false);
                         });
                 }}
             >
