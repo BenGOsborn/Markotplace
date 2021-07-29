@@ -52,6 +52,7 @@ services:
         depends_on:
             - db
             - redis
+            - appbuilder
     appmanager:
         build: src/appmanager/
         ports:

@@ -1,8 +1,4 @@
 import express from "express";
-import { createConnection } from "typeorm";
-import { User } from "./entities/user";
-import { Dev } from "./entities/dev";
-import { App } from "./entities/app";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { redisClient } from "./utils/redis";
@@ -10,21 +6,14 @@ import devRoute from "./routes/dev";
 import userRoute from "./routes/user";
 import paymentRoute from "./routes/payment";
 import { protectedMiddleware } from "./utils/middleware";
+import { connectDB } from "./utils/db";
 
 // Initialize the app and middleware
 const app = express();
 app.use(express.json());
 
-// Initialize ORM
-createConnection({
-    type: "postgres",
-    host: process.env.ENVIRONMENT === "production" ? "db" : "0.0.0.0",
-    database: process.env.POSTGRES_DB,
-    username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    synchronize: true,
-    entities: [User, Dev, App],
-}).then((connection) => connection.synchronize());
+// Initialize database
+connectDB();
 
 // Initialize sessions with redis
 app.use(
