@@ -61,7 +61,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	if environment == "production" {
 		apiURL = "http://api:4000/api/user/owns-app"
 	} else {
-		apiURL = "http://0.0.0.0:4000/api/user/owns-app"
+		apiURL = "http://localhost:4000/api/user/owns-app"
 	}
 	req, _ := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonStr))
 	req.Header.Set("Cookie", fmt.Sprintf("connect.sid=%s", sessionCookie))
@@ -93,7 +93,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Proxy pass to the correct route
-	remote, _ := url.Parse(fmt.Sprintf("http://0.0.0.0:%d", forwardPort))
+	remote, _ := url.Parse(fmt.Sprintf("http://localhost:%d", forwardPort))
 	proxy := httputil.NewSingleHostReverseProxy(remote)
 
 	// Reset the requested path

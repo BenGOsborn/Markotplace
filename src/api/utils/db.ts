@@ -10,7 +10,7 @@ export const connectDB = () => {
         host:
             process.env.ENVIRONMENT === "production"
                 ? process.env.POSTGRES_HOST
-                : "0.0.0.0",
+                : "localhost",
         database: process.env.POSTGRES_DB,
         username: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,

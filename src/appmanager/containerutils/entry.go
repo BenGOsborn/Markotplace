@@ -49,7 +49,7 @@ func (ctr *Container) StartContainer(ctx context.Context, port int) error {
 		Env: []string{fmt.Sprintf("PORT=%d", port)},
 	}, &container.HostConfig{
 		PortBindings: nat.PortMap{
-			nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "0.0.0.0", HostPort: fmt.Sprintf("%d", port)}},
+			nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "localhost", HostPort: fmt.Sprintf("%d", port)}},
 		},
 		AutoRemove: true,
 		Resources: container.Resources{ Memory: 3e+7 }, // **** Needs to be tested further

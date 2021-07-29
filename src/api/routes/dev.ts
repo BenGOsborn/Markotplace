@@ -205,7 +205,7 @@ router.post("/app/create", async (req, res) => {
     axios.post(
         process.env.ENVIRONMENT === "production"
             ? "http://appbuilder:3000/appbuilder/build"
-            : "http://0.0.0.0:3000/appbuilder/build",
+            : "http://localhost:3000/appbuilder/build",
         { appName: name }
     );
 
@@ -340,7 +340,7 @@ router.patch("/app/edit", async (req, res) => {
         axios.post(
             process.env.ENVIRONMENT === "production"
                 ? "http://appbuilder:3000/appbuilder/build"
-                : "http://0.0.0.0:3000/appbuilder/build",
+                : "http://localhost:3000/appbuilder/build",
             { appName: name }
         );
     }

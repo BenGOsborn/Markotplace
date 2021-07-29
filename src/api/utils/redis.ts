@@ -5,6 +5,6 @@ export const redisClient = redis.createClient({
     host:
         process.env.ENVIRONMENT === "production"
             ? process.env.REDIS_HOST
-            : "0.0.0.0",
+            : "localhost",
 });
 redisClient.auth(process.env.REDIS_PASSWORD as string);
