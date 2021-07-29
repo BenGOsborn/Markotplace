@@ -1,6 +1,6 @@
 module.exports = {
     reactStrictMode: true,
     env: {
-        SITE_URL: "http://0.0.0.0:4000",
+        SITE_URL: "http://localhost:4000",
     },
 };
