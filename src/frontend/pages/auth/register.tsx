@@ -29,7 +29,7 @@ const Register: NextPage<Props> = () => {
                     // Make the register request
                     axios
                         .post<string>(
-                            `${process.env.SITE_URL}/api/user/register`,
+                            `${process.env.BACKEND_URL}/api/user/register`,
                             { username, email, password },
                             { withCredentials: true }
                         )
@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     // Verify that the user is logged in
     try {
         await axios.post<string>(
-            `${process.env.SITE_URL}/api/user/is-authenticated`,
+            `${process.env.BACKEND_URL}/api/user/is-authenticated`,
             {},
             { headers: { Cookie: cookies } }
         );

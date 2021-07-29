@@ -1,3 +1,4 @@
+import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { authenticated } from "../utils/context";
 
@@ -6,9 +7,15 @@ const Layout: FC<{}> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
     useEffect(() => {
-        // Some way of checking if a user is authenticated when they relog in (probably just check the cookie)
-        // How will I check the cookie though if it is only accessible from HTTP ?
-        console.log(document.cookie);
+        // I can simply make a request to the isAuthenticated route and return that back ?
+        axios
+            .post<string>(
+                `${process.env.BACKEND_URL}/api/user/is-authenticated`,
+                {},
+                { withCredentials: true }
+            )
+            .then((res) => setIsAuthenticated(true))
+            .catch((err) => setIsAuthenticated(false));
     }, []);
 
     return (
