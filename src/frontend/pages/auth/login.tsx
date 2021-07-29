@@ -1,39 +1,55 @@
 import { GetServerSideProps, NextPage } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import cookie from "cookie";
 import axios from "axios";
+import { Status } from "../../utils/status";
+import { useRouter } from "next/dist/client/router";
 
-interface Props {
-    redirect: boolean;
-}
+const Login: NextPage<{}> = () => {
+    // Declare the states
+    const username = useState<string | null>(null);
+    const password = useState<string | null>(null);
 
-const Login: NextPage<Props> = () => {
-    const username = useState<null>(null);
+    const router = useRouter();
 
-    return <div>Hello</div>;
+    return <>Hello</>;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-    req,
-    res,
-    params,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     // Get the cookie from the request and parse it
     const cookies = req.headers.cookie;
     if (typeof cookies == "undefined")
-        return { props: { redirect: false } as Props };
+        return {
+            props: {},
+        };
     const parsedCookies = cookie.parse(cookies);
 
     // Get the session cookie
     const sess = parsedCookies["connect.sid"];
-    if (!sess) return { props: { redirect: false } as Props };
+    if (!sess)
+        return {
+            props: {},
+        };
 
     // Verify that the user is logged in
     try {
-        await axios.post<string>("http://0.0.0.0:80/api/user/is-authenticated");
-        return { props: { redirect: true } as Props };
+        await axios.post<string>(
+            "http://0.0.0.0:80/api/user/is-authenticated",
+            {},
+            { headers: { Cookie: cookies } }
+        );
+
+        // Redirect
+        res.statusCode = 302;
+        res.setHeader("Location", "/");
+
+        return {
+            props: {},
+        };
     } catch {
-        return { props: { redirect: true } as Props };
+        return {
+            props: {},
+        };
     }
 };
 
