@@ -1,10 +1,10 @@
-import { GetServerSideProps, NextPage } from "next";
-import cookie from "cookie";
+import { NextPage } from "next";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useState } from "react";
 import { Status, StatusMessage } from "../../utils/status";
 import { authenticatedCtx } from "../../utils/context";
+import Link from "next/link";
 
 interface Props {}
 
@@ -83,47 +83,11 @@ const Register: NextPage<Props> = () => {
                 <input type="submit" value="Login" />
 
                 <StatusMessage status={status} />
+
+                <Link href="/user/login">{"Already have an account?"}</Link>
             </form>
         </>
     );
-};
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-    // Get the cookie from the request and parse it
-    const cookies = req.headers.cookie;
-    if (typeof cookies == "undefined")
-        return {
-            props: {} as Props,
-        };
-    const parsedCookies = cookie.parse(cookies);
-
-    // Get the session cookie
-    const sess = parsedCookies["connect.sid"];
-    if (!sess)
-        return {
-            props: {} as Props,
-        };
-
-    // Verify that the user is logged in
-    try {
-        await axios.post<string>(
-            `${process.env.BACKEND_URL}/api/user/is-authenticated`,
-            {},
-            { headers: { Cookie: cookies } }
-        );
-
-        // Redirect
-        res.statusCode = 302;
-        res.setHeader("Location", "/");
-
-        return {
-            props: {} as Props,
-        };
-    } catch {
-        return {
-            props: {} as Props,
-        };
-    }
 };
 
 // Export the page

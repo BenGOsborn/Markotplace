@@ -12,8 +12,8 @@ const Nav = () => {
             <Link href="/">Home</Link>
             {!isAuthenticated ? (
                 <>
-                    <Link href="/auth/login">Login</Link>
-                    <Link href="/auth/register">Register</Link>
+                    <Link href="/user/login">Login</Link>
+                    <Link href="/user/register">Register</Link>
                 </>
             ) : (
                 <>
