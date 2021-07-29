@@ -7,10 +7,12 @@ import userRoute from "./routes/user";
 import paymentRoute from "./routes/payment";
 import { protectedMiddleware } from "./utils/middleware";
 import { connectDB } from "./utils/db";
+import cors from "cors";
 
 // Initialize the app and middleware
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Initialize database
 connectDB();
