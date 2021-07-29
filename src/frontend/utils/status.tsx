@@ -3,6 +3,7 @@ export interface Status {
     message: string;
 }
 
+// Displays a status message from a status
 export const StatusMessage = (props: { status: Status | null }) => {
     return (
         <>

@@ -11,6 +11,7 @@ const Login: NextPage<Props> = () => {
     // Declare the states
     const [username, setUsername] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
+
     const [status, setStatus] = useState<Status | null>(null);
 
     // Used for redirecting
