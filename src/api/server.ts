@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import { createConnection } from "typeorm";
 import { User } from "./entities/user";
 import { Dev } from "./entities/dev";
@@ -15,7 +14,6 @@ import { protectedMiddleware } from "./utils/middleware";
 // Initialize the app and middleware
 const app = express();
 app.use(express.json());
-app.use(cors());
 
 // Initialize ORM
 createConnection({
@@ -26,7 +24,7 @@ createConnection({
     password: process.env.POSTGRES_PASSWORD,
     synchronize: true,
     entities: [User, Dev, App],
-}).then(connection => connection.synchronize());
+}).then((connection) => connection.synchronize());
 
 // Initialize sessions with redis
 app.use(

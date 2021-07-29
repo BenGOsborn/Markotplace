@@ -1,6 +1,5 @@
 import json
 from flask import Flask, request
-from flask_cors import CORS
 import os
 import docker
 import utils
@@ -10,7 +9,6 @@ production = os.getenv("ENVIRONMENT") == "production"
 
 # Initialize Flask
 app = Flask(__name__)
-CORS(app)
 
 # Initializer Docker
 client = docker.from_env()
