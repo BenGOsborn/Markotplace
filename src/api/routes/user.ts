@@ -150,6 +150,14 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
     return res.sendStatus(200);
 });
 
+// Log a user out
+router.post("/logout", async (req, res) => {
+    req.session.destroy((err) => {
+        if (err) return res.sendStatus(500);
+        return res.sendStatus(200);
+    });
+});
+
 // Verify that a user is authorized and return their data
 router.post("/owns-app", protectedMiddleware, async (req, res) => {
     // Get the user
