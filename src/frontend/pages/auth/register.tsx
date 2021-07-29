@@ -30,7 +30,8 @@ const Register: NextPage<Props> = () => {
                     axios
                         .post<string>(
                             `${process.env.SITE_URL}/api/user/register`,
-                            { username, email, password }
+                            { username, email, password },
+                            { withCredentials: true }
                         )
                         .then((res) => {
                             // Set the status
