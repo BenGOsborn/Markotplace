@@ -164,24 +164,14 @@ router.get("/is-authenticated", protectedMiddleware, async (req, res) => {
     res.sendStatus(200);
 });
 
-// Verify that a user is authorized and return their data
-router.post("/owns-app", protectedMiddleware, async (req, res) => {
+// Get a users profile
+router.get("/profile", protectedMiddleware, async (req, res) => {
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
-    // Get the name of the app
-    const { appName }: { appName: string } = req.body;
-
-    // Check that the users apps are not undefined
-    if (typeof user.apps === "undefined") return res.sendStatus(403);
-
-    // Check that the user owns the app
-    const filtered = user.apps.filter((app) => app.name === appName);
-    if (filtered.length === 0) return res.sendStatus(403);
-
-    // Return success
-    res.sendStatus(200);
+    // Return the specified data for the user
+    res.status(200).json({ username: user.username, email: user.email });
 });
 
 // Export the router

@@ -9,12 +9,12 @@ const Layout: FC<{}> = ({ children }) => {
 
     useEffect(() => {
         // Check if the user is authenticated then update the context
-
-        // **** This doesnt make sense - instead we should just attempt to populate the users details across the state, and if they dont exist then just return false
         axios
             .get<string>(
                 `${process.env.BACKEND_URL}/api/user/is-authenticated`,
-                { withCredentials: true }
+                {
+                    withCredentials: true,
+                }
             )
             .then((res) => setIsAuthenticated(true))
             .catch((err) => setIsAuthenticated(false));
