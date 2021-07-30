@@ -201,14 +201,6 @@ router.post("/app/create", async (req, res) => {
         newDevApps = [...user.dev.apps, ...newDevApps];
     await Dev.update(user.dev.id, { apps: newDevApps });
 
-    // Build the new app
-    axios.post(
-        process.env.ENVIRONMENT === "production"
-            ? "http://appbuilder:3000/appbuilder/build"
-            : "http://localhost:3000/appbuilder/build",
-        { appName: name }
-    );
-
     // Clear the cached user
     await clearCache(`user:${user.id}`);
 
@@ -328,22 +320,6 @@ router.patch("/app/edit", async (req, res) => {
 
     // Update the app
     await App.update(existingApp.id, updateData);
-
-    // Rebuild the app
-    if (
-        typeof ghRepoOwner !== "undefined" ||
-        typeof ghRepoName !== "undefined" ||
-        typeof ghRepoName !== "undefined" ||
-        typeof env !== "undefined"
-    ) {
-        // Rebuild the app
-        axios.post(
-            process.env.ENVIRONMENT === "production"
-                ? "http://appbuilder:3000/appbuilder/build"
-                : "http://localhost:3000/appbuilder/build",
-            { appName: name }
-        );
-    }
 
     // Clear the cached data
     await clearCache(`user:${user.id}`);
