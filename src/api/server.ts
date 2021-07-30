@@ -5,6 +5,7 @@ import { redisClient } from "./utils/redis";
 import devRoute from "./routes/dev";
 import userRoute from "./routes/user";
 import paymentRoute from "./routes/payment";
+import appRoute from "./routes/app";
 import { protectedMiddleware } from "./utils/middleware";
 import { connectDB } from "./utils/db";
 import cors from "cors";
@@ -44,6 +45,7 @@ app.use(
 app.use("/api/user", userRoute);
 app.use("/api/dev", protectedMiddleware, devRoute);
 app.use("/api/payment", paymentRoute);
+app.use("/api/app", appRoute);
 
 // Start the server on the specified port
 const PORT = process.env.PORT || 4000;
