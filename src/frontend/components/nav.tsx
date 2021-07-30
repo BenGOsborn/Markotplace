@@ -32,6 +32,8 @@ const Nav = () => {
                             Logout
                         </a>
                     </Link>
+                    <Link href="/user/library">Library</Link>
+                    <Link href="/user/settings">Settings</Link>
                 </>
             )}
         </>
