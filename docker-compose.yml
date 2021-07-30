@@ -37,22 +37,31 @@ services:
             - STRIPE_SECRET=${STRIPE_SECRET}
             - STRIPE_SECRET_TEST=${STRIPE_SECRET_TEST}
             - STRIPE_WEBOOK_SECRET_PURCHASE=${STRIPE_WEBOOK_SECRET_PURCHASE}
-            - SITE_URL=${SITE_URL}
-            - ENVIRONMENT=${ENVIRONMENT}
+            - FRONTEND_URL=${FRONTEND_URL}
             - NODE_ENV=${NODE_ENV}
         depends_on:
             - db
             - redis
-            - appbuilder
+        volumes:
+            - ./src/api:/usr/app
+        restart: always
+        networks:
+            - backend
+    nginx:
+        build: src/nginx/
+        ports:
+            - "8000:80"
+        depends_on:
+            - api
+        volumes:
+            - ./src/nginx:/etc/nginx/conf.d
         restart: always
         networks:
             - backend
 
 networks:
     frontend:
-        driver: custom-driver-1
     backend:
-        driver: custom-driver-2
 # appbuilder:
 #     build: src/appbuilder/
 #     ports:
@@ -83,17 +92,6 @@ networks:
 #         - /usr/bin/docker:/usr/bin/docker
 #     depends_on:
 #         - api
-#     restart: always
-#     networks:
-#         - backend
-# nginx:
-#     build: src/nginx/
-#     ports:
-#         - "8000:80"
-#     depends_on:
-#         - appbuilder
-#         - api
-#         - appmanager
 #     restart: always
 #     networks:
 #         - backend

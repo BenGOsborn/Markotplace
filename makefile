@@ -4,9 +4,9 @@ include .env.local
 
 # ---------- Main ----------
 
-# Build images and start them up
-dc-start:
-	docker-compose up --build
+# Start containers in dev mode
+dc-start-dev:
+	docker-compose --env-file .env.local up --build
 
 # Shutdown Docker Compose
 dc-stop:

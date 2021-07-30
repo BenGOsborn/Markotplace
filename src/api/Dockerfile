@@ -1,16 +1,6 @@
-# Compile TypeScript
-FROM node
+# Build the environment
+FROM node:latest
 WORKDIR /usr/app
-COPY . .
-RUN npm install
-RUN npm run build
 
-# Copy the files to the new environment
-FROM node
-WORKDIR /usr/app
-COPY package*.json ./
-RUN npm install --production
-COPY --from=0 /usr/app/dist ./dist
-
-# Start the server
-CMD npm run start
+# Start the dev server
+CMD npm run dev

@@ -13,7 +13,7 @@ const router = express.Router();
 // Authorize user with GitHub
 router.get("/authorize/github", async (req, res) => {
     // Declare the rediret URL
-    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo`; // **** I might as well put the redirect URL here
+    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo&redirect_uri=${process.env.FRONTEND_URL}/dev/authorize`;
 
     // Redirect the user to GitHub
     res.redirect(redirectURL);
@@ -160,7 +160,7 @@ router.post("/app/create", async (req, res) => {
         `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
         {
             config: {
-                url: `${process.env.SITE_URL}/appbuilder/hook`,
+                url: `${process.env.FRONTEND_URL}/appbuilder/hook`,
                 content_type: "json",
             },
         },
@@ -304,7 +304,7 @@ router.patch("/app/edit", async (req, res) => {
             }/${ghRepoName || existingApp.ghRepoName}/hooks`,
             {
                 config: {
-                    url: `${process.env.SITE_URL}/appbuilder/hook`,
+                    url: `${process.env.FRONTEND_URL}/appbuilder/hook`,
                     content_type: "json",
                 },
             },
