@@ -13,7 +13,7 @@ const router = express.Router();
 // Authorize user with GitHub
 router.get("/authorize/github", async (req, res) => {
     // Declare the rediret URL
-    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo`;
+    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo`; // **** I might as well put the redirect URL here
 
     // Redirect the user to GitHub
     res.redirect(redirectURL);

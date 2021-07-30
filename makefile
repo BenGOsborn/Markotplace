@@ -1,4 +1,6 @@
-include .env
+# .env environments
+include .env.local
+# include .env
 
 # ---------- Main ----------
 

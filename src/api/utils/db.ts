@@ -7,10 +7,7 @@ import { App } from "../entities/app";
 export const connectDB = () => {
     createConnection({
         type: "postgres",
-        host:
-            process.env.ENVIRONMENT === "production"
-                ? process.env.POSTGRES_HOST
-                : "localhost",
+        host: process.env.POSTGRES_HOST,
         database: process.env.POSTGRES_DB,
         username: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,
