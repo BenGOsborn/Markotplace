@@ -1,4 +1,4 @@
-# .env environments
+# Declare the .env file to use
 include .env.local
 # include .env
 
