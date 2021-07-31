@@ -77,7 +77,7 @@ const Settings: NextPage<Props> = ({ username, email }) => {
 
             <StatusMessage status={status} />
 
-            <Link href="/user/dev/settings">Dev settings</Link>
+            <Link href="/user/dev/dashboard">Dev dashboard</Link>
         </>
     );
 };

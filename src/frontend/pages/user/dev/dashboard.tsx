@@ -9,20 +9,8 @@ const Dashboard: NextPage<Props> = () => {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
-        // Get the GitHub OAuth URL
-        const { data: url } = await axios.get<string>(
-            `${process.env.BACKEND_URL}/api/dev/authorize/github`,
-            { withCredentials: true, headers: { Cookie: req.headers.cookie } }
-        );
-
-        // Redirect the user
-        res.statusCode = 302;
-        res.setHeader("Location", url);
-    } catch {
-        // Redirect the user to their user dashboard
-        res.statusCode = 302;
-        res.setHeader("Location", "/user/login");
-    }
+        // Try and return the users data
+    } catch {}
 
     return { props: {} as Props };
 };
