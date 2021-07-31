@@ -180,7 +180,7 @@ router.post(
             `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
             {
                 config: {
-                    url: `${process.env.FRONTEND_URL}/appbuilder/hook`, // **** Perhaps this should NOT send the webhook to the frontend and rather the backend
+                    url: `${process.env.BACKEND_URL}/appbuilder/hook`,
                     content_type: "json",
                 },
             },
@@ -330,7 +330,7 @@ router.patch(
                 }/${ghRepoName || existingApp.ghRepoName}/hooks`,
                 {
                     config: {
-                        url: `${process.env.FRONTEND_URL}/appbuilder/hook`,
+                        url: `${process.env.BACKEND_URL}/appbuilder/hook`,
                         content_type: "json",
                     },
                 },
