@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export const isAuthorized = async (cookie: string | undefined) => {
     // If there is no cookie return false
@@ -6,13 +6,12 @@ export const isAuthorized = async (cookie: string | undefined) => {
 
     // Verify the session cookie
     try {
-        await axios.get(
+        await axios.get<string>(
             `${process.env.BACKEND_URL}/api/user/is-authenticated`,
             { withCredentials: true, headers: { Cookie: cookie } }
         );
         return true;
-    } catch (e) {
-        console.log(e);
+    } catch {
         return false;
     }
 };
