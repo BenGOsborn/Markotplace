@@ -1,2 +1,2 @@
 # Build the environment
-FROM nginx
+FROM nginx:latest
