@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import Link from "next/link";
 import { useState } from "react";
-import { isAuthorized } from "../../utils/authentication";
 import { Status, StatusMessage } from "../../utils/status";
 
 interface Props {
@@ -76,23 +76,13 @@ const Settings: NextPage<Props> = ({ username, email }) => {
             </form>
 
             <StatusMessage status={status} />
+
+            <Link href="/user/dev/settings">Dev settings</Link>
         </>
     );
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-    // Check if the user is authorized
-    const authorized = await isAuthorized(req.headers.cookie);
-
-    // If the user is not authorized then redirect
-    if (!authorized) {
-        res.statusCode = 302;
-        res.setHeader("Location", "/user/login");
-
-        // Return something
-        return { props: {} as Props };
-    }
-
     try {
         // Get the users profile
         const {
@@ -106,7 +96,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         );
         return { props: { username, email } as Props };
     } catch {
-        // Return something
+        // Redirect the user
+        res.statusCode = 302;
+        res.setHeader("Location", "/user/login");
         return { props: {} as Props };
     }
 };

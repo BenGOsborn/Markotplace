@@ -1,7 +1,5 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
-import { useEffect } from "react";
-import { isAuthorized } from "../../utils/authentication";
 
 interface Props {
     apps: { name: string; title: string; description: string }[];
@@ -31,17 +29,6 @@ const Library: NextPage<Props> = ({ apps }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-    // Check if the user is authorized
-    const authorized = await isAuthorized(req.headers.cookie);
-
-    // If the user is not authorized then redirect
-    if (!authorized) {
-        res.statusCode = 302;
-        res.setHeader("Location", "/user/login");
-
-        return { props: { apps: [] } as Props };
-    }
-
     try {
         // Fetch a list of the users apps
         const apps = await axios.get<Props>(
@@ -50,7 +37,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         );
         return { props: { apps: apps.data.apps } as Props };
     } catch {
-        // Return an emtpy list
+        // Redirect the user
+        res.statusCode = 302;
+        res.setHeader("Location", "/user/login");
         return { props: { apps: [] } as Props };
     }
 };

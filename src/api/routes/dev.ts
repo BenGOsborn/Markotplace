@@ -12,11 +12,9 @@ const router = express.Router();
 
 // Authorize user with GitHub
 router.get("/authorize/github", async (req, res) => {
-    // Declare the rediret URL
+    // Return the authorization URL
     const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo&redirect_uri=${process.env.FRONTEND_URL}/dev/authorize`;
-
-    // Redirect the user to GitHub
-    res.redirect(redirectURL);
+    res.status(200).send(redirectURL);
 });
 
 // Callback for GitHub authorization
