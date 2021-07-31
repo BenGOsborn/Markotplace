@@ -10,4 +10,5 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return { props: {} as Props };
 };
 
+// Export the page
 export default Authorize;
