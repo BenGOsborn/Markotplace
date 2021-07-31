@@ -29,9 +29,9 @@ const Settings: NextPage<Props> = ({ username, email }) => {
                         .patch<string>(
                             `${process.env.BACKEND_URL}/api/user/edit`,
                             {
-                                username: newUsername,
-                                email: newEmail,
-                                password: newPassword,
+                                username: newUsername ? newUsername : undefined,
+                                email: newEmail ? newEmail : undefined,
+                                password: newPassword ? newPassword : undefined,
                             },
                             { withCredentials: true }
                         )
