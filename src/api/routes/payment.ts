@@ -37,7 +37,7 @@ router.get("/stripe-dashboard", protectedMiddleware, async (req, res) => {
         await clearCache(`onboarded:${user.dev.id}`);
 
         // Return the url
-        return res.json({ url: onboardingLink, connected: false });
+        return res.json({ url: onboardingLink, onboarded: false });
     }
 
     // Redirect the user to their Stripe dashboard
@@ -46,7 +46,7 @@ router.get("/stripe-dashboard", protectedMiddleware, async (req, res) => {
     ).url;
 
     // Return the url
-    res.json({ url: dashbordLink, connected: true });
+    res.json({ url: dashbordLink, onboarded: true });
 });
 
 // Allow a user to purchase an app
