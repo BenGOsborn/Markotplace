@@ -68,6 +68,8 @@ services:
             - nginx
         restart: always
         network_mode: "host"
+        environment:
+            - NODE_ENV=${NODE_ENV}
 
 networks:
     backend:

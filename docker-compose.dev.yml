@@ -74,6 +74,8 @@ services:
             - ./src/frontend:/usr/app
         restart: always
         network_mode: "host"
+        environment:
+            - NODE_ENV=${NODE_ENV}
 
 networks:
     backend:

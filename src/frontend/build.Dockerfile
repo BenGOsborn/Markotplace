@@ -13,5 +13,8 @@ RUN npm install --production
 COPY --from=build /usr/app/.next ./.next
 COPY --from=build /usr/app/public ./public
 
+# Disable tracking
+ENV NEXT_TELEMETRY_DISABLED 1
+
 # Start the server
 CMD npm run start
