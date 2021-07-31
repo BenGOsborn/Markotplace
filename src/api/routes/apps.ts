@@ -76,10 +76,25 @@ router.get("/dev", protectedMiddleware, async (req, res) => {
 
     // Get the list of the devs apps
     const existingApps = user.dev.apps;
+    if (typeof existingApps === "undefined")
+        return res.status(200).json({ apps: [] });
 
     // Filter out the data for the apps
+    const apps = existingApps.map((app) => {
+        return {
+            name: app.name,
+            title: app.title,
+            description: app.description,
+            price: app.price,
+            ghRepoOwner: app.ghRepoOwner,
+            ghRepoName: app.ghRepoName,
+            ghRepoBranch: app.ghRepoBranch,
+            env: app.env,
+        };
+    });
 
-    res.sendStatus(200);
+    // Return the app data
+    res.status(200).json({ apps });
 });
 
 // Export the router
