@@ -19,7 +19,7 @@ interface Props {
 const Dashboard: NextPage<Props> = ({ apps, stripeURL, onboarded }) => {
     return (
         <>
-            {apps.length > 0 ? (
+            {/* {apps.length > 0 ? (
                 <div>
                     {apps.map((app, index) => {
                         return (
@@ -46,7 +46,7 @@ const Dashboard: NextPage<Props> = ({ apps, stripeURL, onboarded }) => {
                 <a>
                     Connect with Stripe to start receiving monetizing your apps
                 </a>
-            )}
+            )} */}
         </>
     );
 };
