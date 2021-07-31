@@ -9,3 +9,5 @@ const Authorize: NextPage<Props> = () => {
 export const getServerSideProps: GetServerSideProps = async () => {
     return { props: {} as Props };
 };
+
+export default Authorize;
