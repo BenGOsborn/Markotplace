@@ -18,13 +18,15 @@ router.get("/authorize/github", async (req, res) => {
 });
 
 // Callback for GitHub authorization
-router.get("/authorize/github/callback", async (req, res) => {
+router.post("/authorize/github", async (req, res) => {
     // Get the user data from the request
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
-    // Extract the code from the callback
-    const { code } = req.query;
+    // Extract the code from the body and check it exists
+    const { code } = req.body;
+    if (typeof code === "undefined")
+        return res.status(400).send("Code is missing");
 
     // Get the access token
     const {

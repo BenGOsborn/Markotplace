@@ -8,10 +8,6 @@ include .env.local
 dc-start-dev:
 	docker-compose --env-file .env.local up --build
 
-# Shutdown containers
-dc-stop:
-	docker-compose down
-
 # Kill all Docker containers
 docker-kill:
 	docker rm -f $$(docker ps -q)
