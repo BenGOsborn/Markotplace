@@ -10,6 +10,7 @@ const Nav = () => {
     return (
         <>
             <Link href="/">Home</Link>
+            <Link href="/apps">Market</Link>
             {!isAuthenticated ? (
                 <>
                     <Link href="/user/login">Login</Link>
