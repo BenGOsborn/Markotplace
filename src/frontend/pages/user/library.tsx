@@ -24,7 +24,7 @@ const Library: NextPage<Props> = ({ apps }) => {
                     })}
                 </div>
             ) : (
-                <h3>No apps to show</h3>
+                <h3>No apps to display</h3>
             )}
         </>
     );
