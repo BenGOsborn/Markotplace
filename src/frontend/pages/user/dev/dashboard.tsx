@@ -12,9 +12,11 @@ interface Props {
         ghRepoBranch: string;
         env: string;
     }[];
+    stripeURL: string;
+    onboarded: boolean;
 }
 
-const Dashboard: NextPage<Props> = ({ apps }) => {
+const Dashboard: NextPage<Props> = ({ apps, stripeURL, onboarded }) => {
     return (
         <>
             {apps.length > 0 ? (
@@ -38,6 +40,13 @@ const Dashboard: NextPage<Props> = ({ apps }) => {
             ) : (
                 <h3>No apps to display</h3>
             )}
+            {onboarded ? (
+                <a href={stripeURL}>View your Stripe dashboard</a>
+            ) : (
+                <a>
+                    Connect with Stripe to start receiving monetizing your apps
+                </a>
+            )}
         </>
     );
 };
@@ -53,8 +62,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         });
 
         // Get the devs payment link
+        const {
+            data: { stripeURL, onboarded },
+        } = await axios.get<Props>(
+            `${process.env.BACKEND_URL}/api/payment/stripe-dashboard`,
+            {
+                withCredentials: true,
+                headers: { Cookie: req.headers.cookie },
+            }
+        );
 
-        return { props: { apps } as Props };
+        return { props: { apps, stripeURL, onboarded } as Props };
     } catch {
         // Redirect to the settings page
         res.statusCode = 302;
