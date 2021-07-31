@@ -13,4 +13,4 @@ RUN npm install --production
 COPY --from=build /usr/app/dist ./dist
 
 # Start the server
-RUN npm run start
+CMD npm run start

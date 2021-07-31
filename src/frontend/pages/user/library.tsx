@@ -10,9 +10,9 @@ const Library: NextPage<Props> = ({ apps }) => {
         <>
             {apps.length > 0 ? (
                 <div>
-                    {apps.map((app) => {
+                    {apps.map((app, index) => {
                         return (
-                            <div>
+                            <div key={index}>
                                 <h3>
                                     <a href={app.name}>{app.title}</a>
                                 </h3>

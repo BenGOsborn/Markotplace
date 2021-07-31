@@ -11,6 +11,7 @@ WORKDIR /usr/app
 COPY package*.json ./
 RUN npm install --production
 COPY --from=build /usr/app/.next ./.next
+COPY --from=build /usr/app/public ./public
 
 # Start the server
-RUN npm run start
+CMD npm run start
