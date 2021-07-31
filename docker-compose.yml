@@ -62,8 +62,6 @@ services:
     # --------- Frontend services ---------
     frontend:
         build: src/frontend/
-        ports:
-            - "3000:3000"
         depends_on:
             - nginx
         volumes:
