@@ -44,13 +44,16 @@ const Dashboard: NextPage<Props> = ({ apps }) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
-        // Try and fetch a list of the users apps
+        // Fetch a list of the devs apps
         const {
             data: { apps },
         } = await axios.get<Props>(`${process.env.BACKEND_URL}/api/apps/dev`, {
             withCredentials: true,
             headers: { Cookie: req.headers.cookie },
         });
+
+        // Get the devs payment link
+
         return { props: { apps } as Props };
     } catch {
         // Redirect to the settings page
