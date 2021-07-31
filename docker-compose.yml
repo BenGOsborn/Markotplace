@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+    # --------- Backend services ---------
     db:
         image: postgres:latest
         environment:
@@ -58,6 +59,18 @@ services:
         restart: always
         networks:
             - backend
+    # --------- Frontend services ---------
+    frontend:
+        build: src/frontend/
+        ports:
+            - "3000:3000"
+        depends_on:
+            - nginx
+        volumes:
+            - ./src/frontend:/usr/app
+        restart: always
+        networks:
+            - frontend
 
 networks:
     frontend:
