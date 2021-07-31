@@ -87,19 +87,6 @@ router.post("/authorize/github", async (req, res) => {
     res.sendStatus(200);
 });
 
-// Get the data for the users dev account
-router.get("/dashboard", async (req, res) => {
-    // Get the user data from the request
-    // @ts-ignore
-    const { user }: { user: User } = req.locals;
-
-    // Get the list of the devs apps
-    const existingApps = user.apps;
-    // Filter these out and then return the payment link ? (this should be a different endpoint)
-
-    res.sendStatus(200);
-});
-
 // **** Maybe move the following to the apps ?
 // Add an app
 router.post("/app/create", async (req, res) => {

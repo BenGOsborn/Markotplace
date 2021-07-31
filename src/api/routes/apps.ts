@@ -68,5 +68,19 @@ router.get("/list", async (req, res) => {
     res.status(200).json({ apps });
 });
 
+// Get the apps for the users dev account
+router.get("/dev", protectedMiddleware, async (req, res) => {
+    // Get the user data from the request
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
+
+    // Get the list of the devs apps
+    const existingApps = user.dev.apps;
+
+    // Filter out the data for the apps
+
+    res.sendStatus(200);
+});
+
 // Export the router
 export default router;
