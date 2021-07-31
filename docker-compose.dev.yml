@@ -22,7 +22,9 @@ services:
         networks:
             - backend
     api:
-        build: src/api/
+        build:
+            context: src/api
+            dockerfile: dev.Dockerfile
         ports:
             - "4000"
         environment:
@@ -49,7 +51,9 @@ services:
         networks:
             - backend
     nginx:
-        build: src/nginx/
+        build:
+            context: src/nginx
+            dockerfile: dev.Dockerfile
         ports:
             - "8000:80"
         depends_on:
@@ -61,7 +65,9 @@ services:
             - backend
     # --------- Frontend services ---------
     frontend:
-        build: src/frontend/
+        build:
+            context: src/frontend
+            dockerfile: dev.Dockerfile
         depends_on:
             - nginx
         volumes:

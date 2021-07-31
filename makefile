@@ -6,7 +6,11 @@ include .env.local
 
 # Start containers in dev mode
 dc-start-dev:
-	docker-compose --env-file .env.local up --build
+	docker-compose -f docker-compose.dev.yml --env-file .env.local up --build
+
+# Start containers in dev mode
+dc-start-build:
+	docker-compose -f docker-compose.build.yml --env-file .env up --build
 
 # Kill all Docker containers
 docker-kill:
