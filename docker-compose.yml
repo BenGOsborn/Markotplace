@@ -59,6 +59,17 @@ services:
         restart: always
         networks:
             - backend
+    # --------- Frontend services ---------
+    frontend:
+        build: src/frontend/
+        ports:
+            - "3000:3000"
+        depends_on:
+            - nginx
+        volumes:
+            - ./src/frontend:/usr/app
+        restart: always
+        network_mode: "host"
 
 networks:
     backend:
