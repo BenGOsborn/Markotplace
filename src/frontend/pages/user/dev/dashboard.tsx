@@ -19,6 +19,9 @@ interface Props {
 const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
     return (
         <>
+            {/* Now I want the option of creating a new app here OR editing an existing app */}
+            {/* It should all be done through this page */}
+
             {apps.length > 0 ? (
                 <div>
                     {apps.map((app, index) => {
