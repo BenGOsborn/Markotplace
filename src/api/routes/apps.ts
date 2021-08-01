@@ -132,8 +132,6 @@ router.get(
     }
 );
 
-// **** The following two are going to be nightmares to debug - change them later
-
 // Add an app
 router.post(
     "/dev/create",
