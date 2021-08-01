@@ -10,10 +10,13 @@ const Create: NextPage<Props> = () => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
         // Verify that the user is a developer
-        await axios.get<Props>(`${process.env.BACKEND_URL}/api/dev/is-dev`, {
-            withCredentials: true,
-            headers: { Cookie: req.headers.cookie },
-        });
+        await axios.get<Props>(
+            `${process.env.BACKEND_URL}/api/dev/is-authorized`,
+            {
+                withCredentials: true,
+                headers: { Cookie: req.headers.cookie },
+            }
+        );
         return { props: {} as Props };
     } catch {
         // Redirect to the settings page

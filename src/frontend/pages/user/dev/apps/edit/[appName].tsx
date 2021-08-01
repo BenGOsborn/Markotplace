@@ -16,6 +16,9 @@ interface Props {
 
 const Edit: NextPage<Props> = ({ app }) => {
     return (
+        // **** There of course needs to be options in here for the developers to edit their apps and save and make changes
+        // **** Some way of parsing the JSON before sending it off as a request, and formatting the JSON as the env fields
+
         <>
             <h3>
                 <a href={app.name}>{app.title}</a>

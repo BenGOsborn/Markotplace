@@ -80,9 +80,14 @@ router.post("/authorize/github", async (req, res) => {
 });
 
 // Verify that a user is a developer
-router.get("/is-dev", protectedMiddleware, devMiddleware, async (req, res) => {
-    res.sendStatus(200);
-});
+router.get(
+    "/is-authorized",
+    protectedMiddleware,
+    devMiddleware,
+    async (req, res) => {
+        res.sendStatus(200);
+    }
+);
 
 // Export the router
 export default router;
