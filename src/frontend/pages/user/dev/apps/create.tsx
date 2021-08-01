@@ -23,6 +23,9 @@ const Create: NextPage<Props> = () => {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
+
+                    // We should send the request here and update the values
+                    // Also DO NOT FORGET TO PARSE THE JSON PROPERLY - THIS SHOULD ALSO BE REFLECTED IN THE FORM
                     console.log(e);
                 }}
             >
