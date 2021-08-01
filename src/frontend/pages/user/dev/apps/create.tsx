@@ -73,12 +73,12 @@ const Create: NextPage<Props> = () => {
                     placeholder="GitHub Repo Branch"
                     onChange={(e) => setGhRepoBranch(e.target.value)}
                 />
-                <input
+                {/* <input
                     type="text" // This is actually going to be JSON
                     required={true}
                     placeholder="Env"
                     onChange={(e) => setEnv(e.target.value)}
-                />
+                /> */}
                 <input type="submit" value="Create" />
             </form>
 
