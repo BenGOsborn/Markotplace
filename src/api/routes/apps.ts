@@ -224,20 +224,12 @@ router.post(
             ghRepoBranch,
             ghWebhookID,
             env,
+            dev: user.dev,
         });
         await app.save();
 
         // Add the new app to the users account
-        let newUserApps: App[] = [app];
-        if (typeof user.apps !== "undefined")
-            newUserApps = [...user.apps, ...newUserApps];
-        await User.update(user.id, { apps: newUserApps });
-
-        // Add the new app to the users dev account
-        let newDevApps: App[] = [app];
-        if (typeof user.dev.apps !== "undefined")
-            newDevApps = [...user.dev.apps, ...newDevApps];
-        await Dev.update(user.dev.id, { apps: newDevApps });
+        await User.update(user.id, { apps: [...user.apps, app] });
 
         // Add an app
         res.sendStatus(200);
