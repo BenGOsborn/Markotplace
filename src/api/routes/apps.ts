@@ -29,7 +29,7 @@ router.get("/owned", protectedMiddleware, async (req, res) => {
 });
 
 // Verify that a user is authorized and return their data
-router.post("/owns-app", protectedMiddleware, async (req, res) => {
+router.post("/owns", protectedMiddleware, async (req, res) => {
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -70,34 +70,73 @@ router.get("/list", async (req, res) => {
 });
 
 // Get the apps for the users dev account
-router.get("/dev", protectedMiddleware, devMiddleware, async (req, res) => {
-    // Get the user data from the request
-    // @ts-ignore
-    const { user }: { user: User } = req.locals;
+router.get(
+    "/dev/dashboard",
+    protectedMiddleware,
+    devMiddleware,
+    async (req, res) => {
+        // Get the user data from the request
+        // @ts-ignore
+        const { user }: { user: User } = req.locals;
 
-    // Filter out the data for the apps
-    const apps = user.dev.apps.map((app) => {
-        return {
-            name: app.name,
-            title: app.title,
-            description: app.description,
-            price: app.price,
-            ghRepoOwner: app.ghRepoOwner,
-            ghRepoName: app.ghRepoName,
-            ghRepoBranch: app.ghRepoBranch,
-            env: app.env,
+        // Filter out the data for the apps
+        const apps = user.dev.apps.map((app) => {
+            return {
+                name: app.name,
+                title: app.title,
+                description: app.description,
+                price: app.price,
+                ghRepoOwner: app.ghRepoOwner,
+                ghRepoName: app.ghRepoName,
+                ghRepoBranch: app.ghRepoBranch,
+                env: app.env,
+            };
+        });
+
+        // Return the app data
+        res.status(200).json({ apps });
+    }
+);
+
+// Get the details of an app
+router.get(
+    "/dev/details/:appname",
+    protectedMiddleware,
+    devMiddleware,
+    async (req, res) => {
+        // Get the user data from the request
+        // @ts-ignore
+        const { user }: { user: User } = req.locals;
+
+        // Get the app name from the body
+        const appName = req.params.appname;
+
+        // Find the developers app that matches the app name
+        if (user.dev.apps === null) return res.sendStatus(403);
+        const appIndex = user.dev.apps.findIndex((app) => app.name === appName);
+        if (appIndex === -1) return res.sendStatus(403);
+
+        // Get the app and filter out the unused data, then return it
+        const appRaw = user.dev.apps[appIndex];
+        const app = {
+            name: appRaw.name,
+            title: appRaw.title,
+            description: appRaw.description,
+            price: appRaw.price,
+            ghRepoOwner: appRaw.ghRepoOwner,
+            ghRepoName: appRaw.ghRepoName,
+            ghRepoBranch: appRaw.ghRepoBranch,
+            env: appRaw.env,
         };
-    });
-
-    // Return the app data
-    res.status(200).json({ apps });
-});
+        res.status(200).json({ app });
+    }
+);
 
 // **** The following two are going to be nightmares to debug - change them later
 
 // Add an app
 router.post(
-    "/app/create",
+    "/dev/create",
     protectedMiddleware,
     devMiddleware,
     async (req, res) => {
@@ -209,7 +248,7 @@ router.post(
 
 // Edit an app
 router.patch(
-    "/app/edit",
+    "/dev/edit",
     protectedMiddleware,
     devMiddleware,
     async (req, res) => {
