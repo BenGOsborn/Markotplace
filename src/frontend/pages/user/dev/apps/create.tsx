@@ -120,8 +120,14 @@ const Create: NextPage<Props> = () => {
                             const exists = env.filter(
                                 (variable) => variable[0] === envKey
                             );
-                            if (exists.length === 0)
+                            if (exists.length === 0) {
+                                // Update the environment variables
                                 setEnv([...env, [envKey, envValue]]);
+
+                                // Reset the key and value
+                                setEnvKey("");
+                                setEnvValue("");
+                            }
                         }
                     }}
                 >
