@@ -2,6 +2,7 @@ import axios from "axios";
 import express from "express";
 import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
+import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
 
 // Initialize the router
@@ -75,6 +76,11 @@ router.post("/authorize/github", async (req, res) => {
     }
 
     // Return success
+    res.sendStatus(200);
+});
+
+// Verify that a user is a developer
+router.get("/is-dev", protectedMiddleware, devMiddleware, async (req, res) => {
     res.sendStatus(200);
 });
 

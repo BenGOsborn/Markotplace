@@ -19,9 +19,6 @@ interface Props {
 const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
     return (
         <>
-            {/* Now I want the option of creating a new app here OR editing an existing app */}
-            {/* It should all be done through this page */}
-
             {apps.length > 0 ? (
                 <div>
                     {apps.map((app, index) => {
@@ -50,6 +47,7 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                     Connect with Stripe to start receiving monetizing your apps
                 </a>
             )}
+            {/* Also allow a developer to reauthorize their GitHub account */}
         </>
     );
 };
@@ -79,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     } catch {
         // Redirect to the settings page
         res.statusCode = 302;
-        res.setHeader("Location", "/user/dev/authorize-github");
+        res.setHeader("Location", "/user/settings");
         return { props: {} as Props };
     }
 };
