@@ -1,5 +1,6 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import { Status, StatusMessage } from "../../../../utils/status";
 
@@ -21,15 +22,37 @@ const Create: NextPage<Props> = () => {
 
     const [status, setStatus] = useState<Status | null>(null);
 
+    // Used for redirects
+    const router = useRouter();
+
     return (
         <>
             <form
                 onSubmit={(e) => {
+                    // Prevent page from reloading
                     e.preventDefault();
 
-                    // We should send the request here and update the values
-                    // Also DO NOT FORGET TO PARSE THE JSON PROPERLY - THIS SHOULD ALSO BE REFLECTED IN THE FORM
-                    console.log(e);
+                    // Create the env to send
+                    const sendEnv: any = {};
+                    for (let pair of env) {
+                        sendEnv[pair[0]] = pair[1];
+                    }
+
+                    // Make the request to create the new app
+                    axios.post<string>(
+                        `${process.env.BACKEND_URL}/api/apps/dev/create`,
+                        {
+                            name,
+                            title,
+                            description,
+                            price,
+                            ghRepoOwner,
+                            ghRepoName,
+                            ghRepoBranch,
+                            env: sendEnv,
+                        },
+                        { withCredentials: true }
+                    );
                 }}
             >
                 <input
@@ -51,6 +74,7 @@ const Create: NextPage<Props> = () => {
                 />
                 <input
                     type="number"
+                    step={0.01}
                     required={true}
                     placeholder="Price"
                     onChange={(e) => setPrice(e.target.valueAsNumber)}
