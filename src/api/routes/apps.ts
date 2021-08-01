@@ -113,9 +113,9 @@ router.get(
         const appName = req.params.appname;
 
         // Find the developers app that matches the app name
-        if (user.dev.apps === null) return res.sendStatus(403);
+        if (user.dev.apps === null) return res.sendStatus(401);
         const appIndex = user.dev.apps.findIndex((app) => app.name === appName);
-        if (appIndex === -1) return res.sendStatus(403);
+        if (appIndex === -1) return res.sendStatus(401);
 
         // Get the app and filter out the unused data, then return it
         const appRaw = user.dev.apps[appIndex];
@@ -196,8 +196,7 @@ router.post(
                 );
 
         // Validate the env
-        if (!validEnv(env))
-            return res.status(400).send("Invalid environment JSON");
+        if (!validEnv(env)) return res.status(400).send("Invalid env JSON");
 
         // Initialize a new webhook in the repository for the user
         const {
@@ -285,8 +284,15 @@ router.patch(
         });
         if (error) return res.status(400).send(error.details[0].message);
 
+        // Validate the env
+        if (typeof env !== "undefined" && validEnv(env))
+            return res.status(400).send("Invalid env JSON");
+
         // Find the app with the existing name
-        const existingApp = await App.findOne({ where: { name } });
+        const existingApp = await App.findOne({
+            where: { name },
+            relations: ["dev"],
+        });
         if (typeof existingApp === "undefined")
             return res.status(400).send("No app with this name exists");
 
