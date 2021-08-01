@@ -14,10 +14,10 @@ const Create: NextPage<Props> = () => {
     const [ghRepoOwner, setGhRepoOwner] = useState<string | null>(null);
     const [ghRepoName, setGhRepoName] = useState<string | null>(null);
     const [ghRepoBranch, setGhRepoBranch] = useState<string | null>(null);
-    const [env, setEnv] = useState<[string, string][] | null>(null);
+    const [env, setEnv] = useState<[string, string][]>([]);
 
-    // THis should be stored here then pushed into the env when it is ready
-    const [tempEnv, setTempEnv] = useState<[string, string] | null>(null);
+    const [envKey, setEnvKey] = useState<string>("");
+    const [envValue, setEnvValue] = useState<string>("");
 
     const [status, setStatus] = useState<Status | null>(null);
 
@@ -73,12 +73,60 @@ const Create: NextPage<Props> = () => {
                     placeholder="GitHub Repo Branch"
                     onChange={(e) => setGhRepoBranch(e.target.value)}
                 />
-                {/* <input
-                    type="text" // This is actually going to be JSON
+                <ul>
+                    {env.map((variable, index) => {
+                        return (
+                            <li key={index}>
+                                {variable[0]}={variable[1]}
+                                <button
+                                    onClick={(e) => {
+                                        // Prevent the page from reloading
+                                        e.preventDefault();
+
+                                        // Remove the key
+                                        const envCopy = [...env];
+                                        envCopy.splice(index, 1);
+                                        setEnv(envCopy);
+                                    }}
+                                >
+                                    -
+                                </button>
+                            </li>
+                        );
+                    })}
+                </ul>
+                <input
+                    type="text"
                     required={true}
-                    placeholder="Env"
-                    onChange={(e) => setEnv(e.target.value)}
-                /> */}
+                    value={envKey}
+                    placeholder="Env key"
+                    onChange={(e) => setEnvKey(e.target.value)}
+                />
+                <input
+                    type="text"
+                    required={true}
+                    value={envValue}
+                    placeholder="Env value"
+                    onChange={(e) => setEnvValue(e.target.value)}
+                />
+                <button
+                    onClick={(e) => {
+                        // Prevent page from reloading
+                        e.preventDefault();
+
+                        // Check that both fields are not null
+                        if (envKey.length > 0 && envValue.length > 0) {
+                            // Make sure that the same key does not exist
+                            const exists = env.filter(
+                                (variable) => variable[0] === envKey
+                            );
+                            if (exists.length === 0)
+                                setEnv([...env, [envKey, envValue]]);
+                        }
+                    }}
+                >
+                    +
+                </button>
                 <input type="submit" value="Create" />
             </form>
 

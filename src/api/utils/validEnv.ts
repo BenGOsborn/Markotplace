@@ -3,11 +3,9 @@ export default (rawJSON: string) => {
         // Try and parse the JSON
         const parsed = JSON.parse(rawJSON);
 
-        // Check that the object doesnt contain invalid types
+        // Check that the object doesnt contain invalid types **** Should I allow other types too ?
         for (let key of Object.keys(parsed)) {
-            const type = typeof parsed[key];
-            if (type !== "number" && type !== "string" && type !== "boolean")
-                return false;
+            if (typeof parsed[key] !== "string") return false;
         }
 
         // If all checks passed then return true
