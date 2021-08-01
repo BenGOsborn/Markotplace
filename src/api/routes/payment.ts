@@ -2,47 +2,50 @@ import express from "express";
 import Stripe from "stripe";
 import { App } from "../entities/app";
 import { User } from "../entities/user";
-import { protectedMiddleware } from "../utils/middleware";
+import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
 
 // Initialize the router
 const router = express.Router();
 
 // Allow a dev to view their Stripe account
-router.get("/stripe-dashboard", protectedMiddleware, async (req, res) => {
-    // Get the user
-    // @ts-ignore
-    const { user }: { user: User } = req.locals;
+router.get(
+    "/stripe-dashboard",
+    protectedMiddleware,
+    devMiddleware,
+    async (req, res) => {
+        // Get the user
+        // @ts-ignore
+        const { user }: { user: User } = req.locals;
 
-    // Check that the user has a dev account
-    if (typeof user.dev === "undefined")
-        return res.status(400).send("No user account");
+        // Also check the status of the account
+        const detailsSubmitted = (
+            await stripe.accounts.retrieve(user.dev.stripeConnectID)
+        ).details_submitted;
+        if (!detailsSubmitted) {
+            // Create an onboarding link for the dev
+            const onboardingLink = (
+                await stripe.accountLinks.create({
+                    account: user.dev.stripeConnectID,
+                    type: "account_onboarding",
+                    refresh_url: `${process.env.FRONTEND_URL}/user/dev/dashboard`,
+                    return_url: `${process.env.FRONTEND_URL}/user/dev/dashboard`,
+                })
+            ).url;
 
-    // Also check the status of the account
-    const detailsSubmitted = (
-        await stripe.accounts.retrieve(user.dev.stripeConnectID)
-    ).details_submitted;
-    if (!detailsSubmitted) {
-        // Create an onboarding link for the dev
-        const onboardingLink = (
-            await stripe.accountLinks.create({
-                account: user.dev.stripeConnectID,
-                type: "account_onboarding",
-            })
+            // Return the url
+            return res.json({ url: onboardingLink, onboarded: false });
+        }
+
+        // Redirect the user to their Stripe dashboard
+        const dashbordLink = (
+            await stripe.accounts.createLoginLink(user.dev.stripeConnectID)
         ).url;
 
         // Return the url
-        return res.json({ url: onboardingLink, onboarded: false });
+        res.json({ url: dashbordLink, onboarded: true });
     }
-
-    // Redirect the user to their Stripe dashboard
-    const dashbordLink = (
-        await stripe.accounts.createLoginLink(user.dev.stripeConnectID)
-    ).url;
-
-    // Return the url
-    res.json({ url: dashbordLink, onboarded: true });
-});
+);
 
 // Allow a user to purchase an app
 router.post("/purchase", protectedMiddleware, async (req, res) => {
