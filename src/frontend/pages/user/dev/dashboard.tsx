@@ -1,5 +1,6 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import Link from "next/link";
 
 interface Props {
     apps: {
@@ -19,6 +20,7 @@ interface Props {
 const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
     return (
         <>
+            <Link href="/user/dev/apps/create">Create new app</Link>
             {apps.length > 0 ? (
                 <div>
                     {apps.map((app, index) => {
@@ -33,6 +35,9 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                                 <p>{app.ghRepoName}</p>
                                 <p>{app.ghRepoBranch}</p>
                                 <p>{app.env}</p>
+                                <Link href={`/user/dev/apps/edit/${app.name}`}>
+                                    Edit
+                                </Link>
                             </div>
                         );
                     })}
