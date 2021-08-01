@@ -222,7 +222,7 @@ router.post(
             name,
             title,
             description,
-            price: price * 100,
+            price: Math.floor(price * 100),
             ghRepoOwner,
             ghRepoName,
             ghRepoBranch,
@@ -318,7 +318,7 @@ router.patch(
                     );
 
             // Set the new price for the app
-            updateData.price = price * 100;
+            updateData.price = Math.floor(price * 100);
         }
         if (typeof ghRepoOwner !== "undefined")
             updateData.ghRepoOwner = ghRepoOwner;
