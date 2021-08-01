@@ -50,7 +50,7 @@ router.post("/authorize/github", async (req, res) => {
     });
 
     // Check if the user already has a dev account
-    if (typeof user.dev === "undefined") {
+    if (user.dev === null) {
         // Create a new Stripe Connect account for the dev account
         const stripeConnectID = (
             await stripe.accounts.create({

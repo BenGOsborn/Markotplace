@@ -15,9 +15,9 @@ export const protectedMiddleware = async (
     if (typeof userID === "undefined") return res.sendStatus(401);
 
     // Also do a check of the user ID to make sure it exists - if it doesnt then void the session and return error
-    const user = await User.findOne(userID, { relations: ["dev", "apps"] });
-
-    console.log(user);
+    const user = await User.findOne(userID, {
+        relations: ["dev", "apps", "dev.apps"],
+    });
 
     // Pass on the user
     // @ts-ignore
@@ -38,7 +38,8 @@ export const devMiddleware = async (
     const { user }: { user: User } = req.locals;
 
     // **** DOES THIS COME WITH THE DEV DATA SUCH AS THE DEV APPS AND SUCH ?
-    // **** IF THERE IS NO DEV ACCOUNT, DOES IT SAY UNDEFINED ?
+
+    console.log(user);
 
     // Check if the user is a developer, if not block the request
     const dev = user.dev;

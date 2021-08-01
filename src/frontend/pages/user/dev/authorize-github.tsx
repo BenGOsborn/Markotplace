@@ -27,16 +27,10 @@ export const getServerSideProps: GetServerSideProps = async ({
                 }
             );
 
-            console.log("Redirecting to github: ", url);
-
             // Redirect the user
             res.statusCode = 302;
             res.setHeader("Location", url);
         } catch {
-            console.log(
-                "Failed to redirect to redirect to GitHub, redirecting to settings"
-            );
-
             // Redirect the user to their settings
             res.statusCode = 302;
             res.setHeader("Location", "/user/settings");
