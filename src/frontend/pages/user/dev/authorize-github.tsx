@@ -15,8 +15,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     // Get the code from the query
     const { code } = query;
 
-    console.log(code);
-
     // If there is no code in the URL query redirect the user to login with their account, otherwise update their account
     if (typeof code === "undefined") {
         try {
@@ -29,10 +27,16 @@ export const getServerSideProps: GetServerSideProps = async ({
                 }
             );
 
+            console.log("Redirecting to github: ", url);
+
             // Redirect the user
             res.statusCode = 302;
             res.setHeader("Location", url);
         } catch {
+            console.log(
+                "Failed to redirect to redirect to GitHub, redirecting to settings"
+            );
+
             // Redirect the user to their settings
             res.statusCode = 302;
             res.setHeader("Location", "/user/settings");

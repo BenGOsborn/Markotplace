@@ -26,71 +26,56 @@ router.post("/authorize/github", async (req, res) => {
         return res.status(400).send("Code is missing");
 
     // Get the access token
-    try {
-        const {
-            data: { access_token },
-        } = await axios.post<{
-            access_token: string;
-            token_type: string;
-            scope: string;
-        }>(
-            "https://github.com/login/oauth/access_token",
-            {
-                client_id: process.env.GITHUB_CLIENT_ID,
-                client_secret: process.env.GITHUB_CLIENT_SECRET,
-                code,
-            },
-            { headers: { Accept: "application/json" } }
-        );
+    const {
+        data: { access_token },
+    } = await axios.post<{
+        access_token: string;
+        token_type: string;
+        scope: string;
+    }>(
+        "https://github.com/login/oauth/access_token",
+        {
+            client_id: process.env.GITHUB_CLIENT_ID,
+            client_secret: process.env.GITHUB_CLIENT_SECRET,
+            code,
+        },
+        { headers: { Accept: "application/json" } }
+    );
 
-        // Get the username of the user
-        const {
-            data: { login: username },
-        } = await axios.get("https://api.github.com/user", {
-            headers: { Authorization: `token ${access_token}` },
+    // Get the username of the user
+    const {
+        data: { login: username },
+    } = await axios.get("https://api.github.com/user", {
+        headers: { Authorization: `token ${access_token}` },
+    });
+
+    // Check if the user already has a dev account
+    if (typeof user.dev === "undefined") {
+        // Create a new Stripe Connect account for the dev account
+        const stripeConnectID = (
+            await stripe.accounts.create({
+                type: "express",
+            })
+        ).id;
+
+        // Make a new dev account for the user
+        const dev = Dev.create({
+            ghAccessToken: access_token,
+            ghUsername: username,
+            stripeConnectID,
+            user,
         });
-
-        // Check if the user already has a dev account
-        if (typeof user.dev === "undefined") {
-            // Create a new Stripe Connect account for the dev account
-            const stripeConnectID = (
-                await stripe.accounts.create({
-                    type: "express",
-                })
-            ).id;
-
-            // Make a new dev account for the user
-            const dev = Dev.create({
-                ghAccessToken: access_token,
-                ghUsername: username,
-                stripeConnectID,
-                user,
-            });
-            await dev.save();
-        } else {
-            // Update the users existing dev account
-            await Dev.update(user.dev.id, {
-                ghAccessToken: access_token,
-                ghUsername: username,
-            });
-        }
-
-        // Return success
-        res.sendStatus(200);
-    } catch (e) {
-        console.log(
-            "***************\n***************\n***************\n***************"
-        );
-        console.log(e.message);
-        console.log(
-            "***************\n***************\n***************\n***************"
-        );
-        console.log(e.stack);
-        console.log(
-            "***************\n***************\n***************\n***************"
-        );
-        res.sendStatus(500);
+        await dev.save();
+    } else {
+        // Update the users existing dev account
+        await Dev.update(user.dev.id, {
+            ghAccessToken: access_token,
+            ghUsername: username,
+        });
     }
+
+    // Return success
+    res.sendStatus(200);
 });
 
 // Export the router

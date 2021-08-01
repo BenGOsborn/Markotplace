@@ -17,6 +17,8 @@ export const protectedMiddleware = async (
     // Also do a check of the user ID to make sure it exists - if it doesnt then void the session and return error
     const user = await User.findOne(userID, { relations: ["dev", "apps"] });
 
+    console.log(user);
+
     // Pass on the user
     // @ts-ignore
     req.locals = { user };
@@ -40,7 +42,7 @@ export const devMiddleware = async (
 
     // Check if the user is a developer, if not block the request
     const dev = user.dev;
-    if (typeof dev === "undefined")
-        return res.status(401).send("Only developers may access this route");
+    if (dev === null)
+        return res.status(401).send("Only developers may access this");
     next();
 };
