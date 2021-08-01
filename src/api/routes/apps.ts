@@ -6,6 +6,7 @@ import { User } from "../entities/user";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
+import validEnv from "../utils/validEnv";
 
 // Initialize the router
 const router = express.Router();
@@ -193,6 +194,10 @@ router.post(
                 .send(
                     "To charge more than $0 for your app you must first finish setting up your Stripe account"
                 );
+
+        // Validate the env
+        if (!validEnv(env))
+            return res.status(400).send("Invalid environment JSON");
 
         // Initialize a new webhook in the repository for the user
         const {
