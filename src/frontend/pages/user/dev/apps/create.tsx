@@ -115,7 +115,7 @@ const Create: NextPage<Props> = () => {
                         e.preventDefault();
 
                         // Check that both fields are not null
-                        if (envKey.length > 0 && envValue.length > 0) {
+                        if (envKey.length > 0) {
                             // Make sure that the same key does not exist
                             const exists = env.filter(
                                 (variable) => variable[0] === envKey
