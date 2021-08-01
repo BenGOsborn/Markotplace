@@ -16,13 +16,8 @@ router.get("/owned", protectedMiddleware, async (req, res) => {
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
-    // Get the users owned apps
-    const ownedApps = user.apps;
-    if (typeof ownedApps === "undefined")
-        return res.status(200).json({ apps: [] });
-
     // Filter out the unused data and return the owned apps
-    const apps = ownedApps.map((app) => {
+    const apps = user.apps.map((app) => {
         return {
             name: app.name,
             title: app.title,
@@ -43,7 +38,8 @@ router.post("/owns-app", protectedMiddleware, async (req, res) => {
     const { appName }: { appName: string } = req.body;
 
     // Check that the users apps are not undefined
-    if (typeof user.apps === "undefined") return res.sendStatus(401);
+    if (typeof appName === "undefined")
+        return res.status(400).send("App name is required");
 
     // Check that the user owns the app
     const filtered = user.apps.filter((app) => app.name === appName);
@@ -79,13 +75,8 @@ router.get("/dev", protectedMiddleware, devMiddleware, async (req, res) => {
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
-    // Get the list of the devs apps
-    const existingApps = user.dev.apps;
-    if (typeof existingApps === "undefined")
-        return res.status(200).json({ apps: [] });
-
     // Filter out the data for the apps
-    const apps = existingApps.map((app) => {
+    const apps = user.dev.apps.map((app) => {
         return {
             name: app.name,
             title: app.title,
@@ -102,6 +93,8 @@ router.get("/dev", protectedMiddleware, devMiddleware, async (req, res) => {
     res.status(200).json({ apps });
 });
 
+// **** The following two are going to be nightmares to debug - change them later
+
 // Add an app
 router.post(
     "/app/create",
@@ -111,10 +104,6 @@ router.post(
         // Get the user data from the request
         // @ts-ignore
         const { user }: { user: User } = req.locals;
-
-        // Check that the user has a dev account
-        if (typeof user.dev === "undefined")
-            return res.status(400).send("A dev account is required");
 
         // Get the data for the app
         const {
@@ -227,10 +216,6 @@ router.patch(
         // Get the user data from the request
         // @ts-ignore
         const { user }: { user: User } = req.locals;
-
-        // Check that the user has a dev account
-        if (typeof user.dev === "undefined")
-            return res.status(400).send("A dev account is required");
 
         // Get the data for the app
         const {
