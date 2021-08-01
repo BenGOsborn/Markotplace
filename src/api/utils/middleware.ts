@@ -37,10 +37,6 @@ export const devMiddleware = async (
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
-    // **** DOES THIS COME WITH THE DEV DATA SUCH AS THE DEV APPS AND SUCH ?
-
-    console.log(user);
-
     // Check if the user is a developer, if not block the request
     const dev = user.dev;
     if (dev === null)

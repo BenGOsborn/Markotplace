@@ -12,14 +12,14 @@ interface Props {
         ghRepoBranch: string;
         env: string;
     }[];
-    stripeURL: string;
+    url: string;
     onboarded: boolean;
 }
 
-const Dashboard: NextPage<Props> = ({ apps, stripeURL, onboarded }) => {
+const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
     return (
         <>
-            {/* {apps.length > 0 ? (
+            {apps.length > 0 ? (
                 <div>
                     {apps.map((app, index) => {
                         return (
@@ -41,12 +41,12 @@ const Dashboard: NextPage<Props> = ({ apps, stripeURL, onboarded }) => {
                 <h3>No apps to display</h3>
             )}
             {onboarded ? (
-                <a href={stripeURL}>View your Stripe dashboard</a>
+                <a href={url}>View your Stripe dashboard</a>
             ) : (
-                <a>
+                <a href={url}>
                     Connect with Stripe to start receiving monetizing your apps
                 </a>
-            )} */}
+            )}
         </>
     );
 };
@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
         // Get the devs payment link
         const {
-            data: { stripeURL, onboarded },
+            data: { url, onboarded },
         } = await axios.get<Props>(
             `${process.env.BACKEND_URL}/api/payment/stripe-dashboard`,
             {
@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
             }
         );
 
-        return { props: { apps, stripeURL, onboarded } as Props };
+        return { props: { apps, url, onboarded } as Props };
     } catch (e) {
         console.log("Failed");
         console.log(e.message);
