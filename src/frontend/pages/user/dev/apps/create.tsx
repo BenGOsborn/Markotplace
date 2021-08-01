@@ -14,7 +14,10 @@ const Create: NextPage<Props> = () => {
     const [ghRepoOwner, setGhRepoOwner] = useState<string | null>(null);
     const [ghRepoName, setGhRepoName] = useState<string | null>(null);
     const [ghRepoBranch, setGhRepoBranch] = useState<string | null>(null);
-    const [env, setEnv] = useState<string | null>(null);
+    const [env, setEnv] = useState<[string, string][] | null>(null);
+
+    // THis should be stored here then pushed into the env when it is ready
+    const [tempEnv, setTempEnv] = useState<[string, string] | null>(null);
 
     const [status, setStatus] = useState<Status | null>(null);
 
