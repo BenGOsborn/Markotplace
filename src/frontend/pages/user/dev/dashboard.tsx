@@ -73,10 +73,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         );
 
         return { props: { apps, stripeURL, onboarded } as Props };
-    } catch {
+    } catch (e) {
+        console.log("Failed");
+        console.log(e.message);
+
         // Redirect to the settings page
-        res.statusCode = 302;
-        res.setHeader("Location", "/user/dev/authorize-github");
+        // res.statusCode = 302;
+        // res.setHeader("Location", "/user/dev/authorize-github");
         return { props: {} as Props };
     }
 };

@@ -3,7 +3,6 @@ import express from "express";
 import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
 import { stripe } from "../utils/stripe";
-import { clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -68,9 +67,6 @@ router.post("/authorize/github", async (req, res) => {
                 user,
             });
             await dev.save();
-
-            // Update the users dev account
-            // await User.update(user.id, { dev }); // I believe this is the broken line
         } else {
             // Update the users existing dev account
             await Dev.update(user.dev.id, {
@@ -78,9 +74,6 @@ router.post("/authorize/github", async (req, res) => {
                 ghUsername: username,
             });
         }
-
-        // Clear the cached user
-        await clearCache(`user:${user.id}`);
 
         // Return success
         res.sendStatus(200);

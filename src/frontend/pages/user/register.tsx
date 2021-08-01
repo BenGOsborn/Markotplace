@@ -80,7 +80,7 @@ const Register: NextPage<Props> = () => {
                     placeholder="Password"
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <input type="submit" value="Login" />
+                <input type="submit" value="Register" />
 
                 <StatusMessage status={status} />
 

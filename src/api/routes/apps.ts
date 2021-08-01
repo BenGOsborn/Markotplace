@@ -3,7 +3,6 @@ import express from "express";
 import { App } from "../entities/app";
 import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
-import { cacheData, clearCache } from "../utils/cache";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
@@ -159,13 +158,9 @@ router.post(
             return res.status(400).send("An app with that name already exists");
 
         // Check that the dev has submitted their payment details if they wish to charge for their app
-        const detailsSubmitted = await cacheData(
-            `onboarded:${user.dev.id}`,
-            async () =>
-                (
-                    await stripe.accounts.retrieve(user.dev.stripeConnectID)
-                ).details_submitted
-        );
+        const detailsSubmitted = (
+            await stripe.accounts.retrieve(user.dev.stripeConnectID)
+        ).details_submitted;
         if (!detailsSubmitted && price > 0)
             return res
                 .status(400)
@@ -206,9 +201,6 @@ router.post(
         });
         await app.save();
 
-        // Cache the new app
-        await cacheData(`app:${app.id}`, async () => app);
-
         // Add the new app to the users account
         let newUserApps: App[] = [app];
         if (typeof user.apps !== "undefined")
@@ -220,9 +212,6 @@ router.post(
         if (typeof user.dev.apps !== "undefined")
             newDevApps = [...user.dev.apps, ...newDevApps];
         await Dev.update(user.dev.id, { apps: newDevApps });
-
-        // Clear the cached user
-        await clearCache(`user:${user.id}`);
 
         // Add an app
         res.sendStatus(200);
@@ -293,13 +282,9 @@ router.patch(
             updateData.description = description;
         if (typeof price !== "undefined") {
             // Check that the dev has submitted their payment details if they wish to charge for their app
-            const detailsSubmitted = await cacheData(
-                `onboarded:${user.dev.id}`,
-                async () =>
-                    (
-                        await stripe.accounts.retrieve(user.dev.stripeConnectID)
-                    ).details_submitted
-            );
+            const detailsSubmitted = (
+                await stripe.accounts.retrieve(user.dev.stripeConnectID)
+            ).details_submitted;
             if (!detailsSubmitted && price > 0)
                 return res
                     .status(400)
@@ -346,10 +331,6 @@ router.patch(
 
         // Update the app
         await App.update(existingApp.id, updateData);
-
-        // Clear the cached data
-        await clearCache(`user:${user.id}`);
-        await clearCache(`app:${existingApp.id}`);
 
         // Edit an app
         res.sendStatus(200);

@@ -1,11 +1,9 @@
 import express from "express";
 import Stripe from "stripe";
 import { App } from "../entities/app";
-import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
-import { cacheData, clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -32,9 +30,6 @@ router.get("/stripe-dashboard", protectedMiddleware, async (req, res) => {
                 type: "account_onboarding",
             })
         ).url;
-
-        // Clear the onboarded cache
-        await clearCache(`onboarded:${user.dev.id}`);
 
         // Return the url
         return res.json({ url: onboardingLink, onboarded: false });
@@ -67,10 +62,7 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     }
 
     // Get the app from the database
-    const app = await cacheData(
-        `app:${appID}`,
-        async () => await App.findOne(appID)
-    );
+    const app = await App.findOne(appID);
     if (typeof app == "undefined") return res.status(400).send("Invalid app");
 
     // Get the dev account who created the app
@@ -86,9 +78,6 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
                 apps: [...(user.apps as App[]), app as App],
             });
         }
-
-        // Clear the cache for the user
-        await clearCache(`user:${user.id}`);
 
         // Return success
         return res.json({
@@ -176,9 +165,6 @@ router.post("/purchase/success", async (req, res) => {
                     apps: [...user.apps, app],
                 });
             }
-
-            // Clear the cache for the user
-            await clearCache(`user:${userID}`);
 
             // Return success
             res.sendStatus(200);
