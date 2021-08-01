@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         );
 
         return { props: { apps, url, onboarded } as Props };
-    } catch (e) {
+    } catch {
         // Redirect to the settings page
         res.statusCode = 302;
         res.setHeader("Location", "/user/dev/authorize-github");
