@@ -35,7 +35,6 @@ const parseEnv = (envString: string) => {
 
 const Edit: NextPage<Props> = ({ app }) => {
     // Initialize the states
-    const [newName, setNewName] = useState<string | null>(null);
     const [newTitle, setNewTitle] = useState<string | null>(null);
     const [newDescription, setNewDescription] = useState<string | null>(null);
     const [newPrice, setNewPrice] = useState<number | null>(null);
@@ -76,7 +75,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                         .patch<string>(
                             `${process.env.BACKEND_URL}/api/apps/dev/edit`,
                             {
-                                name: newName ? newName : undefined,
+                                name: app.name,
                                 title: newTitle ? newTitle : undefined,
                                 description: newDescription
                                     ? newDescription
@@ -99,7 +98,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                             // Set the status
                             setStatus({
                                 success: true,
-                                message: "Successfully created app",
+                                message: "Successfully updated app",
                             });
 
                             // Redirect to dev dashboard
@@ -114,13 +113,6 @@ const Edit: NextPage<Props> = ({ app }) => {
                         });
                 }}
             >
-                <input
-                    type="text"
-                    required={true}
-                    value={newName || app.name}
-                    placeholder="Name"
-                    onChange={(e) => setNewName(e.target.value)}
-                />
                 <input
                     type="text"
                     required={true}
@@ -194,14 +186,12 @@ const Edit: NextPage<Props> = ({ app }) => {
                 </ul>
                 <input
                     type="text"
-                    required={true}
                     value={envKey}
                     placeholder="Env key"
                     onChange={(e) => setEnvKey(e.target.value)}
                 />
                 <input
                     type="text"
-                    required={true}
                     value={envValue}
                     placeholder="Env value"
                     onChange={(e) => setEnvValue(e.target.value)}
@@ -235,7 +225,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                 >
                     +
                 </button>
-                <input type="submit" value="Create" />
+                <input type="submit" value="Update" />
             </form>
             <StatusMessage status={status} />
         </>

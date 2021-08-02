@@ -281,7 +281,6 @@ router.patch(
 
         // Validate the edit app data
         const { error } = editAppSchema.validate({
-            name,
             title,
             description,
             price,
