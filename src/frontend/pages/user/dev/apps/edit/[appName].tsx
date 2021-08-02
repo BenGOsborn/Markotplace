@@ -92,7 +92,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                                 ghRepoBranch: newGhRepoBranch
                                     ? newGhRepoBranch
                                     : undefined,
-                                env: sendEnv,
+                                env: JSON.stringify(sendEnv),
                             },
                             { withCredentials: true }
                         )

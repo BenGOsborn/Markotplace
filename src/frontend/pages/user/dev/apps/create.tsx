@@ -50,7 +50,7 @@ const Create: NextPage<Props> = () => {
                                 ghRepoOwner,
                                 ghRepoName,
                                 ghRepoBranch,
-                                env: sendEnv,
+                                env: JSON.stringify(sendEnv),
                             },
                             { withCredentials: true }
                         )
