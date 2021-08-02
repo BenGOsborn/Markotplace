@@ -221,7 +221,7 @@ router.post(
             );
             ghWebhookID = id;
         } catch {
-            return res.status(400).send("Unable to register webhook");
+            return res.status(500).send("Unable to register webhook");
         }
 
         // Create a new app and assign it to the dev account
@@ -309,10 +309,9 @@ router.patch(
             return res.status(401).send("You are not able to edit this app");
 
         // Set the data to update
-        const updateData: any = {};
-        if (typeof title !== "undefined") updateData.title = title;
+        if (typeof title !== "undefined") existingApp.title = title;
         if (typeof description !== "undefined")
-            updateData.description = description;
+            existingApp.description = description;
         if (typeof price !== "undefined") {
             // Check that the dev has submitted their payment details if they wish to charge for their app
             const detailsSubmitted = (
@@ -326,44 +325,48 @@ router.patch(
                     );
 
             // Set the new price for the app
-            updateData.price = Math.floor(price * 100);
+            existingApp.price = Math.floor(price * 100);
         }
         if (typeof ghRepoOwner !== "undefined")
-            updateData.ghRepoOwner = ghRepoOwner;
+            existingApp.ghRepoOwner = ghRepoOwner;
         if (typeof ghRepoName !== "undefined")
-            updateData.ghRepoName = ghRepoName;
+            existingApp.ghRepoName = ghRepoName;
         if (typeof ghRepoBranch !== "undefined")
-            updateData.ghRepoBranch = ghRepoBranch;
-        if (typeof env !== "undefined") updateData.env = env;
+            existingApp.ghRepoBranch = ghRepoBranch;
+        if (typeof env !== "undefined") existingApp.env = env;
         if (
             typeof ghRepoOwner !== "undefined" ||
             typeof ghRepoName !== "undefined"
         ) {
-            // Update the webhook if the repo was changed
-            const {
-                data: { id: ghWebhookID },
-            } = await axios.post<{ id: string }>(
-                `https://api.github.com/repos/${
-                    ghRepoOwner || existingApp.ghRepoOwner
-                }/${ghRepoName || existingApp.ghRepoName}/hooks`,
-                {
-                    config: {
-                        url: `${process.env.BACKEND_URL}/appbuilder/hook`,
-                        content_type: "json",
+            try {
+                // Update the webhook if the repo was changed
+                const {
+                    data: { id: ghWebhookID },
+                } = await axios.post<{ id: string }>(
+                    `https://api.github.com/repos/${
+                        ghRepoOwner || existingApp.ghRepoOwner
+                    }/${ghRepoName || existingApp.ghRepoName}/hooks`,
+                    {
+                        config: {
+                            url: `${process.env.BACKEND_URL}/appbuilder/hook`,
+                            content_type: "json",
+                        },
                     },
-                },
-                {
-                    headers: {
-                        Authorization: `token ${user.dev.ghAccessToken}`,
-                        Accept: "application/vnd.github.v3+json",
-                    },
-                }
-            );
-            updateData.ghWebhookID = ghWebhookID;
+                    {
+                        headers: {
+                            Authorization: `token ${user.dev.ghAccessToken}`,
+                            Accept: "application/vnd.github.v3+json",
+                        },
+                    }
+                );
+                existingApp.ghWebhookID = ghWebhookID;
+            } catch {
+                return res.status(500).send("Unable to update webhook");
+            }
         }
 
         // Update the app
-        await App.update(existingApp.id, updateData);
+        await existingApp.save();
 
         // Edit an app
         res.sendStatus(200);
