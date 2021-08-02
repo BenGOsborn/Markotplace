@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
@@ -39,20 +39,38 @@ const Create: NextPage<Props> = () => {
                     }
 
                     // Make the request to create the new app
-                    axios.post<string>(
-                        `${process.env.BACKEND_URL}/api/apps/dev/create`,
-                        {
-                            name,
-                            title,
-                            description,
-                            price,
-                            ghRepoOwner,
-                            ghRepoName,
-                            ghRepoBranch,
-                            env: sendEnv,
-                        },
-                        { withCredentials: true }
-                    );
+                    axios
+                        .post<string>(
+                            `${process.env.BACKEND_URL}/api/apps/dev/create`,
+                            {
+                                name,
+                                title,
+                                description,
+                                price,
+                                ghRepoOwner,
+                                ghRepoName,
+                                ghRepoBranch,
+                                env: sendEnv,
+                            },
+                            { withCredentials: true }
+                        )
+                        .then((res) => {
+                            // Set the status
+                            setStatus({
+                                success: true,
+                                message: "Successfully created app",
+                            });
+
+                            // Redirect to dev dashboard
+                            router.push("/user/dev/dashboard");
+                        })
+                        .catch((err: AxiosError) => {
+                            // Update the status
+                            setStatus({
+                                success: false,
+                                message: err.response?.data,
+                            });
+                        });
                 }}
             >
                 <input
