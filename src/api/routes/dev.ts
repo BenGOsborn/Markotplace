@@ -75,12 +75,9 @@ router.post("/authorize/github", async (req, res) => {
         await dev.save();
     } else {
         // Update the users existing dev account
-
-        // **** Pretty sure this has bugs in it - I should INSTEAD make sure to use the .save on the updated user object
-        await Dev.update(user.dev.id, {
-            ghAccessToken: accessToken,
-            ghUsername: username,
-        });
+        user.dev.ghAccessToken = accessToken;
+        user.dev.ghUsername = username;
+        await user.dev.save();
     }
 
     // Return success

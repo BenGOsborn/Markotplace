@@ -20,6 +20,16 @@ interface Props {
 const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
     return (
         <>
+            {onboarded ? (
+                <a href={url}>View your Stripe dashboard</a>
+            ) : (
+                <a href={url}>
+                    Connect with Stripe to start receiving monetizing your apps
+                </a>
+            )}
+            <Link href="/user/dev/authorize-github">
+                Reconnect GitHub account
+            </Link>
             <Link href="/user/dev/apps/create">Create new app</Link>
             {apps.length > 0 ? (
                 <div>
@@ -45,14 +55,6 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
             ) : (
                 <h3>No apps to display</h3>
             )}
-            {onboarded ? (
-                <a href={url}>View your Stripe dashboard</a>
-            ) : (
-                <a href={url}>
-                    Connect with Stripe to start receiving monetizing your apps
-                </a>
-            )}
-            {/* Also allow a developer to reauthorize their GitHub account */}
         </>
     );
 };
