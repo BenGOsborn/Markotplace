@@ -375,5 +375,36 @@ router.patch(
     }
 );
 
+// Hook for the repository updates
+router.post("/hook", async (req, res) => {
+    // Get the webhook ID from the header
+    const hookID = req.headers["X-GitHub-Hook-ID"];
+    // Get the branch from the body
+    const { ref }: { ref: string } = req.body;
+
+    // Validate that the ref and hookID are specified
+    if (typeof hookID === "undefined" || typeof ref === "undefined")
+        return res.status(400).send("Missing webhook ID or ref");
+
+    // Get the branch from the ref
+    const splitRef = ref.split("/");
+    const branch = splitRef[splitRef.length - 1];
+
+    // Find the app with the hookID and check that it matches the branch
+    const existingApp = await App.findOne({
+        where: { ghRepoBranch: branch, ghWebhookID: hookID },
+    });
+    if (typeof existingApp === "undefined") {
+        return res.status(400).send("Invalid webhook ID or branch");
+    } else {
+        // Update the version of the app
+        existingApp.version += 1;
+        await existingApp.save();
+    }
+
+    // Return succes
+    res.sendStatus(200);
+});
+
 // Export the router
 export default router;
