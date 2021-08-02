@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         // Redirect the user
         res.statusCode = 302;
         res.setHeader("Location", "/user/login");
-        return { props: { apps: [] } as Props };
+        return { props: { apps: [] } };
     }
 };
 

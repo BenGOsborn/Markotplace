@@ -237,7 +237,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     res,
     params,
 }) => {
-    // Get the app name from the query
+    // Get the app name from the url
     const appName = params?.appName;
 
     try {

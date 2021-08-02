@@ -30,30 +30,31 @@ router.get("/owned", protectedMiddleware, async (req, res) => {
 });
 
 // Verify that a user is authorized and return their data
-router.post("/owns", protectedMiddleware, async (req, res) => {
-    // Get the user
-    // @ts-ignore
-    const { user }: { user: User } = req.locals;
+// **** DEPERECIATION WARNING
+// router.post("/owns", protectedMiddleware, async (req, res) => {
+//     // Get the user
+//     // @ts-ignore
+//     const { user }: { user: User } = req.locals;
 
-    // Get the name of the app
-    const { appName }: { appName: string } = req.body;
+//     // Get the name of the app
+//     const { appName }: { appName: string } = req.body;
 
-    // Check that the users apps are not undefined
-    if (typeof appName === "undefined")
-        return res.status(400).send("App name is required");
+//     // Check that the users apps are not undefined
+//     if (typeof appName === "undefined")
+//         return res.status(400).send("App name is required");
 
-    // Check that the user owns the app
-    const filtered = user.apps.filter((app) => app.name === appName);
-    if (filtered.length === 0) return res.sendStatus(401);
+//     // Check that the user owns the app
+//     const filtered = user.apps.filter((app) => app.name === appName);
+//     if (filtered.length === 0) return res.sendStatus(401);
 
-    // Return success
-    res.sendStatus(200);
-});
+//     // Return success
+//     res.sendStatus(200);
+// });
 
 // Get a list of apps **** Add pagination support for this in future versions
 router.get("/list", async (req, res) => {
     // Get a list of apps
-    const existingApps = await App.find();
+    const existingApps = await App.find({ relations: ["dev", "dev.user"] });
 
     // Filter the data out of the apps
     const apps = existingApps.map((app) => {
@@ -68,6 +69,30 @@ router.get("/list", async (req, res) => {
 
     // Return the apps
     res.status(200).json({ apps });
+});
+
+// Get the details for an app
+router.get("/details/:appname", async (req, res) => {
+    // Get the app name from the url
+    const appName = req.params.appname;
+
+    // Find the app with the specified app name
+    const existingApp = await App.findOne({
+        where: { name: appName },
+        relations: ["dev", "dev.user"],
+    });
+    if (typeof existingApp === "undefined")
+        return res.status(400).send("Invalid app name");
+
+    // Filter the data out of the app and return it
+    const app = {
+        name: existingApp.name,
+        title: existingApp.title,
+        description: existingApp.description,
+        author: existingApp.dev.user.username,
+        price: existingApp.price,
+    };
+    return res.status(200).json({ app });
 });
 
 // Get the apps for the users dev account
@@ -99,7 +124,7 @@ router.get(
     }
 );
 
-// Get the details of an app
+// Get the dev details of an app
 router.get(
     "/dev/details/:appname",
     protectedMiddleware,
@@ -109,7 +134,7 @@ router.get(
         // @ts-ignore
         const { user }: { user: User } = req.locals;
 
-        // Get the app name from the body
+        // Get the app name from the url
         const appName = req.params.appname;
 
         // Find the developers app that matches the app name
