@@ -16,6 +16,22 @@ interface Props {
     };
 }
 
+// Parse the environment JSON string into key value pairs
+const parseEnv = (envString: string) => {
+    // Parse the env to JSON
+    const envJSON = JSON.parse(envString);
+
+    // Convert the JSON to pairs
+    const pairs: [string, string][] = [];
+    for (let key of Object.keys(envJSON)) {
+        const pair = [key, envJSON[key]];
+        pairs.push(pair as [string, string]);
+    }
+
+    // Return the pairs
+    return pairs;
+};
+
 const Edit: NextPage<Props> = ({ app }) => {
     // Initialize the states
     const [name, setName] = useState<string | null>(null);
@@ -25,27 +41,10 @@ const Edit: NextPage<Props> = ({ app }) => {
     const [ghRepoOwner, setGhRepoOwner] = useState<string | null>(null);
     const [ghRepoName, setGhRepoName] = useState<string | null>(null);
     const [ghRepoBranch, setGhRepoBranch] = useState<string | null>(null);
+    const [env, setEnv] = useState<[string, string][] | null>(null);
 
-    // I need one where it can be set to null also
-    const [env, setEnv] = useState<[string, string][]>(
-        (() => {
-            // Parse the env to JSON
-            const envJSON = JSON.parse(app.env);
-
-            // Convert the JSON to pairs
-            const pairs: [string, string][] = [];
-            for (let key of Object.keys(envJSON)) {
-                const pair = [key, envJSON[key]];
-                pairs.push(pair as any);
-            }
-
-            // Return the pairs
-            return envJSON;
-        })()
-    );
-
-    // const [envKey, setEnvKey] = useState<string>("");
-    // const [envValue, setEnvValue] = useState<string>("");
+    const [envKey, setEnvKey] = useState<string>("");
+    const [envValue, setEnvValue] = useState<string>("");
 
     const [status, setStatus] = useState<Status | null>(null);
 
@@ -56,7 +55,9 @@ const Edit: NextPage<Props> = ({ app }) => {
                     // Prevent the page from reloading
                     e.preventDefault();
 
-                    // Make the request to updateb the form
+                    // Make the request to update the form
+
+                    // **** Do I need to reset the form after as well?
                 }}
             >
                 <input
@@ -108,27 +109,34 @@ const Edit: NextPage<Props> = ({ app }) => {
                     placeholder="GitHub Repo Branch"
                     onChange={(e) => setGhRepoBranch(e.target.value)}
                 />
-                {/* <ul>
-                    {env.map((variable, index) => {
-                        return (
-                            <li key={index}>
-                                {variable[0]}={variable[1]}
-                                <button
-                                    onClick={(e) => {
-                                        // Prevent the page from reloading
-                                        e.preventDefault();
+                <ul>
+                    {(env !== null ? env : parseEnv(app.env)).map(
+                        (variable, index) => {
+                            return (
+                                <li key={index}>
+                                    {variable[0]}={variable[1]}
+                                    <button
+                                        onClick={(e) => {
+                                            // Prevent the page from reloading
+                                            e.preventDefault();
 
-                                        // Remove the key
-                                        const envCopy = [...env];
-                                        envCopy.splice(index, 1);
-                                        setEnv(envCopy);
-                                    }}
-                                >
-                                    -
-                                </button>
-                            </li>
-                        );
-                    })}
+                                            // Remove the key
+                                            let envCopy;
+                                            if (env !== null) {
+                                                envCopy = [...env];
+                                            } else {
+                                                envCopy = parseEnv(app.env);
+                                            }
+                                            envCopy.splice(index, 1);
+                                            setEnv(envCopy);
+                                        }}
+                                    >
+                                        -
+                                    </button>
+                                </li>
+                            );
+                        }
+                    )}
                 </ul>
                 <input
                     type="text"
@@ -152,12 +160,17 @@ const Edit: NextPage<Props> = ({ app }) => {
                         // Check that both fields are not null
                         if (envKey.length > 0) {
                             // Make sure that the same key does not exist
-                            const exists = env.filter(
-                                (variable) => variable[0] === envKey
-                            );
+
+                            // Check that the key does not exist
+                            const exists = (
+                                env !== null ? env : parseEnv(app.env)
+                            ).filter((variable) => variable[0] === envKey);
                             if (exists.length === 0) {
                                 // Update the environment variables
-                                setEnv([...env, [envKey, envValue]]);
+                                setEnv([
+                                    ...(env !== null ? env : parseEnv(app.env)),
+                                    [envKey, envValue],
+                                ]);
 
                                 // Reset the key and value
                                 setEnvKey("");
@@ -167,7 +180,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                     }}
                 >
                     +
-                </button> */}
+                </button>
                 <input type="submit" value="Create" />
             </form>
             <StatusMessage status={status} />
