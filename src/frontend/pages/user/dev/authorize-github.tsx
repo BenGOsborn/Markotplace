@@ -28,12 +28,12 @@ export const getServerSideProps: GetServerSideProps = async ({
             );
 
             // Redirect the user
-            res.statusCode = 302;
-            res.setHeader("Location", url);
+            return { redirect: { destination: url, permanent: false } };
         } catch {
             // Redirect the user to their settings
-            res.statusCode = 302;
-            res.setHeader("Location", "/user/settings");
+            return {
+                redirect: { destination: "/user/settings", permanent: false },
+            };
         }
     } else {
         try {
@@ -48,16 +48,19 @@ export const getServerSideProps: GetServerSideProps = async ({
             );
 
             // Redirect to the dashboard
-            res.statusCode = 302;
-            res.setHeader("Location", "/user/dev/dashboard");
+            return {
+                redirect: {
+                    destination: "/user/dev/dashboard",
+                    permanent: false,
+                },
+            };
         } catch {
-            // Redirect to the settings
-            res.statusCode = 302;
-            res.setHeader("Location", "/user/settings");
+            // Redirect the user to their settings
+            return {
+                redirect: { destination: "/user/settings", permanent: false },
+            };
         }
     }
-
-    return { props: {} as Props };
 };
 
 // Export the page

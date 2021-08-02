@@ -86,9 +86,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         return { props: { apps, url, onboarded } as Props };
     } catch {
         // Redirect to the settings page
-        res.statusCode = 302;
-        res.setHeader("Location", "/user/settings");
-        return { props: {} as Props };
+        return {
+            redirect: { destination: "/user/settings", permanent: false },
+        };
     }
 };
 
