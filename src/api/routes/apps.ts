@@ -207,8 +207,8 @@ router.post(
                 `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
                 {
                     config: {
-                        // url: `${process.env.BACKEND_URL}/appbuilder/hook`,
-                        url: `https://www.google.com/appbuilder/hook`,
+                        // url: `${process.env.BACKEND_URL}/api/apps/hook`,
+                        url: `https://www.google.com/api/apps/hook`,
                         content_type: "json",
                     },
                 },
@@ -350,7 +350,8 @@ router.patch(
                     }/${ghRepoName || existingApp.ghRepoName}/hooks`,
                     {
                         config: {
-                            url: `${process.env.BACKEND_URL}/appbuilder/hook`,
+                            // url: `${process.env.BACKEND_URL}/api/apps/hook`,
+                            url: `https://www.google.com/api/apps/hook`,
                             content_type: "json",
                         },
                     },
