@@ -26,7 +26,23 @@ const Edit: NextPage<Props> = ({ app }) => {
     const [ghRepoName, setGhRepoName] = useState<string | null>(null);
     const [ghRepoBranch, setGhRepoBranch] = useState<string | null>(null);
 
-    // const [env, setEnv] = useState<[string, string][]>([]);
+    // I need one where it can be set to null also
+    const [env, setEnv] = useState<[string, string][]>(
+        (() => {
+            // Parse the env to JSON
+            const envJSON = JSON.parse(app.env);
+
+            // Convert the JSON to pairs
+            const pairs: [string, string][] = [];
+            for (let key of Object.keys(envJSON)) {
+                const pair = [key, envJSON[key]];
+                pairs.push(pair as any);
+            }
+
+            // Return the pairs
+            return envJSON;
+        })()
+    );
 
     // const [envKey, setEnvKey] = useState<string>("");
     // const [envValue, setEnvValue] = useState<string>("");
@@ -35,7 +51,14 @@ const Edit: NextPage<Props> = ({ app }) => {
 
     return (
         <>
-            <form>
+            <form
+                onSubmit={(e) => {
+                    // Prevent the page from reloading
+                    e.preventDefault();
+
+                    // Make the request to updateb the form
+                }}
+            >
                 <input
                     type="text"
                     required={true}
