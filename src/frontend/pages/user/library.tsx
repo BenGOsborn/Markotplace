@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
         // Fetch a list of the users apps
         const apps = await axios.get<Props>(
-            `${process.env.BACKEND_URL}/apps/owned`,
+            `${process.env.BACKEND_URL}/api/apps/owned`,
             { withCredentials: true, headers: { Cookie: req.headers.cookie } }
         );
         return { props: { apps: apps.data.apps } as Props };

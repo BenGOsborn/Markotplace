@@ -51,7 +51,7 @@ router.get("/owned", protectedMiddleware, async (req, res) => {
 //     res.sendStatus(200);
 // });
 
-// Get a list of apps **** Add pagination support for this in future versions
+// Get a list of apps
 router.get("/list", async (req, res) => {
     // Get a list of apps
     const existingApps = await App.find({ relations: ["dev", "dev.user"] });
