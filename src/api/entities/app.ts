@@ -21,7 +21,7 @@ export class App extends BaseEntity {
     @Column()
     description!: string;
 
-    @Column({ default: 0, type: "int" })
+    @Column({ type: "int" })
     price!: number;
 
     @Column()
@@ -35,6 +35,9 @@ export class App extends BaseEntity {
 
     @Column({ unique: true })
     ghWebhookID!: string;
+
+    @Column({ default: 0, type: "int" })
+    version!: number;
 
     @Column()
     env!: string;

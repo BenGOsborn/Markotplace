@@ -307,6 +307,9 @@ router.patch(
         if (existingApp.dev.id !== user.dev.id)
             return res.status(401).send("You are not able to edit this app");
 
+        // Increment the version of the app
+        existingApp.version += 1;
+
         // Set the data to update
         if (typeof title !== "undefined") existingApp.title = title;
         if (typeof description !== "undefined")

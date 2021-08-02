@@ -27,27 +27,33 @@ router.post("/authorize/github", async (req, res) => {
         return res.status(400).send("Code is missing");
 
     // Get the access token
-    const {
-        data: { access_token },
-    } = await axios.post<{
-        access_token: string;
-        token_type: string;
-        scope: string;
-    }>(
-        "https://github.com/login/oauth/access_token",
-        {
-            client_id: process.env.GITHUB_CLIENT_ID,
-            client_secret: process.env.GITHUB_CLIENT_SECRET,
-            code,
-        },
-        { headers: { Accept: "application/json" } }
-    );
+    let accessToken;
+    try {
+        const {
+            data: { access_token },
+        } = await axios.post<{
+            access_token: string;
+            token_type: string;
+            scope: string;
+        }>(
+            "https://github.com/login/oauth/access_token",
+            {
+                client_id: process.env.GITHUB_CLIENT_ID,
+                client_secret: process.env.GITHUB_CLIENT_SECRET,
+                code,
+            },
+            { headers: { Accept: "application/json" } }
+        );
+        accessToken = access_token;
+    } catch {
+        return res.status(500).send("Unable to get access token");
+    }
 
     // Get the username of the user
     const {
         data: { login: username },
     } = await axios.get("https://api.github.com/user", {
-        headers: { Authorization: `token ${access_token}` },
+        headers: { Authorization: `token ${accessToken}` },
     });
 
     // Check if the user already has a dev account
@@ -61,7 +67,7 @@ router.post("/authorize/github", async (req, res) => {
 
         // Make a new dev account for the user
         const dev = Dev.create({
-            ghAccessToken: access_token,
+            ghAccessToken: accessToken,
             ghUsername: username,
             stripeConnectID,
             user,
@@ -69,8 +75,10 @@ router.post("/authorize/github", async (req, res) => {
         await dev.save();
     } else {
         // Update the users existing dev account
+
+        // **** Pretty sure this has bugs in it - I should INSTEAD make sure to use the .save on the updated user object
         await Dev.update(user.dev.id, {
-            ghAccessToken: access_token,
+            ghAccessToken: accessToken,
             ghUsername: username,
         });
     }
