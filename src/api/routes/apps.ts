@@ -199,23 +199,30 @@ router.post(
         if (!validEnv(env)) return res.status(400).send("Invalid env JSON");
 
         // Initialize a new webhook in the repository for the user
-        const {
-            data: { id: ghWebhookID },
-        } = await axios.post<{ id: string }>(
-            `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
-            {
-                config: {
-                    url: `${process.env.BACKEND_URL}/appbuilder/hook`,
-                    content_type: "json",
+        let ghWebhookID;
+        try {
+            const {
+                data: { id },
+            } = await axios.post<{ id: string }>(
+                `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
+                {
+                    config: {
+                        // url: `${process.env.BACKEND_URL}/appbuilder/hook`,
+                        url: `https://www.google.com/appbuilder/hook`,
+                        content_type: "json",
+                    },
                 },
-            },
-            {
-                headers: {
-                    Authorization: `token ${user.dev.ghAccessToken}`,
-                    Accept: "application/vnd.github.v3+json",
-                },
-            }
-        );
+                {
+                    headers: {
+                        Authorization: `token ${user.dev.ghAccessToken}`,
+                        Accept: "application/vnd.github.v3+json",
+                    },
+                }
+            );
+            ghWebhookID = id;
+        } catch {
+            return res.status(400).send("Unable to register webhook");
+        }
 
         // Create a new app and assign it to the dev account
         const app = App.create({
@@ -233,7 +240,8 @@ router.post(
         await app.save();
 
         // Add the new app to the users account
-        await User.update(user.id, { apps: [...user.apps, app] });
+        user.apps = [...user.apps, app];
+        await user.save();
 
         // Add an app
         res.sendStatus(200);

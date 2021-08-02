@@ -139,14 +139,12 @@ const Create: NextPage<Props> = () => {
                 </ul>
                 <input
                     type="text"
-                    required={true}
                     value={envKey}
                     placeholder="Env key"
                     onChange={(e) => setEnvKey(e.target.value)}
                 />
                 <input
                     type="text"
-                    required={true}
                     value={envValue}
                     placeholder="Env value"
                     onChange={(e) => setEnvValue(e.target.value)}
