@@ -1,5 +1,6 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import { Status, StatusMessage } from "../../../../../utils/status";
 
@@ -34,19 +35,22 @@ const parseEnv = (envString: string) => {
 
 const Edit: NextPage<Props> = ({ app }) => {
     // Initialize the states
-    const [name, setName] = useState<string | null>(null);
-    const [title, setTitle] = useState<string | null>(null);
-    const [description, setDescription] = useState<string | null>(null);
-    const [price, setPrice] = useState<number | null>(null);
-    const [ghRepoOwner, setGhRepoOwner] = useState<string | null>(null);
-    const [ghRepoName, setGhRepoName] = useState<string | null>(null);
-    const [ghRepoBranch, setGhRepoBranch] = useState<string | null>(null);
-    const [env, setEnv] = useState<[string, string][] | null>(null);
+    const [newName, setNewName] = useState<string | null>(null);
+    const [newTitle, setNewTitle] = useState<string | null>(null);
+    const [newDescription, setNewDescription] = useState<string | null>(null);
+    const [newPrice, setNewPrice] = useState<number | null>(null);
+    const [newGhRepoOwner, setNewGhRepoOwner] = useState<string | null>(null);
+    const [newGhRepoName, setNewGhRepoName] = useState<string | null>(null);
+    const [newGhRepoBranch, setNewGhRepoBranch] = useState<string | null>(null);
+    const [newEnv, setNewEnv] = useState<[string, string][] | null>(null);
 
     const [envKey, setEnvKey] = useState<string>("");
     const [envValue, setEnvValue] = useState<string>("");
 
     const [status, setStatus] = useState<Status | null>(null);
+
+    // Used for redirects
+    const router = useRouter();
 
     return (
         <>
@@ -57,60 +61,111 @@ const Edit: NextPage<Props> = ({ app }) => {
 
                     // Make the request to update the form
 
-                    // **** Do I need to reset the form after as well?
+                    // Create the env to send
+                    let sendEnv;
+                    if (newEnv === null) {
+                        sendEnv = undefined;
+                    } else {
+                        sendEnv = {} as any;
+                        for (let pair of newEnv) {
+                            sendEnv[pair[0]] = pair[1];
+                        }
+                    }
+
+                    // Make the request to create the new app
+                    axios
+                        .post<string>(
+                            `${process.env.BACKEND_URL}/api/apps/dev/create`,
+                            {
+                                name: newName ? newName : undefined,
+                                title: newTitle ? newTitle : undefined,
+                                description: newDescription
+                                    ? newDescription
+                                    : undefined,
+                                price: newPrice ? newPrice : undefined,
+                                ghRepoOwner: newGhRepoOwner
+                                    ? newGhRepoOwner
+                                    : undefined,
+                                ghRepoName: newGhRepoName
+                                    ? newGhRepoName
+                                    : undefined,
+                                ghRepoBranch: newGhRepoBranch
+                                    ? newGhRepoBranch
+                                    : undefined,
+                                env: sendEnv,
+                            },
+                            { withCredentials: true }
+                        )
+                        .then((res) => {
+                            // Set the status
+                            setStatus({
+                                success: true,
+                                message: "Successfully created app",
+                            });
+
+                            // Redirect to dev dashboard
+                            router.push("/user/dev/dashboard");
+                        })
+                        .catch((err: AxiosError) => {
+                            // Update the status
+                            setStatus({
+                                success: false,
+                                message: err.response?.data,
+                            });
+                        });
                 }}
             >
                 <input
                     type="text"
                     required={true}
-                    value={name || app.name}
+                    value={newName || app.name}
                     placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => setNewName(e.target.value)}
                 />
                 <input
                     type="text"
                     required={true}
-                    value={title || app.title}
+                    value={newTitle || app.title}
                     placeholder="Title"
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => setNewTitle(e.target.value)}
                 />
                 <textarea
                     required={true}
-                    value={description || app.description}
+                    value={newDescription || app.description}
                     placeholder="Description"
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(e) => setNewDescription(e.target.value)}
                 />
                 <input
                     type="number"
                     step={0.01}
                     required={true}
-                    value={price || app.price}
+                    value={newPrice || app.price}
                     placeholder="Price"
-                    onChange={(e) => setPrice(e.target.valueAsNumber)}
+                    onChange={(e) => setNewPrice(e.target.valueAsNumber)}
                 />
                 <input
                     type="text"
                     required={true}
-                    value={ghRepoOwner || app.ghRepoOwner}
+                    value={newGhRepoOwner || app.ghRepoOwner}
                     placeholder="GitHub Repo Owner"
-                    onChange={(e) => setGhRepoOwner(e.target.value)}
+                    onChange={(e) => setNewGhRepoOwner(e.target.value)}
                 />
                 <input
                     type="text"
                     required={true}
-                    value={ghRepoName || app.ghRepoName}
+                    value={newGhRepoName || app.ghRepoName}
                     placeholder="GitHub Repo Name"
-                    onChange={(e) => setGhRepoName(e.target.value)}
+                    onChange={(e) => setNewGhRepoName(e.target.value)}
                 />
                 <input
                     type="text"
                     required={true}
-                    value={ghRepoBranch || app.ghRepoBranch}
+                    value={newGhRepoBranch || app.ghRepoBranch}
                     placeholder="GitHub Repo Branch"
-                    onChange={(e) => setGhRepoBranch(e.target.value)}
+                    onChange={(e) => setNewGhRepoBranch(e.target.value)}
                 />
                 <ul>
-                    {(env !== null ? env : parseEnv(app.env)).map(
+                    {(newEnv !== null ? newEnv : parseEnv(app.env)).map(
                         (variable, index) => {
                             return (
                                 <li key={index}>
@@ -122,13 +177,13 @@ const Edit: NextPage<Props> = ({ app }) => {
 
                                             // Remove the key
                                             let envCopy;
-                                            if (env !== null) {
-                                                envCopy = [...env];
+                                            if (newEnv !== null) {
+                                                envCopy = [...newEnv];
                                             } else {
                                                 envCopy = parseEnv(app.env);
                                             }
                                             envCopy.splice(index, 1);
-                                            setEnv(envCopy);
+                                            setNewEnv(envCopy);
                                         }}
                                     >
                                         -
@@ -159,16 +214,16 @@ const Edit: NextPage<Props> = ({ app }) => {
 
                         // Check that both fields are not null
                         if (envKey.length > 0) {
-                            // Make sure that the same key does not exist
-
                             // Check that the key does not exist
                             const exists = (
-                                env !== null ? env : parseEnv(app.env)
+                                newEnv !== null ? newEnv : parseEnv(app.env)
                             ).filter((variable) => variable[0] === envKey);
                             if (exists.length === 0) {
                                 // Update the environment variables
-                                setEnv([
-                                    ...(env !== null ? env : parseEnv(app.env)),
+                                setNewEnv([
+                                    ...(newEnv !== null
+                                        ? newEnv
+                                        : parseEnv(app.env)),
                                     [envKey, envValue],
                                 ]);
 
