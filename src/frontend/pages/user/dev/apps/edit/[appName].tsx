@@ -1,5 +1,7 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import { useState } from "react";
+import { Status, StatusMessage } from "../../../../../utils/status";
 
 interface Props {
     app: {
@@ -15,15 +17,137 @@ interface Props {
 }
 
 const Edit: NextPage<Props> = ({ app }) => {
+    // Initialize the states
+    const [name, setName] = useState<string | null>(null);
+    const [title, setTitle] = useState<string | null>(null);
+    const [description, setDescription] = useState<string | null>(null);
+    const [price, setPrice] = useState<number | null>(null);
+    const [ghRepoOwner, setGhRepoOwner] = useState<string | null>(null);
+    const [ghRepoName, setGhRepoName] = useState<string | null>(null);
+    const [ghRepoBranch, setGhRepoBranch] = useState<string | null>(null);
+
+    // const [env, setEnv] = useState<[string, string][]>([]);
+
+    // const [envKey, setEnvKey] = useState<string>("");
+    // const [envValue, setEnvValue] = useState<string>("");
+
+    const [status, setStatus] = useState<Status | null>(null);
+
     return (
         <>
-            <p>{app.title}</p>
-            <p>{app.description}</p>
-            <p>{app.price}</p>
-            <p>{app.ghRepoOwner}</p>
-            <p>{app.ghRepoName}</p>
-            <p>{app.ghRepoBranch}</p>
-            <p>{app.env}</p>
+            <form>
+                <input
+                    type="text"
+                    required={true}
+                    value={name || app.name}
+                    placeholder="Name"
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <input
+                    type="text"
+                    required={true}
+                    value={title || app.title}
+                    placeholder="Title"
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                <textarea
+                    required={true}
+                    value={description || app.description}
+                    placeholder="Description"
+                    onChange={(e) => setDescription(e.target.value)}
+                />
+                <input
+                    type="number"
+                    step={0.01}
+                    required={true}
+                    value={price || app.price}
+                    placeholder="Price"
+                    onChange={(e) => setPrice(e.target.valueAsNumber)}
+                />
+                <input
+                    type="text"
+                    required={true}
+                    value={ghRepoOwner || app.ghRepoOwner}
+                    placeholder="GitHub Repo Owner"
+                    onChange={(e) => setGhRepoOwner(e.target.value)}
+                />
+                <input
+                    type="text"
+                    required={true}
+                    value={ghRepoName || app.ghRepoName}
+                    placeholder="GitHub Repo Name"
+                    onChange={(e) => setGhRepoName(e.target.value)}
+                />
+                <input
+                    type="text"
+                    required={true}
+                    value={ghRepoBranch || app.ghRepoBranch}
+                    placeholder="GitHub Repo Branch"
+                    onChange={(e) => setGhRepoBranch(e.target.value)}
+                />
+                {/* <ul>
+                    {env.map((variable, index) => {
+                        return (
+                            <li key={index}>
+                                {variable[0]}={variable[1]}
+                                <button
+                                    onClick={(e) => {
+                                        // Prevent the page from reloading
+                                        e.preventDefault();
+
+                                        // Remove the key
+                                        const envCopy = [...env];
+                                        envCopy.splice(index, 1);
+                                        setEnv(envCopy);
+                                    }}
+                                >
+                                    -
+                                </button>
+                            </li>
+                        );
+                    })}
+                </ul>
+                <input
+                    type="text"
+                    required={true}
+                    value={envKey}
+                    placeholder="Env key"
+                    onChange={(e) => setEnvKey(e.target.value)}
+                />
+                <input
+                    type="text"
+                    required={true}
+                    value={envValue}
+                    placeholder="Env value"
+                    onChange={(e) => setEnvValue(e.target.value)}
+                />
+                <button
+                    onClick={(e) => {
+                        // Prevent page from reloading
+                        e.preventDefault();
+
+                        // Check that both fields are not null
+                        if (envKey.length > 0) {
+                            // Make sure that the same key does not exist
+                            const exists = env.filter(
+                                (variable) => variable[0] === envKey
+                            );
+                            if (exists.length === 0) {
+                                // Update the environment variables
+                                setEnv([...env, [envKey, envValue]]);
+
+                                // Reset the key and value
+                                setEnvKey("");
+                                setEnvValue("");
+                            }
+                        }
+                    }}
+                >
+                    +
+                </button> */}
+                <input type="submit" value="Create" />
+            </form>
+            <StatusMessage status={status} />
         </>
     );
 };
