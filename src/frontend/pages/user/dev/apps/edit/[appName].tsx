@@ -59,8 +59,6 @@ const Edit: NextPage<Props> = ({ app }) => {
                     // Prevent the page from reloading
                     e.preventDefault();
 
-                    // Make the request to update the form
-
                     // Create the env to send
                     let sendEnv;
                     if (newEnv === null) {
@@ -70,12 +68,13 @@ const Edit: NextPage<Props> = ({ app }) => {
                         for (let pair of newEnv) {
                             sendEnv[pair[0]] = pair[1];
                         }
+                        sendEnv = JSON.stringify(sendEnv);
                     }
 
-                    // Make the request to create the new app
+                    // Make the request to update the app
                     axios
-                        .post<string>(
-                            `${process.env.BACKEND_URL}/api/apps/dev/create`,
+                        .patch<string>(
+                            `${process.env.BACKEND_URL}/api/apps/dev/edit`,
                             {
                                 name: newName ? newName : undefined,
                                 title: newTitle ? newTitle : undefined,
@@ -92,7 +91,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                                 ghRepoBranch: newGhRepoBranch
                                     ? newGhRepoBranch
                                     : undefined,
-                                env: JSON.stringify(sendEnv),
+                                env: sendEnv,
                             },
                             { withCredentials: true }
                         )
