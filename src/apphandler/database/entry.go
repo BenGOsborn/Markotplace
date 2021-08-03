@@ -6,11 +6,19 @@ import (
 	"os"
 )
 
+type AppData struct {
+	ghRepoOwner  string
+	ghRepoName   string
+	ghRepoBranch string
+	version      int
+}
+
+// Maybe instead of a custom struct, simply just extend the original *sql.DB with these functions
 type DataBase struct {
 	db *sql.DB
 }
 
-func (database *DataBase) Connect() {
+func (database *DataBase) Connect() error {
 	// Fetch the data from the database continuously for different apps, check the versions, and if different, rebuild them
 	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
 
@@ -18,12 +26,50 @@ func (database *DataBase) Connect() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", os.Getenv("POSTGRES_HOST"), 5432, os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"))
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	database.db = db
+	return nil
 }
 
-func (database *DataBase) Close() {
+func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
+	// **** Filter the existing apps into their name, owner, and version variants
+	// Maybe even delete the old built containers if I get the chance ?
+
+	// Get a list of apps from the database
+	rows, err := database.db.Query("SELECT ghRepoOwner, ghRepoName, ghRepoBranch, version FROM apps WHERE 1=1") // Change the find condition to exclude the other values
+	if err != nil {
+		return nil, err
+	}
+
+	// To store the data in
+	returnData := []AppData{}
+
+	for rows.Next() {
+		// Read the data from the rows
+		appData := new(AppData)
+		err = rows.Scan(appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version)
+		if err != nil {
+			return nil, err
+		}
+		returnData = append(returnData, *appData)
+	}
+
+	// Check for errors during iteration
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	// Return the data
+	return returnData, nil
+}
+
+func (database *DataBase) Close() error {
 	// Close the connection to the database
-	database.db.Close()
+	err := database.db.Close()
+	if err != nil {
+		return err
+	}
+	return nil
 }
