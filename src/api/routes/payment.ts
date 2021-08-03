@@ -54,40 +54,31 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
     const { user }: { user: User } = req.locals;
 
     // Get the data from the request
-    const { appID }: { appID: number } = req.body;
+    const { appName }: { appName: string } = req.body;
 
     // Check the list of the users apps to see if that game already exists
-    if (typeof user.apps !== "undefined") {
-        for (const app of user.apps) {
-            if (app.id === appID)
-                return res.status(400).send("You already own this app");
-        }
+    for (const app of user.apps) {
+        if (app.name === appName)
+            return res.status(400).send("You already own this app");
     }
 
     // Get the app from the database
-    const app = await App.findOne(appID);
-    if (typeof app == "undefined") return res.status(400).send("Invalid app");
-
-    // Get the dev account who created the app
-    const { dev } = app;
+    const existingApp = await App.findOne({ where: { name: appName } });
+    if (typeof existingApp === "undefined")
+        return res.status(400).send("Invalid app");
 
     // If the app is free, add the app to the users account
-    if (app.price === 0) {
+    if (existingApp.price === 0) {
         // Add the app to the users account
-        if (typeof user.apps === "undefined") {
-            await User.update(user.id, { apps: [app as App] });
-        } else {
-            await User.update(user.id, {
-                apps: [...(user.apps as App[]), app as App],
-            });
-        }
+        user.apps = [...user.apps, existingApp];
+        await user.save();
 
         // Return success
         return res.json({
             clientSecret: null,
             existingCard: null,
             free: true,
-            message: "App purchase was successful!",
+            message: "App successfully added to library",
         });
     }
 
@@ -101,16 +92,16 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
 
     // Create the payment intent and pay out the developer
     const paymentIntent = await stripe.paymentIntents.create({
-        amount: app.price,
+        amount: existingApp.price,
         currency: "usd",
         customer: user.stripeCustomerID,
         metadata: {
             userID: user.id,
-            appID,
+            appName,
         },
-        application_fee_amount: 0.2 * app.price,
+        application_fee_amount: 0.1 * existingApp.price,
         transfer_data: {
-            destination: dev.stripeConnectID,
+            destination: existingApp.dev.stripeConnectID,
         },
     });
 
@@ -147,34 +138,36 @@ router.post("/purchase/success", async (req, res) => {
         );
 
         // Check that the payment succeeded
-        if (event.type === "payment_intent.succeeded") {
-            // Get the payment intent
-            const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        if (event.type !== "payment_intent.succeeded")
+            return res.sendStatus(400);
 
-            // Get the metadata from the payment intent
-            // @ts-ignore
-            const { userID, appID }: { userID: number; appID: number } =
-                paymentIntent.metadata;
+        // Get the payment intent
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-            // Get the app
-            const app = (await App.findOne(appID)) as App;
+        // Get the metadata from the payment intent
+        // @ts-ignore
+        const { userID, appName }: { userID: number; appName: number } =
+            paymentIntent.metadata;
 
-            // Update the users apps
-            const user = (await User.findOne(userID)) as User;
-            if (typeof user.apps === "undefined") {
-                await User.update(userID, { apps: [app] });
-            } else {
-                await User.update(userID, {
-                    apps: [...user.apps, app],
-                });
-            }
+        // Get the app
+        const app = (await App.findOne({
+            where: { name: appName },
+        })) as App;
 
-            // Return success
-            res.sendStatus(200);
-        }
+        // Update the users apps
+        const user = (await User.findOne({
+            where: { id: userID },
+        })) as User;
+
+        // Add the app to the users account
+        user.apps = [...user.apps, app];
+        await user.save();
+
+        // Return success
+        res.sendStatus(200);
     } catch (err) {
-        // Return the error
-        res.status(400).send(err.message);
+        // Return error
+        res.sendStatus(500);
     }
 });
 
