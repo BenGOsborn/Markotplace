@@ -9,6 +9,12 @@ import (
 // Initialize constant variables
 const PORT = 5000
 
+// Different parts of this system
+// - Proxy
+// - Container starter / redirecter
+// - Container builder
+// - App monitoring
+
 func main() {
 	// **** CORS will ALSO be required for this to function properly
 
