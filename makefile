@@ -6,6 +6,10 @@ include .env.local
 
 # Start containers in dev mode
 dc-start-dev:
+	docker-compose -f docker-compose.dev.yml --env-file .env.local up
+
+# Start and build the dev containers
+dc-start-dev-build:
 	docker-compose -f docker-compose.dev.yml --env-file .env.local up --build
 
 # Start containers in dev mode
