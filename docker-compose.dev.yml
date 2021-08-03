@@ -51,6 +51,23 @@ services:
         restart: always
         networks:
             - backend
+    apphandler:
+        build:
+            context: src/apphandler
+            dockerfile: dev.Dockerfile
+        ports:
+            - "5000"
+        environment: 
+            - LOL=LOL
+            # Add in the real env variables here
+        depends_on:
+            - db
+            - api
+        volumes:
+            - ./src/apphandler:/usr/app
+        restart: always
+        networks:
+            - backend
     nginx:
         build:
             context: src/nginx
