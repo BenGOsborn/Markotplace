@@ -101,10 +101,7 @@ func BuildImage(appName string) error {
 
 	// Decompress tar.gz **** figure out how this works!!! https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 	file.Seek(0, io.SeekStart)
-	gzr, err := gzip.NewReader(file)
-	if err != nil {
-		return err
-	}
+	gzr, _ := gzip.NewReader(file)
 	defer gzr.Close()
 
 	tr := tar.NewReader(gzr)
@@ -112,32 +109,24 @@ func BuildImage(appName string) error {
 	for {
 		header, err := tr.Next()
 
-		switch {
-
-		// if no more files are found return
-		case err == io.EOF:
-			return nil
-
-		// return any other error
-		case err != nil:
+		if err == io.EOF {
+			// If no more files are found then exit
+			break
+		} else if err != nil {
+			// Return on any other error
 			return err
-
-		// if the header is nil, just skip it (not sure how this happens)
-		case header == nil:
+		} else if header == nil {
+			// Skip nil header
 			continue
 		}
 
-		// the target location where the dir/file should be created
+		// The target location where the dir/file should be created
 		target := filepath.Join(tempDir, header.Name)
 
-		// the following switch could also be done using fi.Mode(), not sure if there
-		// a benefit of using one vs. the other.
-		// fi := header.FileInfo()
-
-		// check the file type
+		// Check the file type
 		switch header.Typeflag {
 
-		// if its a dir and it doesn't exist create it
+		// If dir that doesnt exist create it
 		case tar.TypeDir:
 			if _, err := os.Stat(target); err != nil {
 				if err := os.MkdirAll(target, 0755); err != nil {
@@ -145,20 +134,19 @@ func BuildImage(appName string) error {
 				}
 			}
 
-		// if it's a file create it
+		// If file then create it
 		case tar.TypeReg:
 			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				return err
 			}
 
-			// copy over contents
+			// Copy contents to file
 			if _, err := io.Copy(f, tr); err != nil {
 				return err
 			}
 
-			// manually close here after each file operation; defering would cause each file close
-			// to wait until all operations have completed.
+			// Close the file
 			f.Close()
 		}
 	}
