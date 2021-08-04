@@ -1,10 +1,10 @@
 package docker
 
 import (
-	"compress/gzip"
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -88,37 +88,17 @@ func BuildImage(appName string) error {
 
 	// Generate a temp directory
 	cwd, _ := os.Getwd()
-	// tempDir, _ := ioutil.TempDir(cwd, "src")
-	// defer os.RemoveAll(tempDir)
+	tempDir, _ := ioutil.TempDir(cwd, "src")
+	defer os.RemoveAll(tempDir)
 
 	// Download the file to the temp directory
-	filePath := filepath.Join(cwd, "src.tar.gz")
-	// // filePath := filepath.Join(tempDir, "src.tar.gz")
-	// file, _ := os.Create(filePath)
-	// _, _ = io.Copy(file, resp.Body)
-	// defer file.Close()
+	filePath := filepath.Join(tempDir, "src.tar.gz")
+	file, _ := os.Create(filePath)
+	_, _ = io.Copy(file, resp.Body)
+	defer file.Close()
 
-	reader, err := os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	defer reader.Close()
+	// Decompress
 
-	archive, err := gzip.NewReader(reader)
-	if err != nil {
-		return err
-	}
-	defer archive.Close()
-
-	target := filepath.Join(cwd, archive.Name)
-	writer, err := os.Create(target)
-	if err != nil {
-		return err
-	}
-	defer writer.Close()
-
-	_, err = io.Copy(writer, archive)
-	return err
-
-	// return nil
+	// Return no errors
+	return nil
 }
