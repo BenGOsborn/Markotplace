@@ -66,7 +66,6 @@ func StartContainer(imageName string, port int) (string, error) {
 	return resp.ID, nil
 }
 
-func BuildImage(appName string) {
+func BuildImage(appName string, database *DataBase) {
 	// Find the with the same appname
-
 }
