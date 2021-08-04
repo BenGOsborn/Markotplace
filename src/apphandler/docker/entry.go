@@ -51,3 +51,7 @@ func StartContainer(imageName string) (string, error) {
 	// Return the ID of the image
 	return resp.ID, nil
 }
+
+func BuildImage() {
+	// This is going to be a mess LOL
+}
