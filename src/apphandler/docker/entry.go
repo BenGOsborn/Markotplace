@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"apphandler/database"
 	"context"
 	"fmt"
 
@@ -66,6 +67,13 @@ func StartContainer(imageName string, port int) (string, error) {
 	return resp.ID, nil
 }
 
-func BuildImage(appName string, database *DataBase) {
+func BuildImage(appName string, database *database.DataBase) error {
 	// Find the with the same appname
+	appData, err := database.GetApp(appName)
+	if err != nil {
+		return err
+	}
+
+	// Now we need to fetch the data from this appData from the repository and branch
+	fmt.Println(appData)
 }
