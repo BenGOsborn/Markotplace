@@ -14,6 +14,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/go-connections/nat"
 )
 
@@ -99,7 +100,7 @@ func BuildImage(appName string) error {
 	_, _ = io.Copy(file, resp.Body)
 	defer file.Close()
 
-	// Decompress tar.gz **** figure out how this works!!! https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
+	// Decompress tar.gz **** https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 	file.Seek(0, io.SeekStart)
 	gzr, _ := gzip.NewReader(file)
 	defer gzr.Close()
@@ -151,7 +152,13 @@ func BuildImage(appName string) error {
 		}
 	}
 
-	// Now I want to attempt to build the images
+	// Initialize Docker client
+	cli, _ := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+
+	// Build Docker image from repo
+	// **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
+	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s-%s", ghRepoOwner, ghRepoName, ghRepoBranch))
+	tar, _ := archive.TarWithOptions()
 
 	// Return no errors
 	return nil
