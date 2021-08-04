@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -84,12 +85,14 @@ func BuildImage(appName string) error {
 	}
 	defer resp.Body.Close()
 
-	// Generate a uuid for the file
-	// **** Maybe I should INSTEAD generate temp files and directories so it is cleaned up when deleted ?
+	// Generate a temp directory
 	uuid, _ := exec.Command("uuidgen").Output()
+	tempDir, _ := os.MkdirTemp(string(uuid), "*")
+	filePath := filepath.Join(tempDir, "source.tar.gz")
+	defer os.Remove(tempDir)
 
 	// Create the file
-	out, err := os.Create(fmt.Sprintf("%s.tar.gz", uuid))
+	out, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
