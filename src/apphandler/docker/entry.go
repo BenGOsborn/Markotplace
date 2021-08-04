@@ -151,6 +151,8 @@ func BuildImage(appName string) error {
 		}
 	}
 
+	// Now I want to attempt to build the images
+
 	// Return no errors
-	// return nil
+	return nil
 }
