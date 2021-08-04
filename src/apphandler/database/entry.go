@@ -33,11 +33,8 @@ func (database *DataBase) Connect() error {
 }
 
 func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
-	// **** Filter the existing apps into their name, owner, and version variants
-	// Maybe even delete the old built containers if I get the chance ?
-
 	// Get a list of apps from the database
-	rows, err := database.db.Query("SELECT ghRepoOwner, ghRepoName, ghRepoBranch, version FROM apps WHERE 1=1") // Change the find condition to exclude the other values
+	rows, err := database.db.Query("SELECT ghRepoOwner, ghRepoName, ghRepoBranch, version FROM apps WHERE 1=1")
 	if err != nil {
 		return nil, err
 	}
