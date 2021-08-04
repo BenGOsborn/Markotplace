@@ -7,11 +7,12 @@ import (
 )
 
 type AppData struct {
-	ghRepoOwner  string
-	ghRepoName   string
-	ghRepoBranch string
-	version      int
-	name         string
+	ghRepoOwner   string
+	ghRepoName    string
+	ghRepoBranch  string
+	version       int
+	env           string
+	ghAccessToken string
 }
 
 // Maybe instead of a custom struct, simply just extend the original *sql.DB with these functions
@@ -35,7 +36,7 @@ func (database *DataBase) Connect() error {
 
 func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
 	// Get a list of apps from the database
-	rows, err := database.db.Query("SELECT name, ghRepoOwner, ghRepoName, ghRepoBranch, version FROM apps")
+	rows, err := database.db.Query("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM app LEFT JOIN dev ON app.devID = dev.id")
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +47,7 @@ func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
 	for rows.Next() {
 		// Read the data from the rows
 		appData := new(AppData)
-		err = rows.Scan(appData.name, appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version)
+		err := rows.Scan(appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken)
 		if err != nil {
 			return nil, err
 		}
@@ -54,8 +55,7 @@ func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
 	}
 
 	// Check for errors during iteration
-	err = rows.Err()
-	if err != nil {
+	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
@@ -65,9 +65,9 @@ func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
 
 func (database *DataBase) GetApp(appName string) (AppData, error) {
 	// Get the row from the database
-	row := database.db.QueryRow("SELECT name, ghRepoOwner, ghRepoName, ghRepoBranch, version FROM apps WHERE name=$1", appName)
+	row := database.db.QueryRow("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
 	appData := new(AppData)
-	if err := row.Scan(appData.name, appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version); err != nil {
+	if err := row.Scan(appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken); err != nil {
 		return *appData, err
 	}
 	return *appData, nil
