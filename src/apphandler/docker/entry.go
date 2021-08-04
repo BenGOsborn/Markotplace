@@ -97,7 +97,7 @@ func BuildImage(appName string) error {
 	filePath := filepath.Join(tempDir, "src.tar.gz")
 	file, _ := os.Create(filePath)
 	_, _ = io.Copy(file, resp.Body)
-	file.Close() // Try and defer this and keep the existing file stream
+	file.Close() // Try and defer this and keep the existing file stream - do this by making the file a READER and not a WRITER ?
 
 	// Decompress **** figure out how this works!!! https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 	r, _ := os.Open(filePath)
