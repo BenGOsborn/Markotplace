@@ -1,12 +1,10 @@
 package docker
 
 import (
-	"archive/tar"
-	"compress/gzip"
 	"context"
 	"fmt"
 	"io"
-	"log"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
@@ -90,53 +88,21 @@ func BuildImage(appName string) error {
 	defer resp.Body.Close()
 
 	// Generate a temp directory
-	uuid, _ := exec.Command("uuidgen").Output()
-	tempDir, _ := os.MkdirTemp(string(uuid), "*")
-	defer os.Remove(tempDir)
+	cwd, _ := os.Getwd()
+	tempDir, _ := ioutil.TempDir(cwd, "src")
+	// defer os.RemoveAll(tempDir)
 
 	// Download the file to the temp directory
-	filePath := filepath.Join(tempDir, "source.tar.gz")
+	filePath := filepath.Join(tempDir, "src.tar.gz")
 	file, _ := os.Create(filePath)
 	_, _ = io.Copy(file, resp.Body)
-	defer file.Close()
+	file.Close()
+
+	// **** When we go to decompress, the file does not exist ????
 
 	// Decompress the tar file
-	// **** Copied straight from https://stackoverflow.com/questions/57639648/how-to-decompress-tar-gz-file-in-go - figure out what this does then refactor
-	var gzipStream io.Reader = file
-	uncompressed, _ := gzip.NewReader(gzipStream)
-
-	tarReader := tar.NewReader(uncompressed)
-
-	for {
-		header, err := tarReader.Next()
-
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Fatalf("ExtractTarGz: Next() failed: %s", err.Error())
-		}
-
-		switch header.Typeflag {
-		case tar.TypeDir:
-			if err := os.Mkdir(header.Name, 0755); err != nil {
-				log.Fatalf("ExtractTarGz: Mkdir() failed: %s", err.Error())
-			}
-		case tar.TypeReg:
-			outFile, err := os.Create(header.Name)
-			if err != nil {
-				log.Fatalf("ExtractTarGz: Create() failed: %s", err.Error())
-			}
-			if _, err := io.Copy(outFile, tarReader); err != nil {
-				log.Fatalf("ExtractTarGz: Copy() failed: %s", err.Error())
-			}
-			outFile.Close()
-
-		default:
-			log.Fatalf("ExtractTarGz: uknown type: %s in %s", string(header.Typeflag), header.Name)
-		}
-	}
+	_, err = exec.Command(fmt.Sprintf("tar -xf %s -C %s", filePath, tempDir)).Output()
+	fmt.Println(err)
 
 	return nil
 }
