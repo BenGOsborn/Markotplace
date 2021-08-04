@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/docker/docker/api/types"
@@ -19,15 +20,18 @@ func ListImages() ([]string, error) {
 	}
 
 	// Get a list of images from the host
-	images, err := cli.ImageList(nil, types.ImageListOptions{})
+	images, err := cli.ImageList(context.TODO(), types.ImageListOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	// Extract the names of the images and return them
-	names := []string{}
+	// Extract the tags of the images and return them
+	tags := []string{}
 	for _, image := range images {
-		names = append(names, image.ID)
+		tag := image.RepoTags
+		if len(tag) > 0 {
+			tags = append(tags, tag[0])
+		}
 	}
-	return names, nil
+	return tags, nil
 }
