@@ -1,13 +1,12 @@
 package docker
 
 import (
+	"compress/gzip"
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/docker/docker/api/types"
@@ -89,20 +88,37 @@ func BuildImage(appName string) error {
 
 	// Generate a temp directory
 	cwd, _ := os.Getwd()
-	tempDir, _ := ioutil.TempDir(cwd, "src")
+	// tempDir, _ := ioutil.TempDir(cwd, "src")
 	// defer os.RemoveAll(tempDir)
 
 	// Download the file to the temp directory
-	filePath := filepath.Join(tempDir, "src.tar.gz")
-	file, _ := os.Create(filePath)
-	_, _ = io.Copy(file, resp.Body)
-	file.Close()
+	filePath := filepath.Join(cwd, "src.tar.gz")
+	// // filePath := filepath.Join(tempDir, "src.tar.gz")
+	// file, _ := os.Create(filePath)
+	// _, _ = io.Copy(file, resp.Body)
+	// defer file.Close()
 
-	// **** When we go to decompress, the file does not exist ????
+	reader, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
 
-	// Decompress the tar file
-	_, err = exec.Command(fmt.Sprintf("tar -xf %s -C %s", filePath, tempDir)).Output()
-	fmt.Println(err)
+	archive, err := gzip.NewReader(reader)
+	if err != nil {
+		return err
+	}
+	defer archive.Close()
 
-	return nil
+	target := filepath.Join(cwd, archive.Name)
+	writer, err := os.Create(target)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	_, err = io.Copy(writer, archive)
+	return err
+
+	// return nil
 }
