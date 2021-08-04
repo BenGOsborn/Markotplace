@@ -2,7 +2,6 @@ package main
 
 import (
 	"apphandler/docker"
-	"fmt"
 )
 
 // Initialize constant variables
@@ -26,9 +25,7 @@ func main() {
 	// log.Println(fmt.Sprintf("Apphandler listening on port %d...", PORT))
 	// log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))
 
-	images, err := docker.ListImages()
-	if err != nil {
+	if err := docker.BuildImage("Yes"); err != nil {
 		panic(err)
 	}
-	fmt.Println(images)
 }
