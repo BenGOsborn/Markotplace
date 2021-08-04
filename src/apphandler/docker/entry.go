@@ -3,6 +3,10 @@ package docker
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"os/exec"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -67,8 +71,35 @@ func StartContainer(imageName string, port int) (string, error) {
 }
 
 func BuildImage(appName string) error {
-	// Now we need to fetch the data from this appData from the repository and branch
-	fmt.Println(appName)
+	// **** Test data
+	ghRepoOwner := "BenGOsborn"
+	ghRepoName := "Webhook-Test"
+	ghRepoBranch := "main"
+
+	// Fetch the repo
+	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", ghRepoOwner, ghRepoName, ghRepoBranch)
+	resp, err := http.Get(fileUrl)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Generate a uuid for the file
+	// **** Maybe I should INSTEAD generate temp files and directories so it is cleaned up when deleted ?
+	uuid, _ := exec.Command("uuidgen").Output()
+
+	// Create the file
+	out, err := os.Create(fmt.Sprintf("%s.tar.gz", uuid))
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Copy the contents to the file
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
