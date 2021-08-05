@@ -102,6 +102,9 @@ func BuildImage(appName string) error {
 		return err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return errors.New("bad status code")
+	}
 
 	// Generate a temp directory
 	cwd, err := os.Getwd()
@@ -120,11 +123,11 @@ func BuildImage(appName string) error {
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
 	// Decompress tar.gz **** https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 	file.Seek(0, io.SeekStart)
