@@ -7,13 +7,13 @@ import (
 )
 
 type AppData struct {
-	appName       string
-	ghRepoOwner   string
-	ghRepoName    string
-	ghRepoBranch  string
-	version       int
-	env           string
-	ghAccessToken string
+	AppName       string
+	GhRepoOwner   string
+	GhRepoName    string
+	GhRepoBranch  string
+	AppVersion    int
+	Env           string
+	GhAccessToken string
 }
 
 // Maybe instead of a custom struct, simply just extend the original *sql.DB with these functions
@@ -48,7 +48,7 @@ func (database *DataBase) GetApps() ([]AppData, error) {
 	for rows.Next() {
 		// Read the data from the rows
 		appData := new(AppData)
-		err := rows.Scan(appData.appName, appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken)
+		err := rows.Scan(appData.AppName, appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch, appData.AppVersion, appData.Env, appData.GhAccessToken)
 		if err != nil {
 			return nil, err
 		}
@@ -68,7 +68,7 @@ func (database *DataBase) GetApp(appName string) (*AppData, error) {
 	// Get the row from the database
 	row := database.db.QueryRow("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
 	appData := new(AppData)
-	if err := row.Scan(appData.appName, appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken); err != nil {
+	if err := row.Scan(appData.AppName, appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch, appData.AppVersion, appData.Env, appData.GhAccessToken); err != nil {
 		return nil, err
 	}
 	return appData, nil

@@ -123,12 +123,12 @@ func ParseImageName(rawImageName string) (*ImageName, error) {
 
 func BuildImage(appData *database.AppData) error {
 	// Download the repo
-	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch)
+	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch)
 	req, err := http.NewRequest("GET", fileUrl, nil)
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("token %s", ghAccessToken))
+	req.Header.Add("Authorization", fmt.Sprintf("token %s", appData.GhAccessToken))
 	httpClient := &http.Client{}
 	resp, err := httpClient.Do(req)
 	if err != nil {
@@ -224,14 +224,14 @@ func BuildImage(appData *database.AppData) error {
 	}
 
 	// Build Docker image from repo **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
-	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
+	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", appData.GhRepoName, appData.GhRepoBranch))
 	tar, err := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
 	if err != nil {
 		return err
 	}
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
 		Dockerfile: "Dockerfile",
-		Tags:       []string{BuildImageName(&ImageName{appName: appName, appVersion: appVersion, ghRepoOwner: ghRepoOwner, ghRepoName: ghRepoName, ghRepoBranch: ghRepoBranch})},
+		Tags:       []string{BuildImageName(&ImageName{appName: appData.AppName, appVersion: appData.AppVersion, ghRepoOwner: appData.GhRepoOwner, ghRepoName: appData.GhRepoName, ghRepoBranch: appData.GhRepoBranch})},
 		Remove:     true,
 	})
 	if err != nil {
