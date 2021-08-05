@@ -157,8 +157,12 @@ func BuildImage(appName string) error {
 
 	// Build Docker image from repo
 	// **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
-	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s-%s", ghRepoOwner, ghRepoName, ghRepoBranch))
-	tar, _ := archive.TarWithOptions()
+	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
+	tar, _ := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
+	const containerPrefix = "Markotplace-App/"
+	res, _ := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{Dockerfile: "Dockerfile",
+		Tags:   []string{containerPrefix + ghRepoOwner + "/" + ghRepoName + "/" + ghRepoBranch},
+		Remove: true})
 
 	// Return no errors
 	return nil
