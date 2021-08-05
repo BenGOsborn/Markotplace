@@ -94,7 +94,7 @@ type ImageName struct {
 	ghRepoBranch string
 }
 
-func BuildImageName(imageName *ImageName) string {
+func buildImageName(imageName *ImageName) string {
 	// Create an image name from the params
 	const CONTAINER_PREFIX = "markotplace-local"
 	name := fmt.Sprintf("%s/%s/%d/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(imageName.appName), imageName.appVersion, strings.ToLower(imageName.ghRepoOwner), strings.ToLower(imageName.ghRepoName), strings.ToLower(imageName.ghRepoBranch))
@@ -231,7 +231,7 @@ func BuildImage(appData *database.AppData) error {
 	}
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
 		Dockerfile: "Dockerfile",
-		Tags:       []string{BuildImageName(&ImageName{appName: appData.AppName, appVersion: appData.AppVersion, ghRepoOwner: appData.GhRepoOwner, ghRepoName: appData.GhRepoName, ghRepoBranch: appData.GhRepoBranch})},
+		Tags:       []string{buildImageName(&ImageName{appName: appData.AppName, appVersion: appData.AppVersion, ghRepoOwner: appData.GhRepoOwner, ghRepoName: appData.GhRepoName, ghRepoBranch: appData.GhRepoBranch})},
 		Remove:     true,
 	})
 	if err != nil {
