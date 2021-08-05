@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -159,10 +160,13 @@ func BuildImage(appName string) error {
 	// **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
 	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
 	tar, _ := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
-	const containerPrefix = "Markotplace-App/"
-	res, _ := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{Dockerfile: "Dockerfile",
-		Tags:   []string{containerPrefix + ghRepoOwner + "/" + ghRepoName + "/" + ghRepoBranch},
+	const containerPrefix = "markotplace-local"
+	_, err = cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{Dockerfile: "Dockerfile",
+		Tags:   []string{fmt.Sprintf("%s/%s/%s/%s", strings.ToLower(containerPrefix), strings.ToLower(ghRepoOwner), strings.ToLower(ghRepoName), strings.ToLower(ghRepoBranch))},
 		Remove: true})
+	if err != nil {
+		return err
+	}
 
 	// Return no errors
 	return nil
