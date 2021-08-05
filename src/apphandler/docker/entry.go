@@ -82,6 +82,31 @@ type ErrorLine struct {
 	Error string `json:"error"`
 }
 
+// What if I simply just encrypt the names of the containers using the server side key so NOONE can guess them using the server secret ???
+// Also remember that these names have been parsed into lowercase
+func BuildImageName(appName string, ghRepoOwner string, ghRepoName string, ghRepoBranch string) string {
+	const CONTAINER_PREFIX = "markotplace-local"
+	name := fmt.Sprintf("%s/%s/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(appName), strings.ToLower(ghRepoOwner), strings.ToLower(ghRepoName), strings.ToLower(ghRepoBranch))
+	return name
+}
+
+type ImageName struct {
+	appName      string
+	ghRepoOwner  string
+	ghRepoName   string
+	ghRepoBranch string
+}
+
+func ParseImageName(rawImageName string) ImageName {
+	split := strings.Split(rawImageName, "/")
+	imageName := new(ImageName)
+	imageName.appName = split[1]
+	imageName.ghRepoOwner = split[2]
+	imageName.ghRepoName = split[3]
+	imageName.ghRepoBranch = split[4]
+	return *imageName
+}
+
 func BuildImage(appName string) error {
 	// **** Test data
 	// **** Add error handling this is MADNESS
@@ -95,7 +120,7 @@ func BuildImage(appName string) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Authorization", "token lol") // This should be the real token
+	req.Header.Add("Authorization", fmt.Sprintf("token %s", "lol"))
 	httpClient := &http.Client{}
 	resp, err := httpClient.Do(req)
 	if err != nil {
@@ -191,12 +216,11 @@ func BuildImage(appName string) error {
 	}
 
 	// Build Docker image from repo **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
-	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
+	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch)) // Don't forget to add the version for this for parsing it
 	tar, err := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
 	if err != nil {
 		return err
 	}
-	const containerPrefix = "markotplace-local"
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
 		Dockerfile: "Dockerfile",
 		Tags:       []string{fmt.Sprintf("%s/%s/%s/%s", strings.ToLower(containerPrefix), strings.ToLower(ghRepoOwner), strings.ToLower(ghRepoName), strings.ToLower(ghRepoBranch))},
