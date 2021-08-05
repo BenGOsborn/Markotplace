@@ -98,19 +98,34 @@ func BuildImage(appName string) error {
 	defer resp.Body.Close()
 
 	// Generate a temp directory
-	cwd, _ := os.Getwd()
-	tempDir, _ := ioutil.TempDir(cwd, "src")
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	tempDir, err := ioutil.TempDir(cwd, "src")
+	if err != nil {
+		return err
+	}
 	defer os.RemoveAll(tempDir)
 
 	// Download the file to the temp directory
 	filePath := filepath.Join(tempDir, "src.tar.gz")
-	file, _ := os.Create(filePath)
-	_, _ = io.Copy(file, resp.Body)
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return err
+	}
 	defer file.Close()
 
 	// Decompress tar.gz **** https://medium.com/@skdomino/taring-untaring-files-in-go-6b07cf56bc07
 	file.Seek(0, io.SeekStart)
-	gzr, _ := gzip.NewReader(file)
+	gzr, err := gzip.NewReader(file)
+	if err != nil {
+		return err
+	}
 	defer gzr.Close()
 
 	tr := tar.NewReader(gzr)
@@ -161,11 +176,17 @@ func BuildImage(appName string) error {
 	}
 
 	// Initialize Docker client
-	cli, _ := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
 
 	// Build Docker image from repo **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
 	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
-	tar, _ := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
+	tar, err := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
+	if err != nil {
+		return err
+	}
 	const containerPrefix = "markotplace-local"
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
 		Dockerfile: "Dockerfile",
