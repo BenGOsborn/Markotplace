@@ -5,6 +5,8 @@ import (
 	"bufio"
 	"compress/gzip"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -74,6 +76,10 @@ func StartContainer(imageName string, port int) (string, error) {
 
 	// Return the ID of the image
 	return resp.ID, nil
+}
+
+type ErrorLine struct {
+	Error string `json:"error"`
 }
 
 func BuildImage(appName string) error {
@@ -171,9 +177,21 @@ func BuildImage(appName string) error {
 		return err
 	}
 
+	// Read the output and check for errors
+	var lastLine string
 	scanner := bufio.NewScanner(res.Body)
 	for scanner.Scan() {
-		// fmt.Println(scanner.Text())
+		lastLine = scanner.Text()
+	}
+
+	// Check for errors
+	errLine := &ErrorLine{}
+	json.Unmarshal([]byte(lastLine), errLine)
+	if errLine.Error != "" {
+		return errors.New(errLine.Error)
+	}
+	if err := scanner.Err(); err != nil {
+		return err
 	}
 
 	// Return no errors
