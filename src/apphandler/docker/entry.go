@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"apphandler/database"
 	"archive/tar"
 	"bufio"
 	"compress/gzip"
@@ -120,9 +121,9 @@ func ParseImageName(rawImageName string) (*ImageName, error) {
 	return imageName, nil
 }
 
-func BuildImage(appName string, appVersion int, ghRepoOwner string, ghRepoName string, ghRepoBranch string, ghAccessToken string) error {
+func BuildImage(appData *database.AppData) error {
 	// Download the repo
-	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", ghRepoOwner, ghRepoName, ghRepoBranch)
+	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch)
 	req, err := http.NewRequest("GET", fileUrl, nil)
 	if err != nil {
 		return err

@@ -33,6 +33,7 @@ func main() {
 	ghRepoBranch := "main"
 	ghAccessToken := "lol"
 
+	// **** Switch this over to appdata
 	// Build the image
 	if err := docker.BuildImage(appName, appVersion, ghRepoOwner, ghRepoName, ghRepoBranch, ghAccessToken); err != nil {
 		panic(err)

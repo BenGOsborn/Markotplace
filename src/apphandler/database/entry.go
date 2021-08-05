@@ -7,6 +7,7 @@ import (
 )
 
 type AppData struct {
+	appName       string
 	ghRepoOwner   string
 	ghRepoName    string
 	ghRepoBranch  string
@@ -34,9 +35,9 @@ func (database *DataBase) Connect() error {
 	return nil
 }
 
-func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
+func (database *DataBase) GetApps() ([]AppData, error) {
 	// Get a list of apps from the database
-	rows, err := database.db.Query("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM app LEFT JOIN dev ON app.devID = dev.id")
+	rows, err := database.db.Query("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM app LEFT JOIN dev ON app.devID = dev.id")
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +48,7 @@ func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
 	for rows.Next() {
 		// Read the data from the rows
 		appData := new(AppData)
-		err := rows.Scan(appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken)
+		err := rows.Scan(appData.appName, appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken)
 		if err != nil {
 			return nil, err
 		}
@@ -63,14 +64,14 @@ func (database *DataBase) GetApps(existingApps []string) ([]AppData, error) {
 	return returnData, nil
 }
 
-func (database *DataBase) GetApp(appName string) (AppData, error) {
+func (database *DataBase) GetApp(appName string) (*AppData, error) {
 	// Get the row from the database
-	row := database.db.QueryRow("SELECT app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
+	row := database.db.QueryRow("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
 	appData := new(AppData)
-	if err := row.Scan(appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken); err != nil {
-		return *appData, err
+	if err := row.Scan(appData.appName, appData.ghRepoOwner, appData.ghRepoName, appData.ghRepoBranch, appData.version, appData.env, appData.ghAccessToken); err != nil {
+		return nil, err
 	}
-	return *appData, nil
+	return appData, nil
 }
 
 func (database *DataBase) Close() error {
