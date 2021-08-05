@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/docker/docker/api/types"
@@ -84,37 +85,45 @@ type ErrorLine struct {
 
 // What if I simply just encrypt the names of the containers using the server side key so NOONE can guess them using the server secret ???
 // Also remember that these names have been parsed into lowercase
-
 type ImageName struct {
 	appName      string
+	appVersion   int
 	ghRepoOwner  string
 	ghRepoName   string
 	ghRepoBranch string
 }
 
-func BuildImageName(imageName ImageName) string {
+func BuildImageName(imageName *ImageName) string {
 	// Create an image name from the params
 	const CONTAINER_PREFIX = "markotplace-local"
-	name := fmt.Sprintf("%s/%s/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(imageName.appName), strings.ToLower(imageName.ghRepoOwner), strings.ToLower(imageName.ghRepoName), strings.ToLower(imageName.ghRepoBranch))
+	name := fmt.Sprintf("%s/%s/%d/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(imageName.appName), imageName.appVersion, strings.ToLower(imageName.ghRepoOwner), strings.ToLower(imageName.ghRepoName), strings.ToLower(imageName.ghRepoBranch))
+
 	return name
 }
 
-func ParseImageName(rawImageName string) ImageName {
+func ParseImageName(rawImageName string) (*ImageName, error) {
 	// Split the name and extract the details
 	split := strings.Split(rawImageName, "/")
 
 	imageName := new(ImageName)
 	imageName.appName = split[1]
-	imageName.ghRepoOwner = split[2]
-	imageName.ghRepoName = split[3]
-	imageName.ghRepoBranch = split[4]
+	appVersion := split[2]
+	appVersionParsed, err := strconv.Atoi(appVersion)
+	if err != nil {
+		return nil, err
+	}
+	imageName.appVersion = int(appVersionParsed)
+	imageName.ghRepoOwner = split[3]
+	imageName.ghRepoName = split[4]
+	imageName.ghRepoBranch = split[5]
 
-	return *imageName
+	return imageName, nil
 }
 
 func BuildImage(appName string) error {
 	// **** Test data
 	// **** Add error handling this is MADNESS
+	appVersion := 1
 	ghRepoOwner := "BenGOsborn"
 	ghRepoName := "Cerci"
 	ghRepoBranch := "main"
@@ -221,14 +230,14 @@ func BuildImage(appName string) error {
 	}
 
 	// Build Docker image from repo **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
-	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch)) // Don't forget to add the version for this for parsing it
+	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
 	tar, err := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
 	if err != nil {
 		return err
 	}
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
 		Dockerfile: "Dockerfile",
-		Tags:       []string{fmt.Sprintf("%s/%s/%s/%s", strings.ToLower(containerPrefix), strings.ToLower(ghRepoOwner), strings.ToLower(ghRepoName), strings.ToLower(ghRepoBranch))},
+		Tags:       []string{BuildImageName(&ImageName{appName: appName, appVersion: appVersion, ghRepoOwner: ghRepoOwner, ghRepoName: ghRepoName, ghRepoBranch: ghRepoBranch})},
 		Remove:     true,
 	})
 	if err != nil {
