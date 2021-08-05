@@ -25,7 +25,17 @@ func main() {
 	// log.Println(fmt.Sprintf("Apphandler listening on port %d...", PORT))
 	// log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))
 
-	if err := docker.BuildImage("Yes"); err != nil {
+	// **** Test app data
+	appName := "lol"
+	appVersion := 1
+	ghRepoOwner := "BenGOsborn"
+	ghRepoName := "Cerci"
+	ghRepoBranch := "main"
+	ghAccessToken := "lol"
+
+	// Build the image
+	if err := docker.BuildImage(appName, appVersion, ghRepoOwner, ghRepoName, ghRepoBranch, ghAccessToken); err != nil {
 		panic(err)
 	}
+
 }

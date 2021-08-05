@@ -120,21 +120,14 @@ func ParseImageName(rawImageName string) (*ImageName, error) {
 	return imageName, nil
 }
 
-func BuildImage(appName string) error {
-	// **** Test data
-	// **** Add error handling this is MADNESS
-	appVersion := 1
-	ghRepoOwner := "BenGOsborn"
-	ghRepoName := "Cerci"
-	ghRepoBranch := "main"
-
+func BuildImage(appName string, appVersion int, ghRepoOwner string, ghRepoName string, ghRepoBranch string, ghAccessToken string) error {
 	// Download the repo
-	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", ghRepoOwner, ghRepoName, ghRepoBranch) // I also need to add a Authorization header in here with the access token
+	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", ghRepoOwner, ghRepoName, ghRepoBranch)
 	req, err := http.NewRequest("GET", fileUrl, nil)
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("token %s", "lol"))
+	req.Header.Add("Authorization", fmt.Sprintf("token %s", ghAccessToken))
 	httpClient := &http.Client{}
 	resp, err := httpClient.Do(req)
 	if err != nil {
