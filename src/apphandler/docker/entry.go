@@ -92,9 +92,9 @@ type ImageName struct {
 	ghRepoBranch string
 }
 
-func BuildImageName(appName string, ghRepoOwner string, ghRepoName string, ghRepoBranch string) string {
+func BuildImageName(imageName ImageName) string {
 	const CONTAINER_PREFIX = "markotplace-local"
-	name := fmt.Sprintf("%s/%s/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(appName), strings.ToLower(ghRepoOwner), strings.ToLower(ghRepoName), strings.ToLower(ghRepoBranch))
+	name := fmt.Sprintf("%s/%s/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(imageName.appName), strings.ToLower(imageName.ghRepoOwner), strings.ToLower(imageName.ghRepoName), strings.ToLower(imageName.ghRepoBranch))
 	return name
 }
 
