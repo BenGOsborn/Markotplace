@@ -163,8 +163,7 @@ func BuildImage(appName string) error {
 	// Initialize Docker client
 	cli, _ := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 
-	// Build Docker image from repo
-	// **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
+	// Build Docker image from repo **** https://www.loginradius.com/blog/async/build-push-docker-images-golang/
 	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
 	tar, _ := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
 	const containerPrefix = "markotplace-local"
