@@ -93,6 +93,7 @@ type ImageName struct {
 }
 
 func BuildImageName(imageName ImageName) string {
+	// Create an image name from the params
 	const CONTAINER_PREFIX = "markotplace-local"
 	name := fmt.Sprintf("%s/%s/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(imageName.appName), strings.ToLower(imageName.ghRepoOwner), strings.ToLower(imageName.ghRepoName), strings.ToLower(imageName.ghRepoBranch))
 	return name
