@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -12,7 +13,7 @@ type AppData struct {
 	GhRepoName    string
 	GhRepoBranch  string
 	AppVersion    int
-	Env           string // This should instead be a hashmap where each of the keys are pointers to strings
+	Env           map[string]*string
 	GhAccessToken string
 }
 
@@ -35,7 +36,23 @@ func (database *DataBase) Connect() error {
 	return nil
 }
 
-func (database *DataBase) GetApps() ([]AppData, error) {
+func parseEnv(envRaw string) (*map[string]*string, error) {
+	// Parse the environment variable JSON into build args
+	var storage map[string]interface{}
+	if err := json.Unmarshal([]byte(envRaw), &storage); err != nil {
+		return nil, err
+	}
+
+	// Convert the keys to pointers and return its address
+	env := make(map[string]*string)
+	for key, value := range storage {
+		strVal := (value.(string))
+		env[key] = &strVal
+	}
+	return &env, nil
+}
+
+func (database *DataBase) GetApps() (*[]AppData, error) {
 	// Get a list of apps from the database
 	rows, err := database.db.Query("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM app LEFT JOIN dev ON app.devID = dev.id")
 	if err != nil {
@@ -43,16 +60,29 @@ func (database *DataBase) GetApps() ([]AppData, error) {
 	}
 
 	// To store the data in
-	returnData := []AppData{}
+	returnData := &[]AppData{}
 
 	for rows.Next() {
 		// Read the data from the rows
 		appData := new(AppData)
-		err := rows.Scan(appData.AppName, appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch, appData.AppVersion, appData.Env, appData.GhAccessToken)
+
+		// Stores the unparsed env JSON
+		var envJSONString string
+
+		// Store the data
+		if err := rows.Scan(appData.AppName, appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch, appData.AppVersion, &envJSONString, appData.GhAccessToken); err != nil {
+			return nil, err
+		}
+
+		// Parse and store the env
+		env, err := parseEnv(envJSONString)
 		if err != nil {
 			return nil, err
 		}
-		returnData = append(returnData, *appData)
+		appData.Env = *env
+
+		// Add the data to the return list
+		*returnData = append(*returnData, *appData)
 	}
 
 	// Check for errors during iteration
@@ -67,10 +97,26 @@ func (database *DataBase) GetApps() ([]AppData, error) {
 func (database *DataBase) GetApp(appName string) (*AppData, error) {
 	// Get the row from the database
 	row := database.db.QueryRow("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
+
+	// Used to store the row
 	appData := new(AppData)
-	if err := row.Scan(appData.AppName, appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch, appData.AppVersion, appData.Env, appData.GhAccessToken); err != nil {
+
+	// Stores the unparsed env JSON
+	var envJSONString string
+
+	// Store the data
+	if err := row.Scan(appData.AppName, appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch, appData.AppVersion, &envJSONString, appData.GhAccessToken); err != nil {
 		return nil, err
 	}
+
+	// Parse and store the env
+	env, err := parseEnv(envJSONString)
+	if err != nil {
+		return nil, err
+	}
+	appData.Env = *env
+
+	// Return the data
 	return appData, nil
 }
 
