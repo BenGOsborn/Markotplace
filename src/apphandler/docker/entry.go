@@ -86,12 +86,12 @@ func BuildImage(appName string) error {
 	// **** Test data
 	// **** Add error handling this is MADNESS
 	ghRepoOwner := "BenGOsborn"
-	ghRepoName := "Webhook-Test"
+	ghRepoName := "Cerci"
 	ghRepoBranch := "main"
 
 	// Fetch the repo
-	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", ghRepoOwner, ghRepoName, ghRepoBranch)
-	resp, err := http.Get(fileUrl)
+	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", ghRepoOwner, ghRepoName, ghRepoBranch) // I also need to add a Authorization header in here with the access token
+	resp, err := http.Get(fileUrl)                                                                              // How do I set headers for this ?
 	if err != nil {
 		return err
 	}
