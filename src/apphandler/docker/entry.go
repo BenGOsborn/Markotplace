@@ -177,12 +177,11 @@ func BuildImage(appName string) error {
 		return err
 	}
 
-	// Read the output and check for errors
+	// Read the output from the build
 	var lastLine string
 	scanner := bufio.NewScanner(res.Body)
 	for scanner.Scan() {
 		lastLine = scanner.Text()
-		fmt.Println(lastLine)
 	}
 
 	// Check for errors
