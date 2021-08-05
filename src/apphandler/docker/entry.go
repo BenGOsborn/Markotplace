@@ -182,6 +182,7 @@ func BuildImage(appName string) error {
 	scanner := bufio.NewScanner(res.Body)
 	for scanner.Scan() {
 		lastLine = scanner.Text()
+		fmt.Println(lastLine)
 	}
 
 	// Check for errors
