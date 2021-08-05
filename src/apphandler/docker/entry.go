@@ -89,9 +89,15 @@ func BuildImage(appName string) error {
 	ghRepoName := "Cerci"
 	ghRepoBranch := "main"
 
-	// Fetch the repo
+	// Download the repo
 	fileUrl := fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", ghRepoOwner, ghRepoName, ghRepoBranch) // I also need to add a Authorization header in here with the access token
-	resp, err := http.Get(fileUrl)                                                                              // How do I set headers for this ?
+	req, err := http.NewRequest("GET", fileUrl, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Authorization", "token lol") // This should be the real token
+	httpClient := &http.Client{}
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return err
 	}
