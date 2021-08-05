@@ -161,9 +161,11 @@ func BuildImage(appName string) error {
 	extractedDir := filepath.Join(tempDir, fmt.Sprintf("%s-%s", ghRepoName, ghRepoBranch))
 	tar, _ := archive.TarWithOptions(extractedDir, &archive.TarOptions{})
 	const containerPrefix = "markotplace-local"
-	_, err = cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{Dockerfile: "Dockerfile",
-		Tags:   []string{fmt.Sprintf("%s/%s/%s/%s", strings.ToLower(containerPrefix), strings.ToLower(ghRepoOwner), strings.ToLower(ghRepoName), strings.ToLower(ghRepoBranch))},
-		Remove: true})
+	_, err = cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
+		Dockerfile: "Dockerfile",
+		Tags:       []string{fmt.Sprintf("%s/%s/%s/%s", strings.ToLower(containerPrefix), strings.ToLower(ghRepoOwner), strings.ToLower(ghRepoName), strings.ToLower(ghRepoBranch))},
+		Remove:     true,
+	})
 	if err != nil {
 		return err
 	}
