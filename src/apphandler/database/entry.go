@@ -12,7 +12,7 @@ type AppData struct {
 	GhRepoName    string
 	GhRepoBranch  string
 	AppVersion    int
-	Env           string
+	Env           string // This should instead be a hashmap where each of the keys are pointers to strings
 	GhAccessToken string
 }
 
