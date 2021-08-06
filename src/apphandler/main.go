@@ -2,6 +2,7 @@ package main
 
 import (
 	"apphandler/database"
+	"fmt"
 )
 
 // Initialize constant variables
@@ -44,7 +45,11 @@ func main() {
 	}
 
 	appName := "Test"
-	db.GetApp(appName)
+	appData, err := db.GetApp(appName)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(appData)
 
 	db.Close()
 

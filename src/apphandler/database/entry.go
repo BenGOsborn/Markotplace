@@ -58,7 +58,7 @@ func parseEnv(envRaw string) (*map[string]*string, error) {
 
 func (database *DataBase) GetApps() (*[]AppData, error) {
 	// Get a list of apps from the database
-	rows, err := database.db.Query("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM app LEFT JOIN dev ON app.devID = dev.id")
+	rows, err := database.db.Query("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM app INNER JOIN dev ON app.devId = dev.id")
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,8 @@ func (database *DataBase) GetApps() (*[]AppData, error) {
 
 func (database *DataBase) GetApp(appName string) (*AppData, error) {
 	// Get the row from the database
-	row := database.db.QueryRow("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
+	// SELECT app."name", app."ghRepoOwner", app."ghRepoName", app."ghRepoBranch", app.version, app.env, dev."ghAccessToken" FROM app INNER JOIN dev ON app."devId" = dev.id WHERE app."name" = 'Test';
+	row := database.db.QueryRow("SELECT app.name, app.\"ghRepoOwner\", app.\"ghRepoName\", app.\"ghRepoBranch\", app.version, app.env, dev.\"ghAccessToken\" FROM app INNER JOIN dev ON app.\"devId\" = dev.id WHERE app.name=$1", appName)
 
 	// Used to store the row
 	appData := new(AppData)
@@ -109,7 +110,7 @@ func (database *DataBase) GetApp(appName string) (*AppData, error) {
 	var envJSONString string
 
 	// Store the data
-	if err := row.Scan(appData.AppName, appData.GhRepoOwner, appData.GhRepoName, appData.GhRepoBranch, appData.AppVersion, &envJSONString, appData.GhAccessToken); err != nil {
+	if err := row.Scan(&appData.AppName, &appData.GhRepoOwner, &appData.GhRepoName, &appData.GhRepoBranch, &appData.AppVersion, &envJSONString, &appData.GhAccessToken); err != nil {
 		return nil, err
 	}
 
