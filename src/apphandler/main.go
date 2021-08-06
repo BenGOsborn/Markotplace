@@ -2,6 +2,7 @@ package main
 
 import (
 	"apphandler/database"
+	"apphandler/docker"
 )
 
 // Initialize constant variables
@@ -51,7 +52,7 @@ func main() {
 	}
 
 	// Build the image - it gets into the cycle because nodemon detects changes
-	// if err := docker.BuildImage(appData); err != nil {
-	// 	panic(err)
-	// }
+	if err := docker.BuildImage(appData); err != nil {
+		panic(err)
+	}
 }
