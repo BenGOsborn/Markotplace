@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	// https://stackoverflow.com/questions/62052881/source-driver-unknown-driver-postgres-forgotten-import-even-though-lib-pq-is
+	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
 )
 
 type AppData struct {
