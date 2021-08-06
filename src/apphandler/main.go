@@ -15,7 +15,7 @@ const PORT = 5000
 // - App monitoring
 
 func main() {
-	// **** CORS will ALSO be required for this to function properly
+	// **** CORS will ALSO be required for this to function properly as cookies are required
 
 	// Handle the main container redirect route
 	// http.HandleFunc("/apphandler", func(w http.ResponseWriter, r *http.Request) {
