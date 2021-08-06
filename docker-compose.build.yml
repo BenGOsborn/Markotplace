@@ -63,6 +63,9 @@ services:
         depends_on:
             - db
             - api
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /usr/bin/docker:/usr/bin/docker
         restart: always
         networks:
             - backend

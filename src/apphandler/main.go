@@ -2,7 +2,7 @@ package main
 
 import (
 	"apphandler/database"
-	"fmt"
+	"apphandler/docker"
 )
 
 // Initialize constant variables
@@ -43,26 +43,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 
 	appName := "Test"
 	appData, err := db.GetApp(appName)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(appData)
 
-	db.Close()
-
-	// testAppData, err := db.GetApp("Test")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-
-	// fmt.Println(testAppData)
-
-	// // Build the image
-	// if err := docker.BuildImage(testAppData); err != nil {
-	// 	panic(err)
-	// }
+	// Build the image
+	if err := docker.BuildImage(appData); err != nil {
+		panic(err)
+	}
 
 }
