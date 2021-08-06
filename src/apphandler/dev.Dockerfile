@@ -10,4 +10,4 @@ ENV PATH=$PATH:/usr/local/go/bin
 RUN rm go${GO_VERSION}.linux-amd64.tar.gz
 
 # Start the server
-CMD nodemon --watch ../app/ --ext '*' --signal SIGTERM --exec go run main.go
+CMD nodemon --watch ../app/ --ext go --signal SIGTERM --exec go run main.go
