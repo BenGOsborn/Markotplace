@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 
@@ -21,14 +22,16 @@ type AppData struct {
 	GhAccessToken string
 }
 
-// Maybe instead of a custom struct, simply just extend the original *sql.DB with these functions
 type DataBase struct {
-	db *sql.DB
+	db        *sql.DB
+	connected bool
 }
 
 func (database *DataBase) Connect() error {
-	// Fetch the data from the database continuously for different apps, check the versions, and if different, rebuild them
-	// https://www.calhoun.io/connecting-to-a-postgresql-database-with-gos-database-sql-package/
+	// Check that there is not an existing connection
+	if database.connected {
+		return errors.New("database already connected")
+	}
 
 	// Connect to DB
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", os.Getenv("POSTGRES_HOST"), 5432, os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"))
@@ -37,6 +40,7 @@ func (database *DataBase) Connect() error {
 		return err
 	}
 	database.db = db
+	database.connected = true
 	return nil
 }
 
@@ -56,6 +60,11 @@ func parseEnv(envRaw string) ([]string, error) {
 }
 
 func (database *DataBase) GetApps() (*[]AppData, error) {
+	// Check that the database is connected
+	if !database.connected {
+		return nil, errors.New("database not connected")
+	}
+
 	// Get a list of apps from the database
 	rows, err := database.db.Query("SELECT app.name, app.\"ghRepoOwner\", app.\"ghRepoName\", app.\"ghRepoBranch\", app.version, app.env, dev.\"ghAccessToken\" FROM app INNER JOIN dev ON app.\"devId\" = dev.id")
 	if err != nil {
@@ -98,6 +107,11 @@ func (database *DataBase) GetApps() (*[]AppData, error) {
 }
 
 func (database *DataBase) GetApp(appName string) (*AppData, error) {
+	// Check that the database is connected
+	if !database.connected {
+		return nil, errors.New("database not connected")
+	}
+
 	// Get the row from the database
 	row := database.db.QueryRow("SELECT app.name, app.\"ghRepoOwner\", app.\"ghRepoName\", app.\"ghRepoBranch\", app.version, app.env, dev.\"ghAccessToken\" FROM app INNER JOIN dev ON app.\"devId\" = dev.id WHERE app.name=$1", appName)
 
@@ -124,10 +138,16 @@ func (database *DataBase) GetApp(appName string) (*AppData, error) {
 }
 
 func (database *DataBase) Close() error {
+	// Check that the database is connected
+	if !database.connected {
+		return errors.New("database not connected")
+	}
+
 	// Close the connection to the database
 	err := database.db.Close()
 	if err != nil {
 		return err
 	}
+	database.connected = false
 	return nil
 }

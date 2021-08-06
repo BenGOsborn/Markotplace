@@ -24,6 +24,8 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
+const CONTAINER_PREFIX = "markotplace-local"
+
 func ListImages() ([]string, error) {
 	// Initialize Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -87,17 +89,13 @@ type ErrorLine struct {
 }
 
 type ImageName struct {
-	appName      string
-	appVersion   int
-	ghRepoOwner  string
-	ghRepoName   string
-	ghRepoBranch string
+	appName    string
+	appVersion int
 }
 
 func buildImageName(appData *database.AppData) string {
 	// Create an image name from the params
-	const CONTAINER_PREFIX = "markotplace-local"
-	name := fmt.Sprintf("%s/%s/%d/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(appData.AppName), appData.AppVersion, strings.ToLower(appData.GhRepoOwner), strings.ToLower(appData.GhRepoName), strings.ToLower(appData.GhRepoBranch))
+	name := fmt.Sprintf("%s/%s/%d", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(appData.AppName), appData.AppVersion)
 
 	return name
 }
@@ -114,9 +112,6 @@ func ParseImageName(rawImageName string) (*ImageName, error) {
 		return nil, err
 	}
 	imageName.appVersion = int(appVersionParsed)
-	imageName.ghRepoOwner = split[3]
-	imageName.ghRepoName = split[4]
-	imageName.ghRepoBranch = split[5]
 
 	return imageName, nil
 }
