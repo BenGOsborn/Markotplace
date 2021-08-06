@@ -2,7 +2,6 @@ package main
 
 import (
 	"apphandler/database"
-	"fmt"
 )
 
 // Initialize constant variables
@@ -38,14 +37,16 @@ func main() {
 	// }
 
 	// Initialize the database
-	db, err := database.Connect()
+	db := new(database.DataBase)
+	err := db.Connect()
 	if err != nil {
 		panic(err)
 	}
 
 	appName := "Test"
-	row := db.QueryRow("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
-	fmt.Println(row)
+	db.GetApp(appName)
+
+	db.Close()
 
 	// testAppData, err := db.GetApp("Test")
 	// if err != nil {
