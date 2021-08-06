@@ -84,20 +84,10 @@ type ErrorLine struct {
 	Error string `json:"error"`
 }
 
-// What if I simply just encrypt the names of the containers using the server side key so NOONE can guess them using the server secret ???
-// Also remember that these names have been parsed into lowercase
-type ImageName struct {
-	appName      string
-	appVersion   int
-	ghRepoOwner  string
-	ghRepoName   string
-	ghRepoBranch string
-}
-
-func buildImageName(imageName *ImageName) string {
+func buildImageName(appData *database.AppData) string {
 	// Create an image name from the params
 	const CONTAINER_PREFIX = "markotplace-local"
-	name := fmt.Sprintf("%s/%s/%d/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(imageName.appName), imageName.appVersion, strings.ToLower(imageName.ghRepoOwner), strings.ToLower(imageName.ghRepoName), strings.ToLower(imageName.ghRepoBranch))
+	name := fmt.Sprintf("%s/%s/%d/%s/%s/%s", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(appData.AppName), appData.AppVersion, strings.ToLower(appData.GhRepoOwner), strings.ToLower(appData.GhRepoName), strings.ToLower(appData.GhRepoBranch))
 
 	return name
 }

@@ -17,7 +17,7 @@ type AppData struct {
 	GhRepoName    string
 	GhRepoBranch  string
 	AppVersion    int
-	Env           map[string]*string
+	Env           []string
 	GhAccessToken string
 }
 
@@ -40,20 +40,19 @@ func (database *DataBase) Connect() error {
 	return nil
 }
 
-func parseEnv(envRaw string) (*map[string]*string, error) {
+func parseEnv(envRaw string) ([]string, error) {
 	// Parse the environment variable JSON into build args
 	var storage map[string]interface{}
 	if err := json.Unmarshal([]byte(envRaw), &storage); err != nil {
 		return nil, err
 	}
 
-	// Convert the keys to pointers and return its address
-	env := make(map[string]*string)
+	// Convert to an array of args
+	env := []string{}
 	for key, value := range storage {
-		strVal := (value.(string))
-		env[key] = &strVal
+		env = append(env, fmt.Sprintf("%s=%s", key, value.(string)))
 	}
-	return &env, nil
+	return env, nil
 }
 
 func (database *DataBase) GetApps() (*[]AppData, error) {
@@ -83,7 +82,7 @@ func (database *DataBase) GetApps() (*[]AppData, error) {
 		if err != nil {
 			return nil, err
 		}
-		appData.Env = *env
+		appData.Env = env
 
 		// Add the data to the return list
 		*returnData = append(*returnData, *appData)
@@ -118,7 +117,7 @@ func (database *DataBase) GetApp(appName string) (*AppData, error) {
 	if err != nil {
 		return nil, err
 	}
-	appData.Env = *env
+	appData.Env = env
 
 	// Return the data
 	return appData, nil

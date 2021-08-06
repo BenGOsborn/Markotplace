@@ -332,7 +332,7 @@ router.patch(
         if (existingApp.dev.id !== user.dev.id)
             return res.status(401).send("You are not able to edit this app");
 
-        // Increment the version of the app
+        // Increment the version of the app **** rebuild on every change, this should not do this for everything
         existingApp.version += 1;
 
         // Set the data to update

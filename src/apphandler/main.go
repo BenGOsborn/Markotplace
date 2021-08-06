@@ -45,6 +45,7 @@ func main() {
 	}
 	defer db.Close()
 
+	// Get the app data
 	appName := "Test"
 	appData, err := db.GetApp(appName)
 	if err != nil {
