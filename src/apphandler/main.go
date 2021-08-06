@@ -26,18 +26,23 @@ func main() {
 	// log.Println(fmt.Sprintf("Apphandler listening on port %d...", PORT))
 	// log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))
 
-	appData := &database.AppData{
-		AppName:       "lol",
-		AppVersion:    1,
-		GhRepoOwner:   "BenGOsborn",
-		GhRepoName:    "Cerci",
-		GhRepoBranch:  "master",
-		GhAccessToken: "lol",
-		// Maybe the Env variable should be set by default as a map which we can put as nil ?
-	}
+	// // Test data
+	// testAppData := &database.AppData{
+	// 	AppName:       "lol",
+	// 	AppVersion:    1,
+	// 	GhRepoOwner:   "BenGOsborn",
+	// 	GhRepoName:    "Cerci",
+	// 	GhRepoBranch:  "master",
+	// 	GhAccessToken: "lol",
+	// 	Env:           map[string]*string{},
+	// }
+
+	// Initialize the database
+	db := new(database.DataBase)
+	db.Connect()
 
 	// Build the image
-	if err := docker.BuildImage(appData); err != nil {
+	if err := docker.BuildImage(testAppData); err != nil {
 		panic(err)
 	}
 

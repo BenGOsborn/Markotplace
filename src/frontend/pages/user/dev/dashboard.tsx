@@ -84,10 +84,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         );
 
         return { props: { apps, url, onboarded } as Props };
-    } catch {
+    } catch (e) {
         // Redirect to the settings page
         return {
-            redirect: { destination: "/user/settings", permanent: false },
+            redirect: { destination: "/user/dev/authorize-github", permanent: false },
         };
     }
 };
