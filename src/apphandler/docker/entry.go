@@ -84,6 +84,14 @@ type ErrorLine struct {
 	Error string `json:"error"`
 }
 
+type ImageName struct {
+	appName      string
+	appVersion   int
+	ghRepoOwner  string
+	ghRepoName   string
+	ghRepoBranch string
+}
+
 func buildImageName(appData *database.AppData) string {
 	// Create an image name from the params
 	const CONTAINER_PREFIX = "markotplace-local"
@@ -221,7 +229,7 @@ func BuildImage(appData *database.AppData) error {
 	}
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
 		Dockerfile: "Dockerfile",
-		Tags:       []string{buildImageName(&ImageName{appName: appData.AppName, appVersion: appData.AppVersion, ghRepoOwner: appData.GhRepoOwner, ghRepoName: appData.GhRepoName, ghRepoBranch: appData.GhRepoBranch})},
+		Tags:       []string{buildImageName(appData)},
 		Remove:     true,
 	})
 	if err != nil {
