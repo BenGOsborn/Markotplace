@@ -2,7 +2,7 @@ package main
 
 import (
 	"apphandler/database"
-	"apphandler/docker"
+	"fmt"
 )
 
 // Initialize constant variables
@@ -38,12 +38,25 @@ func main() {
 	// }
 
 	// Initialize the database
-	db := new(database.DataBase)
-	db.Connect()
-
-	// Build the image
-	if err := docker.BuildImage(testAppData); err != nil {
+	db, err := database.Connect()
+	if err != nil {
 		panic(err)
 	}
+
+	appName := "Test"
+	row := db.QueryRow("SELECT app.name, app.ghRepoOwner, app.ghRepoName, app.ghRepoBranch, app.version, app.env, dev.ghAccessToken FROM apps LEFT JOIN dev ON app.devID = dev.id WHERE app.name=$1", appName)
+	fmt.Println(row)
+
+	// testAppData, err := db.GetApp("Test")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	// fmt.Println(testAppData)
+
+	// // Build the image
+	// if err := docker.BuildImage(testAppData); err != nil {
+	// 	panic(err)
+	// }
 
 }
