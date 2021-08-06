@@ -48,7 +48,7 @@ func ListImages() ([]string, error) {
 	return tags, nil
 }
 
-func StartContainer(imageName string, port int) (string, error) {
+func StartContainer(appData *database.AppData, port int) (string, error) {
 	// Initialize Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -56,19 +56,21 @@ func StartContainer(imageName string, port int) (string, error) {
 	}
 
 	// Build and start the image
-	resp, err := cli.ContainerCreate(context.TODO(), &container.Config{
-		Image: imageName,
-		ExposedPorts: nat.PortSet{
-			nat.Port(fmt.Sprintf("%d/tcp", port)): {},
+	resp, err := cli.ContainerCreate(context.TODO(),
+		&container.Config{
+			Image: buildImageName(appData),
+			ExposedPorts: nat.PortSet{
+				nat.Port(fmt.Sprintf("%d/tcp", port)): {},
+			},
+			Env: append(appData.Env, fmt.Sprintf("PORT=%d", port)),
 		},
-		Env: []string{fmt.Sprintf("PORT=%d", port)},
-	}, &container.HostConfig{
-		PortBindings: nat.PortMap{
-			nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "localhost", HostPort: fmt.Sprintf("%d", port)}},
-		},
-		AutoRemove: true,
-		Resources:  container.Resources{Memory: 3e+7, CPUPercent: 5},
-	}, nil, nil, "")
+		&container.HostConfig{
+			PortBindings: nat.PortMap{
+				nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "localhost", HostPort: fmt.Sprintf("%d", port)}},
+			},
+			AutoRemove: true,
+			Resources:  container.Resources{Memory: 3e+7, CPUPercent: 5},
+		}, nil, nil, "")
 	if err != nil {
 		return "", err
 	}
