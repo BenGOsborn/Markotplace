@@ -6,7 +6,7 @@ RUN go mod download
 RUN go build -o main .
 
 # Copy binary to new environment
-FROM ubuntu
+FROM alpine
 WORKDIR /usr/app
 COPY --from=build /usr/app/main .
 
