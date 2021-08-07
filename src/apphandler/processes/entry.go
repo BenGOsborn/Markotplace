@@ -6,10 +6,10 @@ import (
 
 func Builder(database *database.DataBase) error {
 	// Compares the apps in the database and the apps on the system and builds the new ones
-	validApps, err := database.GetApps()
-	if err != nil {
-		panic(err)
-	}
+	// validApps, err := database.GetApps()
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	// Maybe it makes more sense to leave them in their string form then use them as a lookup table ?
 
