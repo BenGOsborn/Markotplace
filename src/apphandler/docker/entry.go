@@ -39,6 +39,9 @@ func ListImages() (*[]string, error) {
 		return nil, err
 	}
 
+	// ******** DO NOT FORGET THAT THESE CONTAIN LATEST ON THE END OF THEM TOO
+	// ******** I also wonder if the images are not being tagged correctly ?
+
 	// Extract the tags of the images and return them
 	tags := []string{}
 	for _, image := range images {
