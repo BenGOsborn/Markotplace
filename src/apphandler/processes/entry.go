@@ -25,8 +25,8 @@ func Builder(db *database.DataBase) {
 	// Compare the valid images and the existing images and build the new ones
 	for _, appData := range *validApps {
 		imageName := docker.BuildImageName(&appData)
-		if _, ok := existingImages[imageName]; ok {
-			go docker.BuildImage(&appData)
+		if _, ok := existingImages[imageName]; !ok {
+			docker.BuildImage(&appData)
 		}
 	}
 }
