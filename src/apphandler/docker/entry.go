@@ -228,7 +228,7 @@ func BuildImage(appData *database.AppData) error {
 		return err
 	}
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
-		Dockerfile: "Dockerfile",
+		Dockerfile: "markotplace.Dockerfile",
 		Tags:       []string{BuildImageName(appData)},
 		Remove:     true,
 		PullParent: true,
