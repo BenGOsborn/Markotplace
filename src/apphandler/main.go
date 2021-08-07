@@ -47,16 +47,4 @@ func main() {
 
 	// Start the builder
 	processes.Builder(db)
-
-	// // Get the app data
-	// appName := "Test"
-	// appData, err := db.GetApp(appName)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// // Build the image - it gets into the cycle because nodemon detects changes
-	// if err := docker.BuildImage(appData); err != nil {
-	// 	panic(err)
-	// }
 }
