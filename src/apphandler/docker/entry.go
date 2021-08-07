@@ -231,6 +231,8 @@ func BuildImage(appData *database.AppData) error {
 		Dockerfile: "Dockerfile",
 		Tags:       []string{BuildImageName(appData)},
 		Remove:     true,
+		PullParent: true,
+		NoCache:    true,
 	})
 	if err != nil {
 		return err
