@@ -2,7 +2,7 @@ package main
 
 import (
 	"apphandler/database"
-	"apphandler/docker"
+	"apphandler/processes"
 )
 
 // Initialize constant variables
@@ -45,15 +45,20 @@ func main() {
 	}
 	defer db.Close()
 
-	// Get the app data
-	appName := "Test"
-	appData, err := db.GetApp(appName)
+	err = processes.Builder(db)
 	if err != nil {
 		panic(err)
 	}
 
-	// Build the image - it gets into the cycle because nodemon detects changes
-	if err := docker.BuildImage(appData); err != nil {
-		panic(err)
-	}
+	// // Get the app data
+	// appName := "Test"
+	// appData, err := db.GetApp(appName)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// // Build the image - it gets into the cycle because nodemon detects changes
+	// if err := docker.BuildImage(appData); err != nil {
+	// 	panic(err)
+	// }
 }

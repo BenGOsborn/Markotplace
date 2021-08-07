@@ -36,7 +36,7 @@ export class App extends BaseEntity {
     @Column({ unique: true })
     ghWebhookID!: string;
 
-    @Column({ default: 0, type: "int" })
+    @Column({ default: 1, type: "int" })
     version!: number;
 
     @Column()

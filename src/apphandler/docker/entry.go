@@ -26,7 +26,7 @@ import (
 
 const CONTAINER_PREFIX = "markotplace-local"
 
-func ListImages() ([]string, error) {
+func ListImages() (*[]string, error) {
 	// Initialize Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -47,7 +47,7 @@ func ListImages() ([]string, error) {
 			tags = append(tags, tag[0])
 		}
 	}
-	return tags, nil
+	return &tags, nil
 }
 
 func StartContainer(appData *database.AppData, port int) (string, error) {
@@ -88,32 +88,35 @@ type ErrorLine struct {
 	Error string `json:"error"`
 }
 
-type ImageName struct {
+type ImageData struct {
 	appName    string
 	appVersion int
 }
 
 func buildImageName(appData *database.AppData) string {
 	// Create an image name from the params
-	name := fmt.Sprintf("%s/%s/%d", strings.ToLower(CONTAINER_PREFIX), strings.ToLower(appData.AppName), appData.AppVersion)
+	name := fmt.Sprintf("%s/%s/%d", CONTAINER_PREFIX, appData.AppName, appData.AppVersion)
 
 	return name
 }
 
-func ParseImageName(rawImageName string) (*ImageName, error) {
+func ParseImageName(rawImageName string) (*ImageData, error) {
 	// Split the name and extract the details
 	split := strings.Split(rawImageName, "/")
+	if split[0] != CONTAINER_PREFIX && len(split) != 3 {
+		return nil, errors.New("invalid image name")
+	}
 
-	imageName := new(ImageName)
-	imageName.appName = split[1]
+	imageData := new(ImageData)
+	imageData.appName = split[1]
 	appVersion := split[2]
 	appVersionParsed, err := strconv.Atoi(appVersion)
 	if err != nil {
 		return nil, err
 	}
-	imageName.appVersion = int(appVersionParsed)
+	imageData.appVersion = int(appVersionParsed)
 
-	return imageName, nil
+	return imageData, nil
 }
 
 func BuildImage(appData *database.AppData) error {

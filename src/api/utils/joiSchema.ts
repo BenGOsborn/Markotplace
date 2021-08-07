@@ -22,7 +22,7 @@ export const updateSchema = Joi.object({
 export const createAppSchema = Joi.object({
     name: Joi.string()
         .required()
-        .regex(/^[a-zA-Z0-9_-]{3,20}$/),
+        .regex(/^(?=.{3,20}$)([a-z0-9]+(?:[-]?[a-z0-9]+)+)$/),
     title: Joi.string().required().min(1).max(50),
     description: Joi.string().required().min(1).max(500),
     price: Joi.number().required().integer().min(0).max(999),
