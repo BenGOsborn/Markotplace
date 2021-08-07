@@ -45,10 +45,8 @@ func main() {
 	}
 	defer db.Close()
 
-	err = processes.Builder(db)
-	if err != nil {
-		panic(err)
-	}
+	// Start the builder
+	processes.Builder(db)
 
 	// // Get the app data
 	// appName := "Test"

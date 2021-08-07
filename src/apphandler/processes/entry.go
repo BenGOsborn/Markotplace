@@ -5,7 +5,7 @@ import (
 	"apphandler/docker"
 )
 
-func Builder(db *database.DataBase) error {
+func Builder(db *database.DataBase) {
 	// Get a list of valid apps
 	validApps, err := db.GetApps()
 	if err != nil {
@@ -29,9 +29,6 @@ func Builder(db *database.DataBase) error {
 			go docker.BuildImage(&appData)
 		}
 	}
-
-	// Return no errors
-	return nil
 }
 
 func Cleaner() {
