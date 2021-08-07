@@ -54,8 +54,15 @@ func main() {
 		panic(err)
 	}
 
+	// Maybe there is a better way of accessing this ?
+	// type Tracker struct {
+	// 	AppData *database.AppData
+	// 	LastAccessed time.Time
+	// }
+	// tMap := []Tracker{}
+
 	// Start the container
-	err = docker.StartContainer(row, 7000)
+	err = docker.StartContainer(row, 7777)
 	if err != nil {
 		panic(err)
 	}

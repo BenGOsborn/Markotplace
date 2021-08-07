@@ -68,6 +68,7 @@ func StartContainer(appData *database.AppData, port int) error {
 		},
 		&container.HostConfig{
 			// **** Maybe it IS possible without exposing ports, but it could only be through other containers - https://stackoverflow.com/questions/39674417/docker-connect-to-container-without-exposing-ports
+			// **** PROBLEMS ARE OCCURING WITH THENPORT BINDINGS - THEY ARE NOT CONNECTING PROPERLY
 			PortBindings: nat.PortMap{
 				nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "localhost", HostPort: fmt.Sprintf("%d", port)}},
 			},
