@@ -2,7 +2,7 @@ package main
 
 import (
 	"apphandler/database"
-	"apphandler/processes"
+	"apphandler/docker"
 )
 
 // Initialize constant variables
@@ -46,5 +46,31 @@ func main() {
 	defer db.Close()
 
 	// Start the builder
-	processes.Builder(db)
+	// processes.Builder(db)
+
+	// Get the app
+	row, err := db.GetApp("test")
+	if err != nil {
+		panic(err)
+	}
+
+	// Start the container
+	err = docker.StartContainer(row, 7000)
+	if err != nil {
+		panic(err)
+	}
+
+	// Get the container
+	ctr, err := docker.GetRunningContainer(row)
+	if err != nil {
+		panic(err)
+	}
+
+	// Then maybe I can just have some sort of lookup table for the times each one was accessed ?
+
+	// Stop the container
+	err = docker.StopContainer(ctr)
+	if err != nil {
+		panic(err)
+	}
 }

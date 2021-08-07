@@ -50,11 +50,11 @@ func ListImages() (*[]string, error) {
 	return &tags, nil
 }
 
-func StartContainer(appData *database.AppData, port int) (string, error) {
+func StartContainer(appData *database.AppData, port int) error {
 	// Initialize Docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	// Build and start the image
@@ -67,6 +67,7 @@ func StartContainer(appData *database.AppData, port int) (string, error) {
 			Env: append(appData.Env, fmt.Sprintf("PORT=%d", port)),
 		},
 		&container.HostConfig{
+			// **** Maybe it IS possible without exposing ports, but it could only be through other containers - https://stackoverflow.com/questions/39674417/docker-connect-to-container-without-exposing-ports
 			PortBindings: nat.PortMap{
 				nat.Port(fmt.Sprintf("%d/tcp", port)): []nat.PortBinding{{HostIP: "localhost", HostPort: fmt.Sprintf("%d", port)}},
 			},
@@ -74,14 +75,57 @@ func StartContainer(appData *database.AppData, port int) (string, error) {
 			Resources:  container.Resources{Memory: 3e+7, CPUPercent: 5},
 		}, nil, nil, "")
 	if err != nil {
-		return "", err
+		return err
 	}
 	if err := cli.ContainerStart(context.TODO(), resp.ID, types.ContainerStartOptions{}); err != nil {
-		return "", err
+		return err
 	}
 
-	// Return the ID of the image
-	return resp.ID, nil
+	// Return no errors
+	return nil
+}
+
+func StopContainer(container *types.Container) error {
+	// Initialize Docker client
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return err
+	}
+
+	// Stop the container
+	if err := cli.ContainerStop(context.TODO(), container.ID, nil); err != nil {
+		return err
+	}
+
+	// Return no errors
+	return nil
+}
+
+func GetRunningContainer(appData *database.AppData) (*types.Container, error) {
+	// Initialize Docker client
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		return nil, err
+	}
+
+	// Get a list of running containers
+	containers, err := cli.ContainerList(context.TODO(), types.ContainerListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	// Build the real image name
+	realImageName := BuildImageName(appData)
+
+	// Display names of containers
+	for _, container := range containers {
+		if container.Image == realImageName {
+			return &container, err
+		}
+	}
+
+	// Return no error
+	return nil, errors.New("no container found")
 }
 
 type ErrorLine struct {
@@ -228,7 +272,7 @@ func BuildImage(appData *database.AppData) error {
 		return err
 	}
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
-		Dockerfile: "markotplace.Dockerfile",
+		Dockerfile: "Dockerfile",
 		Tags:       []string{BuildImageName(appData)},
 		Remove:     true,
 		PullParent: true,
