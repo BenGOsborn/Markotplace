@@ -39,9 +39,6 @@ func ListImages() (*[]string, error) {
 		return nil, err
 	}
 
-	// ******** DO NOT FORGET THAT THESE CONTAIN LATEST ON THE END OF THEM TOO
-	// ******** I also wonder if the images are not being tagged correctly ?
-
 	// Extract the tags of the images and return them
 	tags := []string{}
 	for _, image := range images {
@@ -98,7 +95,7 @@ type ImageData struct {
 
 func BuildImageName(appData *database.AppData) string {
 	// Create an image name from the params
-	name := fmt.Sprintf("%s/%s/%d", CONTAINER_PREFIX, appData.AppName, appData.AppVersion)
+	name := fmt.Sprintf("%s/%s/%d:latest", CONTAINER_PREFIX, appData.AppName, appData.AppVersion)
 
 	return name
 }
