@@ -2,42 +2,33 @@ package processes
 
 import (
 	"apphandler/database"
+	"apphandler/docker"
 )
 
-func Builder(database *database.DataBase) error {
-	// Compares the apps in the database and the apps on the system and builds the new ones
-	// validApps, err := database.GetApps()
-	// if err != nil {
-	// 	panic(err)
-	// }
+func Builder(db *database.DataBase) error {
+	// Get a list of valid apps
+	validApps, err := db.GetApps()
+	if err != nil {
+		panic(err)
+	}
 
-	// Maybe it makes more sense to leave them in their string form then use them as a lookup table ?
+	// Get a map of the systems existing built images
+	existingImageNames, err := docker.ListImages()
+	if err != nil {
+		panic(err)
+	}
+	existingImages := map[string]interface{}{}
+	for _, existingImageName := range *existingImageNames {
+		existingImages[existingImageName] = nil
+	}
 
-	// Get the list of existing docker images
-	// existingImageNames, err := docker.ListImages()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// existingImageData := map[string]docker.ImageData{}
-	// for _, imageName := range *existingImageNames {
-	// 	imageData, err := docker.ParseImageName(imageName)
-	// 	if err != nil {
-	// 		continue
-	// 	}
-	// 	existingImageData[] = append(existingImageData, *imageData)
-	// }
-
-	// fmt.Println(validApps)
-	// fmt.Println(existingImageData)
-
-	// A better solution would be to make a map out of this existing image data to reduce the time complexity
-
-	// for _, appData := range *validApps {
-	// 	exists := false
-	// 	for _, imageData := range existingImageData {
-
-	// 	}
-	// }
+	// Compare the valid images and the existing images and build the new ones
+	for _, appData := range *validApps {
+		imageName := docker.BuildImageName(&appData)
+		if _, ok := existingImages[imageName]; ok {
+			go docker.BuildImage(&appData)
+		}
+	}
 
 	// Return no errors
 	return nil

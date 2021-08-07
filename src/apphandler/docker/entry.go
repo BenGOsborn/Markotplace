@@ -60,7 +60,7 @@ func StartContainer(appData *database.AppData, port int) (string, error) {
 	// Build and start the image
 	resp, err := cli.ContainerCreate(context.TODO(),
 		&container.Config{
-			Image: buildImageName(appData),
+			Image: BuildImageName(appData),
 			ExposedPorts: nat.PortSet{
 				nat.Port(fmt.Sprintf("%d/tcp", port)): {},
 			},
@@ -93,7 +93,7 @@ type ImageData struct {
 	appVersion int
 }
 
-func buildImageName(appData *database.AppData) string {
+func BuildImageName(appData *database.AppData) string {
 	// Create an image name from the params
 	name := fmt.Sprintf("%s/%s/%d", CONTAINER_PREFIX, appData.AppName, appData.AppVersion)
 
@@ -229,7 +229,7 @@ func BuildImage(appData *database.AppData) error {
 	}
 	res, err := cli.ImageBuild(context.TODO(), tar, types.ImageBuildOptions{
 		Dockerfile: "Dockerfile",
-		Tags:       []string{buildImageName(appData)},
+		Tags:       []string{BuildImageName(appData)},
 		Remove:     true,
 	})
 	if err != nil {
