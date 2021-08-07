@@ -28,7 +28,16 @@ func Builder(database *database.DataBase) error {
 	}
 
 	fmt.Println(validApps)
-	fmt.Println(existingImageData) // This presents a problem - the app name can ONLY ever be lowercase (yikes)
+	fmt.Println(existingImageData)
+
+	// A better solution would be to make a map out of this existing image data to reduce the time complexity
+
+	for _, appData := range *validApps {
+		exists := false
+		for _, imageData := range existingImageData {
+
+		}
+	}
 
 	// Return no errors
 	return nil
