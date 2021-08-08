@@ -3,6 +3,8 @@ package main
 import (
 	"apphandler/database"
 	"apphandler/docker"
+	"apphandler/processes"
+	"time"
 )
 
 // Initialize constant variables
@@ -54,18 +56,15 @@ func main() {
 		panic(err)
 	}
 
-	// Maybe there is a better way of accessing this ?
-	// type Tracker struct {
-	// 	AppData *database.AppData
-	// 	LastAccessed time.Time
-	// }
-	// tMap := []Tracker{}
+	// Create a way of tracking the variables
+	tracker := map[string]*processes.Tracker{}
 
 	// Start the container
 	err = docker.StartContainer(row, 7777)
 	if err != nil {
 		panic(err)
 	}
+	tracker["test"] = &processes.Tracker{AppData: row, LastAccessed: time.Now()}
 
 	// Get the container
 	ctr, err := docker.GetRunningContainer(row)
