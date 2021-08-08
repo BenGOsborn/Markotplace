@@ -49,8 +49,8 @@ func Builder(db *database.DataBase) {
 }
 
 func Cleaner(tracker *map[string]*Tracker) {
-	// Maybe it should force close processes out of its scope as well such as processes that start with the prefix and have no record of existing ?
 	for {
+		// Check for controller containers that havent been used recently
 		for key, value := range *tracker {
 			// If the container has not been accessed recently
 			if time.Now().After(value.LastAccessed.Add(20 * time.Minute)) {
@@ -71,7 +71,7 @@ func Cleaner(tracker *map[string]*Tracker) {
 	}
 }
 
-// **** System cleanup function for removing old containers ?
+// **** System cleanup function for removing old containers AND shutting down untracked containers spun up by this service
 
 func Stop() {
 	// Stops unused containers
