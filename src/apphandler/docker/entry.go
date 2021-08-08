@@ -39,12 +39,17 @@ func ListImages() (*[]string, error) {
 		return nil, err
 	}
 
-	// Extract the tags of the images and return them
+	// Extract the tags of the images with the prefix and return them
 	tags := []string{}
 	for _, image := range images {
-		tag := image.RepoTags
-		if len(tag) > 0 {
-			tags = append(tags, tag[0])
+		tagList := image.RepoTags
+		if len(tagList) > 0 {
+			tag := tagList[0]
+			if len(tag) > len(CONTAINER_PREFIX) {
+				if tag[0:len(CONTAINER_PREFIX)] == CONTAINER_PREFIX {
+					tags = append(tags, tag)
+				}
+			}
 		}
 	}
 	return &tags, nil
