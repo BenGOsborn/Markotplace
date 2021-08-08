@@ -48,7 +48,11 @@ func Builder(db *database.DataBase) {
 	}
 }
 
-func Cleaner(tracker *map[string]*Tracker) {
+func Cleaner() {
+	// System cleanup function for removing old containers AND shutting down untracked containers spun up by this service
+}
+
+func Stop(tracker *map[string]*Tracker) {
 	for {
 		// Check for controller containers that havent been used recently
 		for key, value := range *tracker {
@@ -69,10 +73,4 @@ func Cleaner(tracker *map[string]*Tracker) {
 		// Sleep before restarting
 		time.Sleep(PROCESS_DELAY)
 	}
-}
-
-// **** System cleanup function for removing old containers AND shutting down untracked containers spun up by this service
-
-func Stop() {
-	// Stops unused containers
 }
