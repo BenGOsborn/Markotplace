@@ -11,6 +11,10 @@ type Tracker struct {
 	LastAccessed time.Time
 }
 
+func (tracker *Tracker) ResetTimer() {
+	tracker.LastAccessed = time.Now()
+}
+
 func Builder(db *database.DataBase) {
 	for {
 		// Get a list of valid apps
@@ -43,8 +47,26 @@ func Builder(db *database.DataBase) {
 }
 
 func Cleaner(tracker *map[string]*Tracker) {
-	// Deletes the apps on the system no longer used by the database
+	// Maybe it should force close processes out of its scope as well such as processes that start with the prefix and have no record of existing ?
+	for {
+		for key, value := range *tracker {
+			// If the container has not been accessed recently
+			if time.Now().After(value.LastAccessed.Add(20 * time.Minute)) {
+				// Get the container
+				ctr, err := docker.GetRunningContainer(value.AppData)
+				if err != nil {
+					continue
+				}
+
+				// Stop the container and delete it from the list
+				docker.StopContainer(ctr)
+				delete(*tracker, key)
+			}
+		}
+	}
 }
+
+// **** System cleanup function for removing old containers ?
 
 func Stop() {
 	// Stops unused containers
