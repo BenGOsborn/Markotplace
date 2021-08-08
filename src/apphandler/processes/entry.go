@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const PROCESS_DELAY = 20 * time.Second
+
 type Tracker struct {
 	AppData      *database.AppData
 	LastAccessed time.Time
@@ -42,7 +44,7 @@ func Builder(db *database.DataBase) {
 		}
 
 		// Pause before restarting - adjust the time on this
-		time.Sleep(20 * time.Second)
+		time.Sleep(PROCESS_DELAY)
 	}
 }
 
@@ -63,6 +65,9 @@ func Cleaner(tracker *map[string]*Tracker) {
 				delete(*tracker, key)
 			}
 		}
+
+		// Sleep before restarting
+		time.Sleep(PROCESS_DELAY)
 	}
 }
 
