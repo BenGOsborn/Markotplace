@@ -7,41 +7,37 @@ import (
 	"crypto/rand"
 	"fmt"
 	"net"
+	"time"
 )
 
 func GetRunningApp(appName string, tracker *map[string]*processes.Tracker, db *database.DataBase) (string, error) {
-	// Declare the appdata
-	var appData *database.AppData
-
 	// Try and get the container that matches the app name
 	trackerData, ok := (*tracker)[appName]
 	if ok {
-		appData = trackerData.AppData
+		// Reset the timer
+		trackerData.ResetTimer()
+
+		// Return the URI of the app
+		return fmt.Sprintf("http://0.0.0.0:%d", trackerData.Port), nil
 	} else {
-		tempAppData, err := db.GetApp(appName)
+		// Find the app data that matches the app name
+		appData, err := db.GetApp(appName)
 		if err != nil {
 			return "", err
 		}
-		appData = tempAppData
-	}
 
-	// Attempt to get the running container
-	ctr, err := docker.GetRunningContainer(appData)
-	if err != nil {
-		// Attempt to start the container
-		port := 3000
+		// Try and build the new container
+		// **** What is the point of some of those other containers ?
+		port := 3000 // **** Generate a port from scratch
 		err = docker.StartContainer(appData, port)
-		// **** ADD THE CONTAINER TO THE TRACKER LIST + ADD THE PORT
 		if err != nil {
 			return "", err
 		}
+		(*tracker)[appName] = &processes.Tracker{Port: port, AppData: appData, LastAccessed: time.Now()}
 
-		// Return the URI of the container
+		// Return the URI of the app
 		return fmt.Sprintf("http://0.0.0.0:%d", port), nil
 	}
-
-	// Return the URI of the container
-	return fmt.Sprintf("http://0.0.0.0:%d", ctr.Ports[0].PublicPort), nil
 }
 
 // Specify a new way to exlcude known used containers

@@ -8,6 +8,7 @@ import (
 
 type Tracker struct {
 	AppData      *database.AppData
+	Port         int
 	LastAccessed time.Time
 }
 
