@@ -4,6 +4,7 @@ import (
 	"apphandler/database"
 	"apphandler/docker"
 	"apphandler/processes"
+	"fmt"
 	"time"
 )
 
@@ -71,6 +72,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println(ctr.Ports[0].PublicPort)
 
 	// Then maybe I can just have some sort of lookup table for the times each one was accessed ?
 

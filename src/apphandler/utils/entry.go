@@ -1,5 +1,36 @@
 package utils
 
+import (
+	"apphandler/database"
+	"apphandler/docker"
+	"apphandler/processes"
+	"fmt"
+)
+
+func GetContainerURL(appName string, tracker *map[string]*processes.Tracker, db *database.DataBase) (string, error) {
+	// Declare the appdata
+	var appData *database.AppData
+
+	// Try and get the container that matches the app name
+	trackerData, ok := (*tracker)[appName]
+	if ok {
+		appData = trackerData.AppData
+	} else {
+		tempAppData, err := db.GetApp(appName)
+		if err != nil {
+			return "", err
+		}
+		appData = tempAppData
+	}
+
+	// Attempt to get a new container, or start a new one
+	ctr, err := docker.GetRunningContainer(appData)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("http://0.0.0.0:%d", ctr.Ports[0].PublicPort), nil
+}
+
 // Specify a new way to exlcude known used containers
 // func GetPort(containers *[]Container) int {
 // 	// Specify the valid port range
