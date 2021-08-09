@@ -30,26 +30,25 @@ router.get("/owned", protectedMiddleware, async (req, res) => {
 });
 
 // Verify that a user is authorized and return their data
-// **** DEPERECIATION WARNING
-// router.post("/owns", protectedMiddleware, async (req, res) => {
-//     // Get the user
-//     // @ts-ignore
-//     const { user }: { user: User } = req.locals;
+router.post("/owns", protectedMiddleware, async (req, res) => {
+    // Get the user
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
 
-//     // Get the name of the app
-//     const { appName }: { appName: string } = req.body;
+    // Get the name of the app
+    const { appName }: { appName: string } = req.body;
 
-//     // Check that the users apps are not undefined
-//     if (typeof appName === "undefined")
-//         return res.status(400).send("App name is required");
+    // Check that the users apps are not undefined
+    if (typeof appName === "undefined")
+        return res.status(400).send("App name is required");
 
-//     // Check that the user owns the app
-//     const filtered = user.apps.filter((app) => app.name === appName);
-//     if (filtered.length === 0) return res.sendStatus(401);
+    // Check that the user owns the app
+    const filtered = user.apps.filter((app) => app.name === appName);
+    if (filtered.length === 0) return res.sendStatus(401);
 
-//     // Return success
-//     res.sendStatus(200);
-// });
+    // Return success
+    res.sendStatus(200);
+});
 
 // Get a list of apps
 router.get("/list", async (req, res) => {
