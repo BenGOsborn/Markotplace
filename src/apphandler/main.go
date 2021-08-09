@@ -51,6 +51,7 @@ func main() {
 	// Start the builder
 	// processes.Builder(db)
 
+	// Test app name
 	const APPNAME = "test"
 
 	// Get the app
@@ -58,6 +59,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// Build the image
+	err = docker.BuildImage(row)
 
 	// Create a way of tracking the variables
 	tracker := map[string]*processes.Tracker{}
