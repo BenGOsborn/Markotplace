@@ -4,9 +4,11 @@ import (
 	"apphandler/database"
 	"apphandler/docker"
 	"apphandler/processes"
-	"crypto/rand"
+	"errors"
 	"fmt"
+	"math/rand"
 	"net"
+	"sort"
 	"time"
 )
 
@@ -27,8 +29,10 @@ func GetRunningApp(appName string, tracker *map[string]*processes.Tracker, db *d
 		}
 
 		// Try and build the new container
-		// **** What is the point of some of those other containers ?
-		port := 3000 // **** Generate a port from scratch
+		port, err := GetPort(tracker)
+		if err != nil {
+			return "", err
+		}
 		err = docker.StartContainer(appData, port)
 		if err != nil {
 			return "", err
@@ -46,12 +50,12 @@ func GetPort(tracker *map[string]*processes.Tracker) (int, error) {
 	portMin := 2000
 	portMax := 65535
 
-	// Get a sorted list of existing ports within the valid port range
+	// Get a list of existing ports within the valid port range
 	badPorts := []int{}
-	for key, value := range *tracker {
-		// I need some way of getting the ports from the running processes too ?
+	for _, value := range *tracker {
+		badPorts = append(badPorts, value.Port)
 	}
-	// sort.Ints(badPorts)
+	sort.Ints(badPorts)
 
 	// Generate a random port until it is correct
 	for {
@@ -59,11 +63,16 @@ func GetPort(tracker *map[string]*processes.Tracker) (int, error) {
 		randPort := portMin + rand.Int()%(portMax-portMin+1)
 
 		// Make sure that the port is not in the list of existing ports
-		for _, existingPort := range existingPorts {
+		for _, existingPort := range badPorts {
 			if randPort < existingPort {
 				break
 			}
 			randPort++
+
+			// Check if out of ports
+			if randPort > portMax {
+				return -1, errors.New("no valid ports")
+			}
 		}
 
 		// Check that the port is not used by the rest of the system
@@ -72,7 +81,9 @@ func GetPort(tracker *map[string]*processes.Tracker) (int, error) {
 		// If the server connected to the port it must be valid, so return it, otherwise continue
 		if err == nil {
 			server.Close()
-			return randPort
+			return randPort, nil
+		} else {
+			badPorts = append(badPorts, randPort)
 		}
 	}
 }
