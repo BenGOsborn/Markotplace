@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-const PROCESS_DELAY = 20 * time.Second
-
 type Tracker struct {
 	AppData      *database.AppData
 	LastAccessed time.Time
@@ -16,6 +14,8 @@ type Tracker struct {
 func (tracker *Tracker) ResetTimer() {
 	tracker.LastAccessed = time.Now()
 }
+
+const PROCESS_DELAY = 20 * time.Second
 
 func Builder(db *database.DataBase) {
 	for {
