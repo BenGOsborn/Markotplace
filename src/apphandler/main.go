@@ -62,6 +62,9 @@ func main() {
 
 	// Build the image
 	err = docker.BuildImage(row)
+	if err != nil {
+		panic(err)
+	}
 
 	// Create a way of tracking the variables
 	tracker := map[string]*processes.Tracker{}
