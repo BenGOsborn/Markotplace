@@ -55,7 +55,6 @@ func GetPort(tracker *map[string]*processes.Tracker) (int, error) {
 	for _, value := range *tracker {
 		badPorts = append(badPorts, value.Port)
 	}
-	sort.Ints(badPorts)
 
 	// Generate a random port until it is correct
 	for {
@@ -63,6 +62,7 @@ func GetPort(tracker *map[string]*processes.Tracker) (int, error) {
 		randPort := portMin + rand.Int()%(portMax-portMin+1)
 
 		// Make sure that the port is not in the list of existing ports
+		sort.Ints(badPorts)
 		for _, existingPort := range badPorts {
 			if randPort < existingPort {
 				break

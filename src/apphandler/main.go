@@ -4,8 +4,8 @@ import (
 	"apphandler/database"
 	"apphandler/docker"
 	"apphandler/processes"
+	"apphandler/utils"
 	"fmt"
-	"time"
 )
 
 // Initialize constant variables
@@ -51,8 +51,10 @@ func main() {
 	// Start the builder
 	// processes.Builder(db)
 
+	const APPNAME = "test"
+
 	// Get the app
-	row, err := db.GetApp("test")
+	row, err := db.GetApp(APPNAME)
 	if err != nil {
 		panic(err)
 	}
@@ -60,22 +62,17 @@ func main() {
 	// Create a way of tracking the variables
 	tracker := map[string]*processes.Tracker{}
 
-	// Start the container
-	err = docker.StartContainer(row, 7777)
+	uri, err := utils.GetRunningApp(APPNAME, &tracker, db)
 	if err != nil {
 		panic(err)
 	}
-	tracker["test"] = &processes.Tracker{AppData: row, LastAccessed: time.Now()}
+	fmt.Printf("URI of container: %s\n", uri)
 
 	// Get the container
 	ctr, err := docker.GetRunningContainer(row)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(ctr.Ports[0].PublicPort)
-
-	// Then maybe I can just have some sort of lookup table for the times each one was accessed ?
 
 	// Stop the container
 	err = docker.StopContainer(ctr)
