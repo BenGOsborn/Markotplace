@@ -6,10 +6,9 @@ import (
 	"apphandler/processes"
 	"apphandler/utils"
 	"fmt"
+	"os"
+	"strconv"
 )
-
-// Initialize constant variables
-const PORT = 5000
 
 // Different parts of this system
 // - Proxy
@@ -17,7 +16,7 @@ const PORT = 5000
 // - Container builder
 // - App monitoring
 
-func main() {
+func Test() {
 	// **** CORS will ALSO be required for this to function properly as cookies are required
 
 	// Handle the main container redirect route
@@ -86,4 +85,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func main() {
+	// Initialize the port
+	port, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		port = 5000
+	}
+
+	// Initialize the background processes
+
+	// Start the proxy handler
 }
