@@ -3,42 +3,17 @@ package main
 import (
 	"apphandler/database"
 	"apphandler/docker"
+	"apphandler/handle"
 	"apphandler/processes"
 	"apphandler/utils"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"strconv"
 )
 
-// Different parts of this system
-// - Proxy
-// - Container starter / redirecter
-// - Container builder
-// - App monitoring
-
 func Test() {
-	// **** CORS will ALSO be required for this to function properly as cookies are required
-
-	// Handle the main container redirect route
-	// http.HandleFunc("/apphandler", func(w http.ResponseWriter, r *http.Request) {
-	// 	fmt.Fprintf(w, "Hello world!")
-	// })
-
-	// // Start the server and log error
-	// log.Println(fmt.Sprintf("Apphandler listening on port %d...", PORT))
-	// log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", PORT), nil))
-
-	// // Test data
-	// testAppData := &database.AppData{
-	// 	AppName:       "lol",
-	// 	AppVersion:    1,
-	// 	GhRepoOwner:   "BenGOsborn",
-	// 	GhRepoName:    "Cerci",
-	// 	GhRepoBranch:  "master",
-	// 	GhAccessToken: "lol",
-	// 	Env:           map[string]*string{},
-	// }
-
 	// Initialize the database
 	db := new(database.DataBase)
 	err := db.Connect()
@@ -94,7 +69,28 @@ func main() {
 		port = 5000
 	}
 
-	// Initialize the background processes
+	// Initialize the database and tracker
+
+	// Initialize the database
+	db := new(database.DataBase)
+	if err := db.Connect(); err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	// Initialize the tracker
+	tracker := map[string]*processes.Tracker{}
+
+	// Initialize the processes
+	go processes.Builder(db)
+	go processes.Stop(&tracker)
+	// I also need one for the cleaner eventually
 
 	// Start the proxy handler
+	const proxyRoute = "/apphandler"
+	http.HandleFunc(proxyRoute, handle.ProxyHandle(proxyRoute, &tracker, db))
+
+	// Start the server
+	log.Println(fmt.Sprintf("Apphandler listening on port %d...", port))
+	log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
