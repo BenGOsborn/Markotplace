@@ -93,6 +93,10 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
         customer_email: user.email,
         payment_intent_data: {
             setup_future_usage: "on_session",
+            application_fee_amount: 0.1 * existingApp.price,
+            transfer_data: {
+                destination: existingApp.dev.stripeConnectID,
+            },
         },
         allow_promotion_codes: true,
         customer: user.stripeCustomerID,
