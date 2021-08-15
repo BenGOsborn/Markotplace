@@ -1,5 +1,6 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import Link from "next/link";
 
 interface Props {
     apps: {
@@ -20,13 +21,12 @@ const Apps: NextPage<Props> = ({ apps }) => {
                         return (
                             <div key={index}>
                                 <h3>
-                                    <a href={`/apps/${app.name}`}>
+                                    <Link href={`/apps/${app.name}`}>
                                         {app.title}
-                                    </a>
+                                    </Link>
                                 </h3>
                                 <h4>{app.author}</h4>
                                 <p>{app.description}</p>
-                                <p>{app.price}</p>
                             </div>
                         );
                     })}

@@ -316,7 +316,7 @@ router.patch(
         if (error) return res.status(400).send(error.details[0].message);
 
         // Validate the env
-        if (typeof env !== "undefined" && validEnv(env))
+        if (typeof env !== "undefined" && !validEnv(env))
             return res.status(400).send("Invalid env JSON");
 
         // Find the app with the existing name
@@ -356,9 +356,6 @@ router.patch(
             typeof ghRepoName !== "undefined"
         ) {
             try {
-                console.log(
-                    `https://api.github.com/repos/${existingApp.ghRepoOwner}/${existingApp.ghRepoName}/hooks/${existingApp.ghWebhookID}`
-                );
                 // Delete the existing webhook if the repo was changed
                 await axios.delete<any>(
                     `https://api.github.com/repos/${existingApp.ghRepoOwner}/${existingApp.ghRepoName}/hooks/${existingApp.ghWebhookID}`,
