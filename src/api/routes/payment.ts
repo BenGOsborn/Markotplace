@@ -72,7 +72,10 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
     }
 
     // Get the app from the database
-    const existingApp = await App.findOne({ where: { name: appName } });
+    const existingApp = await App.findOne({
+        where: { name: appName },
+        relations: ["dev"],
+    });
     if (typeof existingApp === "undefined")
         return res.status(400).send("Invalid app");
 
@@ -90,7 +93,6 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
 
     // Create a new checkout session
     const session = await stripe.checkout.sessions.create({
-        customer_email: user.email,
         payment_intent_data: {
             setup_future_usage: "on_session",
             application_fee_amount: 0.1 * existingApp.price,
@@ -106,6 +108,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
                 amount: existingApp.price,
                 currency: "usd",
                 name: existingApp.title,
+                quantity: 1,
             },
         ],
         mode: "payment",
@@ -121,7 +124,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
 });
 
 // On payment success
-router.post("/checkout/success", async (req, res) => {
+router.post("/checkout/hook", async (req, res) => {
     // Get the Stripe signature
     const signature = req.headers["stripe-signature"];
 
