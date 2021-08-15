@@ -130,7 +130,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                     type="number"
                     step={0.01}
                     required={true}
-                    value={newPrice || app.price}
+                    value={newPrice || (app.price / 100).toFixed(2)}
                     placeholder="Price"
                     onChange={(e) => setNewPrice(e.target.valueAsNumber)}
                 />

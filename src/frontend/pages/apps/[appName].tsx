@@ -23,11 +23,10 @@ const App: NextPage<Props> = ({ app }) => {
 
     return (
         <>
-            <p>{app.name}</p>
-            <p>{app.title}</p>
+            <h1>{app.title}</h1>
+            <h3>{app.author}</h3>
             <p>{app.description}</p>
-            <p>{app.author}</p>
-            <p>{app.price}</p>
+            <p>${(app.price / 100).toFixed(2)}</p>
             <a
                 href="#"
                 onClick={(e) => {
