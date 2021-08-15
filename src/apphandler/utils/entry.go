@@ -40,7 +40,7 @@ func GetRunningApp(appName string, tracker *map[string]*processes.Tracker, db *d
 		(*tracker)[appName] = &processes.Tracker{Port: port, AppData: appData, LastAccessed: time.Now()}
 
 		// Return the URI of the app
-		return fmt.Sprintf("http://0.0.0.0:%d", port), nil
+		return fmt.Sprintf("http://localhost:%d", port), nil
 	}
 }
 

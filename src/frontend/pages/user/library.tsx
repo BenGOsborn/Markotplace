@@ -14,7 +14,12 @@ const Library: NextPage<Props> = ({ apps }) => {
                         return (
                             <div key={index}>
                                 <h3>
-                                    <a href={app.name}>{app.title}</a>
+                                    <a
+                                        // href={`${process.env.BACKEND_URL}/apphandler?appName=${app.name}`} // **** This is the right one eventually
+                                        href={`http://localhost:49155/apphandler?appName=${app.name}`} // THE PORT COULD BREAK WHEN RESTARTED
+                                    >
+                                        {app.title}
+                                    </a>
                                 </h3>
                                 <p>{app.description}</p>
                             </div>

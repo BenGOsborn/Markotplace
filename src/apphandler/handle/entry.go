@@ -54,7 +54,7 @@ func ProxyHandle(route string, tracker *map[string]*processes.Tracker, db *datab
 			w.WriteHeader(500)
 			return
 		}
-		req.Header.Set("Cookie", fmt.Sprintf("connect.sid=%s", sessionCookie))
+		req.Header.Set("Cookie", sessionCookie.String())
 		req.Header.Set("Content-Type", "application/json")
 
 		// Verify that the user owns the app
