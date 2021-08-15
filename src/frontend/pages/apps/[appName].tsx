@@ -1,5 +1,8 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/dist/client/router";
+import { useState } from "react";
+import { Status, StatusMessage } from "../../utils/status";
 
 interface Props {
     app: {
@@ -12,6 +15,12 @@ interface Props {
 }
 
 const App: NextPage<Props> = ({ app }) => {
+    // Store the status
+    const [status, setStatus] = useState<Status | null>(null);
+
+    // Used for redirects
+    const router = useRouter();
+
     return (
         <>
             <p>{app.name}</p>
@@ -19,6 +28,42 @@ const App: NextPage<Props> = ({ app }) => {
             <p>{app.description}</p>
             <p>{app.author}</p>
             <p>{app.price}</p>
+            <a
+                href="#"
+                onClick={(e) => {
+                    // Prevent the default action
+                    e.preventDefault();
+
+                    // Get the redirect URL
+                    axios
+                        .post<{ redirectURL: string }>(
+                            `${process.env.BACKEND_URL}/api/payment/checkout`,
+                            { appName: app.name },
+                            { withCredentials: true }
+                        )
+                        .then((res) => {
+                            // Set the status
+                            setStatus({
+                                success: true,
+                                message: "Redirecting",
+                            });
+
+                            // Redirect to the URL
+                            router.push(res.data.redirectURL);
+                        })
+                        .catch((err) => {
+                            // Set the status
+                            setStatus({
+                                success: false,
+                                message: err.response?.data,
+                            });
+                        });
+                }}
+            >
+                {app.price == 0 ? "Add To Library" : "Purchase Now"}
+            </a>
+
+            <StatusMessage status={status} />
         </>
     );
 };

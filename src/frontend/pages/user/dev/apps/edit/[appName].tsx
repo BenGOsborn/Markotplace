@@ -255,8 +255,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     } catch {
         // Redirect to the settings page
         return {
-            props: {} as Props,
-            redirect: { destination: "/user/settings", permanent: false },
+            notFound: true,
         };
     }
 };

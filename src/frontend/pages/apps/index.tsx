@@ -20,7 +20,9 @@ const Apps: NextPage<Props> = ({ apps }) => {
                         return (
                             <div key={index}>
                                 <h3>
-                                    <a href={app.name}>{app.title}</a>
+                                    <a href={`/apps/${app.name}`}>
+                                        {app.title}
+                                    </a>
                                 </h3>
                                 <h4>{app.author}</h4>
                                 <p>{app.description}</p>
