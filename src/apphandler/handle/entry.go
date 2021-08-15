@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 )
 
 const STATE_COOKIE = "appmanager.state.appname"
@@ -21,7 +22,7 @@ func ProxyHandle(route string, tracker *map[string]*processes.Tracker, db *datab
 
 		// Get the app name from the query OR from the cookie and then set the cookie back if not exists
 		var appName string
-		appNames, ok := r.URL.Query()["appName"]
+		appNames, ok := r.URL.Query()["appName"] // Now, we are going to cut the first part of the URL out as the appname, and then cut the following out ? (maybe I dont need the state cookie)
 		if !ok {
 			// Get the state cookie
 			stateCookie, err := r.Cookie(STATE_COOKIE)
@@ -77,11 +78,12 @@ func ProxyHandle(route string, tracker *map[string]*processes.Tracker, db *datab
 		}
 
 		// Proxy to the container
+		time.Sleep(5 * time.Second) // This seens necessary?
 		remote, _ := url.Parse(uri)
 		proxy := httputil.NewSingleHostReverseProxy(remote)
 
 		// Reset the requested path
-		req.URL.Path = req.URL.Path[:len(route)]
+		r.URL.Path = r.URL.Path[len(route):]
 
 		// Set a cookie for maintaining the container connection
 		proxy.ModifyResponse = func(r *http.Response) error {
