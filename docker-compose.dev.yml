@@ -69,7 +69,9 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
             - /usr/bin/docker:/usr/bin/docker
         restart: always
-        networks: # Can't access localhost with this config - PROBLEM
+        extra_hosts:
+            - "dockerhost:$DOCKERHOST"
+        networks:
             - backend
     nginx:
         build:

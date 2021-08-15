@@ -66,6 +66,8 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
             - /usr/bin/docker:/usr/bin/docker
         restart: always
+        extra_hosts:
+            - "dockerhost:$DOCKERHOST"
         networks:
             - backend
     nginx:
