@@ -350,18 +350,15 @@ router.patch(
             // Set the new price for the app
             existingApp.price = Math.floor(price * 100);
         }
-        if (typeof ghRepoOwner !== "undefined")
-            existingApp.ghRepoOwner = ghRepoOwner;
-        if (typeof ghRepoName !== "undefined")
-            existingApp.ghRepoName = ghRepoName;
-        if (typeof ghRepoBranch !== "undefined")
-            existingApp.ghRepoBranch = ghRepoBranch;
         if (typeof env !== "undefined") existingApp.env = env;
         if (
             typeof ghRepoOwner !== "undefined" ||
             typeof ghRepoName !== "undefined"
         ) {
             try {
+                console.log(
+                    `https://api.github.com/repos/${existingApp.ghRepoOwner}/${existingApp.ghRepoName}/hooks/${existingApp.ghWebhookID}`
+                );
                 // Delete the existing webhook if the repo was changed
                 await axios.delete<any>(
                     `https://api.github.com/repos/${existingApp.ghRepoOwner}/${existingApp.ghRepoName}/hooks/${existingApp.ghWebhookID}`,
@@ -395,10 +392,17 @@ router.patch(
                     }
                 );
                 existingApp.ghWebhookID = ghWebhookID;
-            } catch {
+            } catch (e) {
+                console.log(e.message);
                 return res.status(500).send("Unable to update webhook");
             }
         }
+        if (typeof ghRepoOwner !== "undefined")
+            existingApp.ghRepoOwner = ghRepoOwner;
+        if (typeof ghRepoName !== "undefined")
+            existingApp.ghRepoName = ghRepoName;
+        if (typeof ghRepoBranch !== "undefined")
+            existingApp.ghRepoBranch = ghRepoBranch;
         if (
             typeof ghRepoOwner !== "undefined" ||
             typeof ghRepoName !== "undefined" ||

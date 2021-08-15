@@ -37,17 +37,13 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                         return (
                             <div key={index}>
                                 <h3>
-                                    <a href={app.name}>{app.title}</a>
+                                    <Link
+                                        href={`/user/dev/apps/edit/${app.name}`}
+                                    >
+                                        {app.title}
+                                    </Link>
                                 </h3>
                                 <p>{app.description}</p>
-                                <p>{app.price}</p>
-                                <p>{app.ghRepoOwner}</p>
-                                <p>{app.ghRepoName}</p>
-                                <p>{app.ghRepoBranch}</p>
-                                <p>{app.env}</p>
-                                <Link href={`/user/dev/apps/edit/${app.name}`}>
-                                    Edit
-                                </Link>
                             </div>
                         );
                     })}
@@ -59,7 +55,7 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     try {
         // Fetch a list of the devs apps
         const {
@@ -87,7 +83,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     } catch (e) {
         // Redirect to the settings page
         return {
-            redirect: { destination: "/user/dev/authorize-github", permanent: false },
+            redirect: {
+                destination: "/user/dev/authorize-github",
+                permanent: false,
+            },
         };
     }
 };
