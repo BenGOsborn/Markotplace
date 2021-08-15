@@ -133,7 +133,7 @@ router.post("/checkout/hook", async (req, res) => {
         const event = stripe.webhooks.constructEvent(
             req.body,
             signature as string,
-            process.env.STRIPE_WEBOOK_SIGNING_SECRET as string
+            process.env.STRIPE_WEBOOK_SIGNING_SECRET_PURCHASE as string
         );
 
         // Check that the payment succeeded
