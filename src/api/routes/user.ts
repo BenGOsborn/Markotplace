@@ -30,7 +30,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new Stripe customer for the user
-    const stripeCustomerID = (await stripe.customers.create({ email })).id;
+    const stripeCustomerID = (await stripe.customers.create()).id;
 
     // Create the new user
     const user = User.create({
