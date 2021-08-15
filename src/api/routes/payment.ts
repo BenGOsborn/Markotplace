@@ -51,6 +51,11 @@ interface CheckoutReturn {
     redirectURL: string;
 }
 
+interface MetaData extends Stripe.MetadataParam {
+    userID: number;
+    appName: string;
+}
+
 // Allow a user to purchase an app
 router.post("/checkout", protectedMiddleware, async (req, res) => {
     // Get the user
@@ -102,6 +107,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
         mode: "payment",
         success_url: `${process.env.FRONTEND_URL}/user/library`,
         cancel_url: `${process.env.FRONTEND_URL}/apps/${existingApp.name}`,
+        metadata: { userID: user.id, appName: existingApp.name } as MetaData,
     });
 
     // Return the payment intent
@@ -132,8 +138,7 @@ router.post("/checkout/success", async (req, res) => {
 
         // Get the metadata from the payment intent
         // @ts-ignore
-        const { userID, appName }: { userID: number; appName: number } =
-            paymentIntent.metadata;
+        const { userID, appName }: MetaData = paymentIntent.metadata;
 
         // Get the app
         const app = (await App.findOne({
@@ -143,6 +148,7 @@ router.post("/checkout/success", async (req, res) => {
         // Update the users apps
         const user = (await User.findOne({
             where: { id: userID },
+            relations: ["apps"],
         })) as User;
 
         // Add the app to the users account
