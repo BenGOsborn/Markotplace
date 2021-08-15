@@ -70,7 +70,7 @@ services:
             - /usr/bin/docker:/usr/bin/docker
         restart: always
         extra_hosts:
-            - "dockerhost:$DOCKERHOST"
+            - "host.docker.internal:host-gateway"
         networks:
             - backend
     nginx:

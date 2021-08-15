@@ -20,7 +20,7 @@ func GetRunningApp(appName string, tracker *map[string]*processes.Tracker, db *d
 		trackerData.ResetTimer()
 
 		// Return the URI of the app
-		return fmt.Sprintf("http://dockerhost:%d", trackerData.Port), nil
+		return fmt.Sprintf("http://host.docker.internal:%d", trackerData.Port), nil
 	} else {
 		// Find the app data that matches the app name
 		appData, err := db.GetApp(appName)
@@ -40,7 +40,7 @@ func GetRunningApp(appName string, tracker *map[string]*processes.Tracker, db *d
 		(*tracker)[appName] = &processes.Tracker{Port: port, AppData: appData, LastAccessed: time.Now()}
 
 		// Return the URI of the app
-		return fmt.Sprintf("http://dockerhost:%d", port), nil
+		return fmt.Sprintf("http://host.docker.internal:%d", port), nil
 	}
 }
 

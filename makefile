@@ -6,17 +6,14 @@ include .env.local
 
 # Start containers in dev mode
 dc-start-dev:
-	export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
 	docker-compose -f docker-compose.dev.yml --env-file .env.local up
 
 # Start and build the dev containers
 dc-start-dev-build:
-	export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
 	docker-compose -f docker-compose.dev.yml --env-file .env.local up --build
 
 # Start containers in dev mode
 dc-start-build:
-	export DOCKERHOST=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $2 }' | cut -f2 -d: | head -n1)
 	docker-compose -f docker-compose.build.yml --env-file .env up --build
 
 # Kill all Docker containers
