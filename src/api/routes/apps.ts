@@ -331,9 +331,6 @@ router.patch(
         if (existingApp.dev.id !== user.dev.id)
             return res.status(401).send("You are not able to edit this app");
 
-        // Increment the version of the app **** rebuild on every change, this should not do this for everything
-        existingApp.version += 1;
-
         // Set the data to update
         if (typeof title !== "undefined") existingApp.title = title;
         if (typeof description !== "undefined")
@@ -365,7 +362,18 @@ router.patch(
             typeof ghRepoName !== "undefined"
         ) {
             try {
-                // Update the webhook if the repo was changed
+                // Delete the existing webhook if the repo was changed
+                await axios.delete<any>(
+                    `https://api.github.com/repos/${existingApp.ghRepoOwner}/${existingApp.ghRepoName}/hooks/${existingApp.ghWebhookID}`,
+                    {
+                        headers: {
+                            Authorization: `token ${user.dev.ghAccessToken}`,
+                            Accept: "application/vnd.github.v3+json",
+                        },
+                    }
+                );
+
+                // Create the new webhook in the new repo
                 const {
                     data: { id: ghWebhookID },
                 } = await axios.post<{ id: string }>(
@@ -390,6 +398,14 @@ router.patch(
             } catch {
                 return res.status(500).send("Unable to update webhook");
             }
+        }
+        if (
+            typeof ghRepoOwner !== "undefined" ||
+            typeof ghRepoName !== "undefined" ||
+            typeof ghRepoBranch !== "undefined"
+        ) {
+            // Increment the version of the app if the repo changed
+            existingApp.version += 1;
         }
 
         // Update the app
