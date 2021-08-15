@@ -12,7 +12,11 @@ import cors from "cors";
 
 // Initialize the app and middleware
 const app = express();
-app.use(express.json());
+app.use((req, res, next) => {
+    // Apply middleware to all routes except the one specified
+    const pathCheck = req.path === "/api/payment/checkout/hook";
+    pathCheck ? next() : express.json()(req, res, next);
+});
 app.use(
     cors({
         credentials: true,
