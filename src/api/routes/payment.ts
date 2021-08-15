@@ -47,8 +47,12 @@ router.get(
     }
 );
 
+interface CheckoutReturn {
+    redirectURL: string;
+}
+
 // Allow a user to purchase an app
-router.post("/purchase", protectedMiddleware, async (req, res) => {
+router.post("/checkout", protectedMiddleware, async (req, res) => {
     // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
@@ -75,57 +79,39 @@ router.post("/purchase", protectedMiddleware, async (req, res) => {
 
         // Return success
         return res.json({
-            clientSecret: null,
-            existingCard: null,
-            free: true,
-            message: "App successfully added to library",
-        });
+            redirectURL: `${process.env.FRONTEND_URL}/user/library`,
+        } as CheckoutReturn);
     }
 
-    // Check if the user already has a card
-    const paymentMethods = (
-        await stripe.paymentMethods.list({
-            customer: user.stripeCustomerID,
-            type: "card",
-        })
-    ).data;
-
-    // Create the payment intent and pay out the developer
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount: existingApp.price,
-        currency: "usd",
+    // Create a new checkout session
+    const session = await stripe.checkout.sessions.create({
+        customer_email: user.email,
+        payment_intent_data: {
+            setup_future_usage: "on_session",
+        },
+        allow_promotion_codes: true,
         customer: user.stripeCustomerID,
-        metadata: {
-            userID: user.id,
-            appName,
-        },
-        application_fee_amount: 0.1 * existingApp.price,
-        transfer_data: {
-            destination: existingApp.dev.stripeConnectID,
-        },
+        payment_method_types: ["card"],
+        line_items: [
+            {
+                amount: existingApp.price,
+                currency: "usd",
+                name: existingApp.title,
+            },
+        ],
+        mode: "payment",
+        success_url: `${process.env.FRONTEND_URL}/user/library`,
+        cancel_url: `${process.env.FRONTEND_URL}/apps/${existingApp.name}`,
     });
-
-    if (paymentMethods.length > 0) {
-        // Return the payment intent
-        return res.json({
-            clientSecret: paymentIntent.client_secret,
-            existingCard: true,
-            free: false,
-            message: null,
-        });
-    }
 
     // Return the payment intent
     res.json({
-        clientSecret: paymentIntent.client_secret,
-        existingCard: false,
-        free: false,
-        message: null,
-    });
+        redirectURL: session.url,
+    } as CheckoutReturn);
 });
 
 // On payment success
-router.post("/purchase/success", async (req, res) => {
+router.post("/checkout/success", async (req, res) => {
     // Get the Stripe signature
     const signature = req.headers["stripe-signature"];
 
