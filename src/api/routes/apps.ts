@@ -389,8 +389,7 @@ router.patch(
                     }
                 );
                 existingApp.ghWebhookID = ghWebhookID;
-            } catch (e) {
-                console.log(e.message);
+            } catch {
                 return res.status(500).send("Unable to update webhook");
             }
         }
