@@ -4,6 +4,7 @@ import { App } from "../entities/app";
 import { User } from "../entities/user";
 import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
+import bodyParser from "body-parser";
 
 // Initialize the router
 const router = express.Router();
@@ -99,6 +100,10 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
             transfer_data: {
                 destination: existingApp.dev.stripeConnectID,
             },
+            metadata: {
+                userID: user.id,
+                appName: existingApp.name,
+            } as MetaData,
         },
         allow_promotion_codes: true,
         customer: user.stripeCustomerID,
@@ -114,7 +119,6 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
         mode: "payment",
         success_url: `${process.env.FRONTEND_URL}/user/library`,
         cancel_url: `${process.env.FRONTEND_URL}/apps/${existingApp.name}`,
-        metadata: { userID: user.id, appName: existingApp.name } as MetaData,
     });
 
     // Return the payment intent
@@ -124,53 +128,57 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
 });
 
 // On payment success
-router.post("/checkout/hook", async (req, res) => {
-    // Get the Stripe signature
-    const signature = req.headers["stripe-signature"];
+router.post(
+    "/checkout/hook",
+    bodyParser.raw({ type: "application/json" }),
+    async (req, res) => {
+        // Get the Stripe signature
+        const signature = req.headers["stripe-signature"];
 
-    try {
-        // Get the webhook event
-        const event = stripe.webhooks.constructEvent(
-            req.body,
-            signature as string,
-            process.env.STRIPE_WEBOOK_SIGNING_SECRET_PURCHASE as string
-        );
+        try {
+            // Get the webhook event
+            const event = stripe.webhooks.constructEvent(
+                req.body,
+                signature as string,
+                process.env.STRIPE_WEBOOK_SIGNING_SECRET_PURCHASE as string
+            );
 
-        // Check that the payment succeeded
-        if (event.type !== "payment_intent.succeeded")
-            return res.sendStatus(400);
+            // Check that the payment succeeded
+            if (event.type !== "payment_intent.succeeded")
+                return res.sendStatus(400);
 
-        // Get the payment intent
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+            // Get the payment intent
+            const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-        // Get the metadata from the payment intent
-        // @ts-ignore
-        const { userID, appName }: MetaData = paymentIntent.metadata;
+            console.log(paymentIntent);
 
-        // Get the app
-        const app = (await App.findOne({
-            where: { name: appName },
-        })) as App;
+            // Get the metadata from the payment intent
+            // @ts-ignore
+            const { userID, appName }: MetaData = paymentIntent.metadata;
 
-        // Update the users apps
-        const user = (await User.findOne({
-            where: { id: userID },
-            relations: ["apps"],
-        })) as User;
+            // Get the app
+            const app = (await App.findOne({
+                where: { name: appName },
+            })) as App;
 
-        // Add the app to the users account
-        user.apps = [...user.apps, app];
-        await user.save();
+            // Update the users apps
+            const user = (await User.findOne({
+                where: { id: userID },
+                relations: ["apps"],
+            })) as User;
 
-        // Return success
-        res.sendStatus(200);
-    } catch (err) {
-        console.log(err.message);
+            // Add the app to the users account
+            user.apps = [...user.apps, app];
+            await user.save();
 
-        // Return error
-        res.sendStatus(500);
+            // Return success
+            res.sendStatus(200);
+        } catch {
+            // Return error
+            res.sendStatus(500);
+        }
     }
-});
+);
 
 // Export the router
 export default router;
