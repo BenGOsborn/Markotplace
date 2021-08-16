@@ -87,7 +87,7 @@ func main() {
 	// I also need one for the cleaner eventually
 
 	// Start the proxy handler
-	const proxyRoute = "/apphandler"
+	const proxyRoute = "/apphandler/"
 	http.HandleFunc(proxyRoute, handle.ProxyHandle(proxyRoute, &tracker, db))
 
 	// Start the server

@@ -19,7 +19,7 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Immediate
 
 -   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update + MORE CACHING
--   Make the proxy into a url path instead of a query param ?
+-   Add a max number of retries system
 
 ## Better load balancer
 
