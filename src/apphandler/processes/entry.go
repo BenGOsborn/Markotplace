@@ -20,8 +20,7 @@ func (tracker *Tracker) ResetTimer() {
 	tracker.LastAccessed = time.Now()
 }
 
-// const PROCESS_DELAY = 5 * time.Minute
-const PROCESS_DELAY = 5 * time.Second
+const PROCESS_DELAY = 5 * time.Minute
 
 func Builder(db *database.DataBase) {
 	for {
@@ -62,7 +61,7 @@ func Cleaner(tracker *map[string]*Tracker) {
 			panic(err)
 		}
 
-		// Get a list of running containers **** Maybe add some sort of filters for this ?
+		// Get a list of running containers
 		containers, err := cli.ContainerList(context.TODO(), types.ContainerListOptions{})
 		if err != nil {
 			panic(err)
