@@ -87,11 +87,18 @@ func ProxyHandle(route string, tracker *map[string]*processes.Tracker, db *datab
 		remote, _ := url.Parse(uri)
 		proxy := httputil.NewSingleHostReverseProxy(remote)
 
-		// Retry system **** BAD
+		// Retry system
+		retries := 0
 		proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, e error) {
 			// Retry the proxy
-			time.Sleep(3 * time.Second)
-			proxy.ServeHTTP(w, r)
+			retries += 1
+			if retries < 4 {
+				time.Sleep(3 * time.Second)
+				proxy.ServeHTTP(w, r)
+			} else {
+				w.WriteHeader(500)
+				return
+			}
 		}
 
 		// Serve the proxy

@@ -16,7 +16,7 @@ const Library: NextPage<Props> = ({ apps }) => {
                                 <h3>
                                     <a
                                         // href={`${process.env.BACKEND_URL}/apphandler?appName=${app.name}`} // **** This is the right one eventually
-                                        href={`http://localhost:49176/apphandler/${app.name}`} // THE PORT COULD BREAK WHEN RESTARTED
+                                        href={`${process.env.BACKEND_URL}/apphandler/${app.name}`} // THE PORT COULD BREAK WHEN RESTARTED
                                     >
                                         {app.title}
                                     </a>
