@@ -13,8 +13,6 @@ import (
 	"time"
 )
 
-const STATE_COOKIE = "appmanager.state.appname"
-
 func ProxyHandle(route string, tracker *map[string]*processes.Tracker, db *database.DataBase) func(w http.ResponseWriter, r *http.Request) {
 	// Return the handler that uses the specified params
 	return func(w http.ResponseWriter, r *http.Request) {

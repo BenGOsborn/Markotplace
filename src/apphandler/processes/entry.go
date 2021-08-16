@@ -16,7 +16,8 @@ func (tracker *Tracker) ResetTimer() {
 	tracker.LastAccessed = time.Now()
 }
 
-const PROCESS_DELAY = 20 * time.Second
+// const PROCESS_DELAY = 5 * time.Minute
+const PROCESS_DELAY = 5 * time.Second
 
 func Builder(db *database.DataBase) {
 	for {
