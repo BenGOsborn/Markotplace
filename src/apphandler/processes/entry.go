@@ -49,32 +49,50 @@ func Builder(db *database.DataBase) {
 			}
 		}
 
-		// Pause before restarting - adjust the time on this
+		// Pause before restarting
 		time.Sleep(PROCESS_DELAY)
 	}
 }
 
 func Cleaner(tracker *map[string]*Tracker) {
-	// System cleanup function for removing old containers AND shutting down untracked containers spun up by this service
+	for {
+		// Initialize Docker client
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(err)
+		}
 
-	// Initialize Docker client
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
+		// Get a list of running containers **** Maybe add some sort of filters for this ?
+		containers, err := cli.ContainerList(context.TODO(), types.ContainerListOptions{})
+		if err != nil {
+			panic(err)
+		}
+
+		// Cache the names of the tracked containers
+		trackedContainers := map[string]interface{}{}
+		for _, tracked := range *tracker {
+			imageName := docker.BuildImageName(tracked.AppData)
+			trackedContainers[imageName] = nil
+		}
+
+		// Check that the services made by this container are all tracked
+		for _, container := range containers {
+			// Check that contains image is attached to this service
+			containerImage := container.Image
+			_, err := docker.ParseImageName(containerImage)
+			if err != nil {
+				continue
+			}
+
+			_, ok := trackedContainers[containerImage]
+			if !ok {
+				docker.StopContainer(&container)
+			}
+		}
+
+		// Pause before restarting
+		time.Sleep(PROCESS_DELAY)
 	}
-
-	// Get a list of running containers **** Maybe add some sort of filters for this ?
-	containers, err := cli.ContainerList(context.TODO(), types.ContainerListOptions{})
-	if err != nil {
-
-	}
-
-	// Cache the names of the containers
-	runningContainers := map[string]interface{}{}
-	for _, container := range containers {
-		runningContainers[container.Image] = nil
-	}
-
-	// Now do something with this
 }
 
 func Stop(tracker *map[string]*Tracker) {
@@ -95,7 +113,7 @@ func Stop(tracker *map[string]*Tracker) {
 			}
 		}
 
-		// Sleep before restarting
+		// Pause before restarting
 		time.Sleep(PROCESS_DELAY)
 	}
 }
