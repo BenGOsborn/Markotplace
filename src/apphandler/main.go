@@ -85,7 +85,6 @@ func main() {
 	go processes.Builder(db)
 	go processes.Stop(&tracker)
 	go processes.Cleaner(&tracker)
-	// I also need one for the cleaner eventually
 
 	// Start the proxy handler
 	const proxyRoute = "/apphandler/"
