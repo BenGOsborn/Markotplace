@@ -62,10 +62,29 @@ func StartContainer(appData *database.AppData, port int) error {
 		return err
 	}
 
+	// Check if the image exists - if it does not, attempt to build the image before starting it
+	imageName := BuildImageName(appData)
+	tags, err := ListImages()
+	if err != nil {
+		return err
+	}
+	exists := false
+	for _, tag := range *tags {
+		if tag == imageName {
+			exists = true
+		}
+	}
+	if !exists {
+		// Attempt to build the image from scratch
+		if err := BuildImage(appData); err != nil {
+			return err
+		}
+	}
+
 	// Build and start the image
 	resp, err := cli.ContainerCreate(context.TODO(),
 		&container.Config{
-			Image: BuildImageName(appData),
+			Image: imageName,
 			ExposedPorts: nat.PortSet{
 				nat.Port(fmt.Sprintf("%d/tcp", port)): {},
 			},
