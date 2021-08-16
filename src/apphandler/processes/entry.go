@@ -45,14 +45,14 @@ func Builder(db *database.DataBase) {
 		var wg sync.WaitGroup
 		for _, appData := range *validApps {
 			wg.Add(1)
-			go func() {
-				imageName := docker.BuildImageName(&appData)
+			go func(appData *database.AppData) {
+				imageName := docker.BuildImageName(appData)
 				if _, ok := existingImages[imageName]; !ok {
-					docker.BuildImage(&appData)
+					docker.BuildImage(appData)
 				}
 
 				wg.Done()
-			}()
+			}(&appData)
 		}
 		wg.Wait()
 
@@ -93,15 +93,15 @@ func Cleaner(tracker *map[string]*Tracker) {
 			}
 
 			wg.Add(1)
-			go func() {
+			go func(container *types.Container) {
 				// Check if the container is being tracked - if it is not then stop it
 				_, ok := trackedContainers[containerImage]
 				if !ok {
-					docker.StopContainer(&container)
+					docker.StopContainer(container)
 				}
 
 				wg.Done()
-			}()
+			}(&container)
 		}
 		wg.Wait()
 
