@@ -84,6 +84,7 @@ func Cleaner(tracker *map[string]*Tracker) {
 				continue
 			}
 
+			// Check if the container is being tracked - if it is not then stop it
 			_, ok := trackedContainers[containerImage]
 			if !ok {
 				docker.StopContainer(&container)
