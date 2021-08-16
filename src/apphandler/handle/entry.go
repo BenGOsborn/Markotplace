@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -21,24 +22,36 @@ func ProxyHandle(route string, tracker *map[string]*processes.Tracker, db *datab
 		// Handle CORS
 
 		// Parse the URL
+		var appName string
 		r.URL.Path = r.URL.Path[len(route):]
-		// paths = r.URL.Path // Now I need to get the following route from it and check it out (make sure it has the right amount of slashes)
+		if len(r.URL.Path) > 0 && strings.HasPrefix(r.URL.Path, "/") {
+			slashIndex := strings.Index(r.URL.Path, "/")
+			if slashIndex == -1 {
+				w.WriteHeader(500)
+				return
+			}
+			appName = r.URL.Path[:slashIndex]
+			r.URL.Path = r.URL.Path[slashIndex:]
+		} else {
+			w.WriteHeader(500)
+			return
+		}
 
 		// Get the app name from the query OR from the cookie and then set the cookie back if not exists
-		var appName string
-		appNames, ok := r.URL.Query()["appName"] // Now, we are going to cut the first part of the URL out as the appname, and then cut the following out ? (maybe I dont need the state cookie)
-		if !ok {
-			// Get the state cookie
-			stateCookie, err := r.Cookie(STATE_COOKIE)
-			if err != nil {
-				w.WriteHeader(400)
-				return
-			} else {
-				appName = stateCookie.Value
-			}
-		} else {
-			appName = appNames[0]
-		}
+		// var appName string
+		// appNames, ok := r.URL.Query()["appName"] // Now, we are going to cut the first part of the URL out as the appname, and then cut the following out ? (maybe I dont need the state cookie)
+		// if !ok {
+		// 	// Get the state cookie
+		// 	stateCookie, err := r.Cookie(STATE_COOKIE)
+		// 	if err != nil {
+		// 		w.WriteHeader(400)
+		// 		return
+		// 	} else {
+		// 		appName = stateCookie.Value
+		// 	}
+		// } else {
+		// 	appName = appNames[0]
+		// }
 
 		// Verify the authentication cookie and that the user owns the app
 		sessionCookie, err := r.Cookie("connect.sid")
