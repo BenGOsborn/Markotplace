@@ -177,7 +177,7 @@ func ParseImageName(rawImageName string) (*ImageData, error) {
 
 	imageData := new(ImageData)
 	imageData.appName = split[1]
-	appVersion := split[2]
+	appVersion := strings.Split(split[2], ":")[0]
 	appVersionParsed, err := strconv.Atoi(appVersion)
 	if err != nil {
 		return nil, err
