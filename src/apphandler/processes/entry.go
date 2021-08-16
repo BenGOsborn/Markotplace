@@ -21,6 +21,7 @@ func (tracker *Tracker) ResetTimer() {
 	tracker.LastAccessed = time.Now()
 }
 
+// The delay between processes restarting
 const PROCESS_DELAY = 5 * time.Minute
 
 func Builder(db *database.DataBase) {
