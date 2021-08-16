@@ -4,6 +4,7 @@ import (
 	"apphandler/database"
 	"apphandler/docker"
 	"context"
+	"sync"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -41,12 +42,19 @@ func Builder(db *database.DataBase) {
 		}
 
 		// Compare the valid images and the existing images and build the new ones
+		var wg sync.WaitGroup
 		for _, appData := range *validApps {
-			imageName := docker.BuildImageName(&appData)
-			if _, ok := existingImages[imageName]; !ok {
-				docker.BuildImage(&appData)
-			}
+			wg.Add(1)
+			go func() {
+				imageName := docker.BuildImageName(&appData)
+				if _, ok := existingImages[imageName]; !ok {
+					docker.BuildImage(&appData)
+				}
+
+				wg.Done()
+			}()
 		}
+		wg.Wait()
 
 		// Pause before restarting
 		time.Sleep(PROCESS_DELAY)
@@ -75,6 +83,7 @@ func Cleaner(tracker *map[string]*Tracker) {
 		}
 
 		// Check that the services made by this container are all tracked
+		var wg sync.WaitGroup
 		for _, container := range containers {
 			// Check that contains image is attached to this service
 			containerImage := container.Image
@@ -83,12 +92,18 @@ func Cleaner(tracker *map[string]*Tracker) {
 				continue
 			}
 
-			// Check if the container is being tracked - if it is not then stop it
-			_, ok := trackedContainers[containerImage]
-			if !ok {
-				docker.StopContainer(&container)
-			}
+			wg.Add(1)
+			go func() {
+				// Check if the container is being tracked - if it is not then stop it
+				_, ok := trackedContainers[containerImage]
+				if !ok {
+					docker.StopContainer(&container)
+				}
+
+				wg.Done()
+			}()
 		}
+		wg.Wait()
 
 		// Pause before restarting
 		time.Sleep(PROCESS_DELAY)
@@ -98,6 +113,7 @@ func Cleaner(tracker *map[string]*Tracker) {
 func Stop(tracker *map[string]*Tracker) {
 	for {
 		// Check for controller containers that havent been used recently
+		var wg sync.WaitGroup
 		for key, value := range *tracker {
 			// If the container has not been accessed recently
 			if time.Now().After(value.LastAccessed.Add(20 * time.Minute)) {
@@ -107,11 +123,17 @@ func Stop(tracker *map[string]*Tracker) {
 					continue
 				}
 
-				// Stop the container and delete it from the list
-				docker.StopContainer(ctr)
-				delete(*tracker, key)
+				wg.Add(1)
+				go func() {
+					// Stop the container and delete it from the list
+					docker.StopContainer(ctr)
+					delete(*tracker, key)
+
+					wg.Done()
+				}()
 			}
 		}
+		wg.Wait()
 
 		// Pause before restarting
 		time.Sleep(PROCESS_DELAY)
