@@ -61,14 +61,8 @@ interface MetaData extends Stripe.MetadataParam {
 // Allow a user to purchase an app
 router.post("/checkout", protectedMiddleware, async (req, res) => {
     // Get the user
-    const {
-        user: { id },
-    }: // @ts-ignore
-    { user: User } = req.locals;
-    const user = (await User.findOne({
-        where: { id },
-        relations: ["apps"],
-    })) as User;
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
 
     // Get the data from the request
     const { appName }: { appName: string } = req.body;
@@ -92,6 +86,8 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
         // Add the app to the users account
         user.apps = [...user.apps, existingApp];
         await user.save();
+
+        await clearCache(`user:${user.id}`);
 
         // Return success
         return res.json({

@@ -21,6 +21,7 @@ export const protectedMiddleware = async (
             relations: ["dev", "apps", "dev.apps"],
         });
     });
+    user = User.create(user as User);
 
     // Pass on the user
     // @ts-ignore

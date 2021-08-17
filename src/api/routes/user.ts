@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
 
 // Provide a way for the user to edit their account
 router.patch("/edit", protectedMiddleware, async (req, res) => {
-    // Get the user and extract the userID
+    // Get the user
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
