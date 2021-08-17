@@ -16,7 +16,7 @@ export const protectedMiddleware = async (
     if (typeof userID === "undefined") return res.sendStatus(401);
 
     // Also do a check of the user ID to make sure it exists
-    const user = await cacheData(`user:${userID}`, async () => {
+    let user = await cacheData(`user:${userID}`, async () => {
         return await User.findOne(userID, {
             relations: ["dev", "apps", "dev.apps"],
         });

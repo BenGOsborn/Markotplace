@@ -18,9 +18,6 @@ An online marketplace that allows developers to monetize their online web apps.
 
 ## Immediate
 
--   Maybe in the case of caching, instead of clearing the cache, I should instead UPDATE the cache after an update + MORE CACHING
--   Reimplement caching in high traffic spots (user authentication (requires updates after purchase and account updates), app listings, app data)
-
 ## Better load balancer
 
 -   Add in the Upgrade header for websockets for nginx and my proxy + test proxies with websockets
