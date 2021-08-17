@@ -100,33 +100,28 @@ router.get("/details/:appname", async (req, res) => {
 });
 
 // Get the apps for the users dev account
-router.get(
-    "/dev/dashboard",
-    protectedMiddleware,
-    devMiddleware,
-    async (req, res) => {
-        // Get the user data from the request
-        // @ts-ignore
-        const { user }: { user: User } = req.locals;
+router.get("/dev", protectedMiddleware, devMiddleware, async (req, res) => {
+    // Get the user data from the request
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
 
-        // Filter out the data for the apps
-        const apps = user.dev.apps.map((app) => {
-            return {
-                name: app.name,
-                title: app.title,
-                description: app.description,
-                price: app.price,
-                ghRepoOwner: app.ghRepoOwner,
-                ghRepoName: app.ghRepoName,
-                ghRepoBranch: app.ghRepoBranch,
-                env: app.env,
-            };
-        });
+    // Filter out the data for the apps
+    const apps = user.dev.apps.map((app) => {
+        return {
+            name: app.name,
+            title: app.title,
+            description: app.description,
+            price: app.price,
+            ghRepoOwner: app.ghRepoOwner,
+            ghRepoName: app.ghRepoName,
+            ghRepoBranch: app.ghRepoBranch,
+            env: app.env,
+        };
+    });
 
-        // Return the app data
-        res.status(200).json({ apps });
-    }
-);
+    // Return the app data
+    res.status(200).json({ apps });
+});
 
 // Get the dev details of an app
 router.get(

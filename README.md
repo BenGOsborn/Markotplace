@@ -19,6 +19,9 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Immediate
 
 -   One of my apps failed to start (maybe look into the updating tool ?)
+-   Maybe I should also cache some of the dev info ?
+-   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache)
+-   Try and looking at all .find instances and try and cache some of them
 
 ## Better load balancer
 

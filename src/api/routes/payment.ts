@@ -87,6 +87,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
         user.apps = [...user.apps, existingApp];
         await user.save();
 
+        // Clear the users cache
         await clearCache(`user:${user.id}`);
 
         // Return success
