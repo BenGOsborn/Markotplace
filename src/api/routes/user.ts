@@ -4,6 +4,7 @@ import { registerSchema, updateSchema } from "../utils/joiSchema";
 import bcrypt from "bcrypt";
 import { protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
+import { clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -79,7 +80,6 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
     // Get the user and extract the userID
     // @ts-ignore
     const { user }: { user: User } = req.locals;
-    const { id: userID } = user;
 
     // Get the data to update
     const {
@@ -107,14 +107,13 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
 
     // Set the data to update
-    const updateData: any = {};
     if (typeof username !== "undefined") {
         // Check that the new username is unique
         const existingUser = await User.findOne({ where: { username } });
         if (existingUser) return res.status(400).send("This username is taken");
 
         // Set the new username
-        updateData.username = username;
+        user.username = username;
     }
     if (typeof email !== "undefined") {
         // Check that the new email is unique
@@ -122,19 +121,23 @@ router.patch("/edit", protectedMiddleware, async (req, res) => {
         if (existingUser) return res.status(400).send("This email is taken");
 
         // Set the new email
-        updateData.email = email;
+        user.email = email;
     }
     if (typeof password !== "undefined") {
+        // Hash the new password and update the existing
         const hashedPassword = await bcrypt.hash(password, 10);
-        updateData.password = hashedPassword;
+        user.password = hashedPassword;
     }
 
     // Update the user
-    await User.update(userID, updateData);
+    await user.save();
 
     // Update the users Stripe customer email if there is a new email
     if (typeof email !== "undefined")
         await stripe.customers.update(user.stripeCustomerID, { email });
+
+    // Clear the cached user
+    await clearCache(`user:${user.id}`);
 
     // Return success
     return res.sendStatus(200);

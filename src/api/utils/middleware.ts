@@ -1,5 +1,6 @@
 import express, { NextFunction } from "express";
 import { User } from "../entities/user";
+import { cacheData } from "./cache";
 
 // User authenticated middleware
 export const protectedMiddleware = async (
@@ -14,9 +15,11 @@ export const protectedMiddleware = async (
     // If the user ID exists the user is authenticated else no
     if (typeof userID === "undefined") return res.sendStatus(401);
 
-    // Also do a check of the user ID to make sure it exists - if it doesnt then void the session and return error
-    const user = await User.findOne(userID, {
-        relations: ["dev", "apps", "dev.apps"],
+    // Also do a check of the user ID to make sure it exists
+    const user = await cacheData(`user:${userID}`, async () => {
+        return await User.findOne(userID, {
+            relations: ["dev", "apps", "dev.apps"],
+        });
     });
 
     // Pass on the user

@@ -5,6 +5,7 @@ import { User } from "../entities/user";
 import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
 import bodyParser from "body-parser";
+import { clearCache } from "../utils/cache";
 
 // Initialize the router
 const router = express.Router();
@@ -150,8 +151,6 @@ router.post(
             // Get the payment intent
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-            console.log(paymentIntent);
-
             // Get the metadata from the payment intent
             // @ts-ignore
             const { userID, appName }: MetaData = paymentIntent.metadata;
@@ -170,6 +169,9 @@ router.post(
             // Add the app to the users account
             user.apps = [...user.apps, app];
             await user.save();
+
+            // Clear the cache of the user
+            await clearCache(`user:${user.id}`);
 
             // Return success
             res.sendStatus(200);
