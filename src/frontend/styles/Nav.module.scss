@@ -1,0 +1,35 @@
+@import "variables";
+
+.nav {
+    margin: 0 auto;
+    background-color: $backgroundColor;
+    padding: 10px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 85%;
+    font-size: 22px;
+
+    .logo {
+        color: $primary;
+        transition: all 0.2s ease 0s;
+        &:hover {
+            color: $primaryHighlight;
+        }
+    }
+
+    ul {
+        list-style: none;
+        display: flex;
+        align-items: center;
+
+        li {
+            padding: 0 15px;
+            color: $light;
+            transition: all 0.2s ease 0s;
+            &:hover {
+                color: $lightHighlight;
+            }
+        }
+    }
+}
