@@ -9,8 +9,10 @@
     align-items: center;
     width: 85%;
     font-size: 22px;
+    font-weight: 600;
 
     .logo {
+        font-size: 30px;
         color: $primary;
         transition: all 0.2s ease 0s;
         &:hover {

@@ -5,6 +5,7 @@ import { Status, StatusMessage } from "../../utils/status";
 import { useRouter } from "next/dist/client/router";
 import { authenticatedCtx } from "../../utils/context";
 import Link from "next/link";
+import styles from "../../styles/Login.module.scss";
 
 interface Props {} // How can I make this work with TypeScript getserversideprops
 
@@ -22,8 +23,8 @@ const Login: NextPage<Props> = () => {
     const router = useRouter();
 
     return (
-        <>
-            <h1>Login</h1>
+        <div className={styles.login}>
+            <h1>Sign in to your account</h1>
             <form
                 onSubmit={(e) => {
                     // Prevent the page from refreshing
@@ -74,12 +75,13 @@ const Login: NextPage<Props> = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <input type="submit" value="Login" />
-
-                <StatusMessage status={status} />
-
-                <Link href="/user/register">{"Don't have an account?"}</Link>
             </form>
-        </>
+            <StatusMessage status={status} />
+
+            <span className={styles.extra}>
+                <Link href="/user/register">{"Don't have an account?"}</Link>
+            </span>
+        </div>
     );
 };
 

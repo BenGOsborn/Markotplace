@@ -29,6 +29,12 @@ const Nav = () => {
                 ) : (
                     <>
                         <li>
+                            <Link href="/user/library">Library</Link>
+                        </li>
+                        <li>
+                            <Link href="/user/settings">Settings</Link>
+                        </li>
+                        <li>
                             <Link href="/">
                                 <a
                                     onClick={(e) =>
@@ -46,12 +52,6 @@ const Nav = () => {
                                     Logout
                                 </a>
                             </Link>
-                        </li>
-                        <li>
-                            <Link href="/user/library">Library</Link>
-                        </li>
-                        <li>
-                            <Link href="/user/settings">Settings</Link>
                         </li>
                     </>
                 )}
