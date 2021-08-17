@@ -3,6 +3,7 @@ import express from "express";
 import { App } from "../entities/app";
 import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
+import { cacheData } from "../utils/cache";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
@@ -53,7 +54,9 @@ router.post("/owns", protectedMiddleware, async (req, res) => {
 // Get a list of apps
 router.get("/list", async (req, res) => {
     // Get a list of apps
-    const existingApps = await App.find({ relations: ["dev", "dev.user"] });
+    const existingApps = await cacheData(`apps`, async () => {
+        return await App.find({ relations: ["dev", "dev.user"] });
+    });
 
     // Filter the data out of the apps
     const apps = existingApps.map((app) => {
@@ -76,9 +79,11 @@ router.get("/details/:appname", async (req, res) => {
     const appName = req.params.appname;
 
     // Find the app with the specified app name
-    const existingApp = await App.findOne({
-        where: { name: appName },
-        relations: ["dev", "dev.user"],
+    const existingApp = await cacheData(`apps:${appName}`, async () => {
+        return await App.findOne({
+            where: { name: appName },
+            relations: ["dev", "dev.user"],
+        });
     });
     if (typeof existingApp === "undefined")
         return res.status(400).send("Invalid app name");
