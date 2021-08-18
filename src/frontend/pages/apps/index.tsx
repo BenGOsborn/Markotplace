@@ -17,7 +17,7 @@ const Apps: NextPage<Props> = ({ apps }) => {
     return (
         <div className={styles.apps}>
             {apps.length > 0 ? (
-                <>
+                <div className={styles.grid}>
                     {apps.map((app, index) => {
                         return (
                             <Card
@@ -29,7 +29,7 @@ const Apps: NextPage<Props> = ({ apps }) => {
                             />
                         );
                     })}
-                </>
+                </div>
             ) : (
                 <h3>No apps to display</h3>
             )}
