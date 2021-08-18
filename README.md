@@ -22,6 +22,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe I should also cache some of the dev info ?
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache)
 -   Try and looking at all .find instances and try and cache some of them
+-   Make all pages fixed to a minimum height for the footer to work ?
 
 ## Better load balancer
 
