@@ -2,4 +2,18 @@
 
 .settings {
     @include form;
+
+    .extra {
+        margin: 20px 0;
+        background-color: $veryLight;
+        border-radius: 5px;
+        cursor: pointer;
+        padding: 12.5px;
+        transition: all 0.2s ease 0s;
+        text-transform: uppercase;
+        font-weight: bold;
+        &:hover {
+            background-color: $veryLightHighlight;
+        }
+    }
 }

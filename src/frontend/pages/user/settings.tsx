@@ -20,6 +20,7 @@ const Settings: NextPage<Props> = ({ username, email }) => {
 
     return (
         <div className={styles.settings}>
+            <h1>Update your settings</h1>
             <form
                 onSubmit={(e) => {
                     // Prevent the page from refreshing
@@ -74,11 +75,13 @@ const Settings: NextPage<Props> = ({ username, email }) => {
                     onChange={(e) => setNewPassword(e.target.value)}
                 />
                 <input type="submit" value="Update" />
+
+                <StatusMessage status={status} />
+
+                <Link href="/user/dev/dashboard">
+                    <span className={styles.extra}>Dev dashboard</span>
+                </Link>
             </form>
-
-            <StatusMessage status={status} />
-
-            <Link href="/user/dev/dashboard">Dev dashboard</Link>
         </div>
     );
 };
