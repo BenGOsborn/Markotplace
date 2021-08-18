@@ -1,17 +1,18 @@
 @import "variables";
 
 .card {
-    padding: 20px;
+    margin: 0 auto;
+    padding: 10px 20px;
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     width: 400px;
     transition: all 0.2s ease 0s;
+    text-align: center;
     &:hover {
-        padding: 25px;
+        padding: 10px 35px 15px 35px;
     }
 
     h1 {
-        text-align: center;
         font-size: 25px;
         cursor: pointer;
         color: $primaryHighlight;

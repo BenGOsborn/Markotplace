@@ -1,6 +1,7 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import Card from "../../components/card";
+import styles from "../../styles/Library.module.scss";
 
 interface Props {
     apps: { name: string; title: string; description: string }[];
@@ -8,9 +9,9 @@ interface Props {
 
 const Library: NextPage<Props> = ({ apps }) => {
     return (
-        <>
+        <div className={styles.library}>
             {apps.length > 0 ? (
-                <div>
+                <>
                     {apps.map((app, index) => {
                         return (
                             <Card
@@ -21,11 +22,11 @@ const Library: NextPage<Props> = ({ apps }) => {
                             />
                         );
                     })}
-                </div>
+                </>
             ) : (
                 <h3>No apps to display</h3>
             )}
-        </>
+        </div>
     );
 };
 
