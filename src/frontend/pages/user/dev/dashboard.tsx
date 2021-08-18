@@ -40,6 +40,10 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                     </a>
                 </Link>
             </nav>
+            <div className={styles.description}>
+                <h1>Your apps</h1>
+                <h2>Select an app to edit it</h2>
+            </div>
             {apps.length > 0 ? (
                 <div className={styles.grid}>
                     {apps.map((app, index) => {

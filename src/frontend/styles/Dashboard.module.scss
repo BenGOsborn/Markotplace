@@ -6,6 +6,19 @@
         @include grid;
     }
 
+    .description {
+        margin: 60px 0 0 0;
+        text-align: center;
+
+        h1 {
+            color: $primaryHighlight;
+        }
+
+        h2 {
+            color: $primary;
+        }
+    }
+
     nav {
         display: flex;
         justify-content: space-between;
@@ -19,12 +32,21 @@
         a {
             padding: 20px;
             font-size: 20px;
+            color: $light;
+            transition: all 0.2s ease 0s;
+            &:hover {
+                color: $lightHighlight;
+            }
 
             span {
                 background-color: $accent;
                 padding: 10px 20px;
                 border-radius: 10px;
                 color: $backgroundColor;
+                transition: all 0.2s ease 0s;
+                &:hover {
+                    background-color: $accentHighlight;
+                }
             }
         }
     }
