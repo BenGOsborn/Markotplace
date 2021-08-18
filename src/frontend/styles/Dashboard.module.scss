@@ -1,0 +1,31 @@
+@import "grid";
+@import "variables";
+
+.dashboard {
+    .grid {
+        @include grid;
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 60%;
+        margin: 20px auto;
+        padding: 20px 20px 5px 20px;
+        border-bottom: 2px solid $veryLightHighlight;
+        font-weight: 600;
+
+        a {
+            padding: 20px;
+            font-size: 20px;
+
+            span {
+                background-color: $accent;
+                padding: 10px 20px;
+                border-radius: 10px;
+                color: $backgroundColor;
+            }
+        }
+    }
+}

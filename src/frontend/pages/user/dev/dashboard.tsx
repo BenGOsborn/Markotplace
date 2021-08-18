@@ -1,6 +1,8 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
+import Card from "../../../components/card";
+import styles from "../../../styles/Dashboard.module.scss";
 
 interface Props {
     apps: {
@@ -19,39 +21,42 @@ interface Props {
 
 const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
     return (
-        <>
-            {onboarded ? (
-                <a href={url}>View your Stripe dashboard</a>
-            ) : (
-                <a href={url}>
-                    Connect with Stripe to start receiving monetizing your apps
-                </a>
-            )}
-            <Link href="/user/dev/authorize-github">
-                Reconnect GitHub account
-            </Link>
-            <Link href="/user/dev/apps/create">Create new app</Link>
+        <div className={styles.dashboard}>
+            <nav>
+                {onboarded ? (
+                    <a href={url}>View your Stripe dashboard</a>
+                ) : (
+                    <a href={url}>
+                        Connect with Stripe to start receiving monetizing your
+                        apps
+                    </a>
+                )}
+                <Link href="/user/dev/authorize-github">
+                    Reconnect GitHub account
+                </Link>
+                <Link href="/user/dev/apps/create">
+                    <a>
+                        <span>Create new app</span>
+                    </a>
+                </Link>
+            </nav>
             {apps.length > 0 ? (
-                <div>
+                <div className={styles.grid}>
                     {apps.map((app, index) => {
                         return (
-                            <div key={index}>
-                                <h3>
-                                    <Link
-                                        href={`/user/dev/apps/edit/${app.name}`}
-                                    >
-                                        {app.title}
-                                    </Link>
-                                </h3>
-                                <p>{app.description}</p>
-                            </div>
+                            <Card
+                                key={index}
+                                title={app.title}
+                                description={app.description}
+                                link={`/user/dev/apps/edit/${app.name}`}
+                            />
                         );
                     })}
                 </div>
             ) : (
                 <h3>No apps to display</h3>
             )}
-        </>
+        </div>
     );
 };
 
