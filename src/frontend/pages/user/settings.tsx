@@ -3,6 +3,7 @@ import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useState } from "react";
 import { Status, StatusMessage } from "../../utils/status";
+import styles from "../../styles/Settings.module.scss";
 
 interface Props {
     username: string;
@@ -18,7 +19,7 @@ const Settings: NextPage<Props> = ({ username, email }) => {
     const [status, setStatus] = useState<Status | null>(null);
 
     return (
-        <>
+        <div className={styles.settings}>
             <form
                 onSubmit={(e) => {
                     // Prevent the page from refreshing
@@ -58,13 +59,13 @@ const Settings: NextPage<Props> = ({ username, email }) => {
                 <input
                     type="text"
                     placeholder="New username"
-                    value={newUsername || username}
+                    value={newUsername !== null ? newUsername : username}
                     onChange={(e) => setNewUsername(e.target.value)}
                 />
                 <input
                     type="email"
                     placeholder="New email"
-                    value={newEmail || email}
+                    value={newEmail !== null ? newEmail : email}
                     onChange={(e) => setNewEmail(e.target.value)}
                 />
                 <input
@@ -78,7 +79,7 @@ const Settings: NextPage<Props> = ({ username, email }) => {
             <StatusMessage status={status} />
 
             <Link href="/user/dev/dashboard">Dev dashboard</Link>
-        </>
+        </div>
     );
 };
 
