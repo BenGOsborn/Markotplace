@@ -3,6 +3,7 @@ import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import { Status, StatusMessage } from "../../../../../utils/status";
+import styles from "../../../../../styles/Edit.module.scss";
 
 interface Props {
     app: {
@@ -52,7 +53,7 @@ const Edit: NextPage<Props> = ({ app }) => {
     const router = useRouter();
 
     return (
-        <>
+        <div className={styles.edit}>
             <form
                 onSubmit={(e) => {
                     // Prevent the page from reloading
@@ -155,80 +156,88 @@ const Edit: NextPage<Props> = ({ app }) => {
                     placeholder="GitHub Repo Branch"
                     onChange={(e) => setNewGhRepoBranch(e.target.value)}
                 />
-                <ul>
-                    {(newEnv !== null ? newEnv : parseEnv(app.env)).map(
-                        (variable, index) => {
-                            return (
-                                <li key={index}>
-                                    {variable[0]}={variable[1]}
-                                    <button
-                                        onClick={(e) => {
-                                            // Prevent the page from reloading
-                                            e.preventDefault();
+                <div className={styles.env}>
+                    <h2>Edit your app</h2>
+                    <div className={styles.grid}>
+                        {(newEnv !== null ? newEnv : parseEnv(app.env)).map(
+                            (variable, index) => {
+                                return (
+                                    <>
+                                        <span>{variable[0]}</span>
+                                        <span>{variable[1]}</span>
+                                        <button
+                                            onClick={(e) => {
+                                                // Prevent the page from reloading
+                                                e.preventDefault();
 
-                                            // Remove the key
-                                            let envCopy;
-                                            if (newEnv !== null) {
-                                                envCopy = [...newEnv];
-                                            } else {
-                                                envCopy = parseEnv(app.env);
-                                            }
-                                            envCopy.splice(index, 1);
-                                            setNewEnv(envCopy);
-                                        }}
-                                    >
-                                        -
-                                    </button>
-                                </li>
-                            );
-                        }
-                    )}
-                </ul>
-                <input
-                    type="text"
-                    value={envKey}
-                    placeholder="Env key"
-                    onChange={(e) => setEnvKey(e.target.value)}
-                />
-                <input
-                    type="text"
-                    value={envValue}
-                    placeholder="Env value"
-                    onChange={(e) => setEnvValue(e.target.value)}
-                />
-                <button
-                    onClick={(e) => {
-                        // Prevent page from reloading
-                        e.preventDefault();
-
-                        // Check that both fields are not null
-                        if (envKey.length > 0) {
-                            // Check that the key does not exist
-                            const exists = (
-                                newEnv !== null ? newEnv : parseEnv(app.env)
-                            ).filter((variable) => variable[0] === envKey);
-                            if (exists.length === 0) {
-                                // Update the environment variables
-                                setNewEnv([
-                                    ...(newEnv !== null
-                                        ? newEnv
-                                        : parseEnv(app.env)),
-                                    [envKey, envValue],
-                                ]);
-
-                                // Reset the key and value
-                                setEnvKey("");
-                                setEnvValue("");
+                                                // Remove the key
+                                                let envCopy;
+                                                if (newEnv !== null) {
+                                                    envCopy = [...newEnv];
+                                                } else {
+                                                    envCopy = parseEnv(app.env);
+                                                }
+                                                envCopy.splice(index, 1);
+                                                setNewEnv(envCopy);
+                                            }}
+                                        >
+                                            Remove
+                                        </button>
+                                    </>
+                                );
                             }
-                        }
-                    }}
-                >
-                    +
-                </button>
+                        )}
+                    </div>
+                    <div className={styles.inputs}>
+                        <input
+                            type="text"
+                            value={envKey}
+                            placeholder="Env key"
+                            onChange={(e) => setEnvKey(e.target.value)}
+                        />
+                        <input
+                            type="text"
+                            value={envValue}
+                            placeholder="Env value"
+                            onChange={(e) => setEnvValue(e.target.value)}
+                        />
+                        <button
+                            onClick={(e) => {
+                                // Prevent page from reloading
+                                e.preventDefault();
+                                // Check that both fields are not null
+                                if (envKey.length > 0) {
+                                    // Check that the key does not exist
+                                    const exists = (
+                                        newEnv !== null
+                                            ? newEnv
+                                            : parseEnv(app.env)
+                                    ).filter(
+                                        (variable) => variable[0] === envKey
+                                    );
+                                    if (exists.length === 0) {
+                                        // Update the environment variables
+                                        setNewEnv([
+                                            ...(newEnv !== null
+                                                ? newEnv
+                                                : parseEnv(app.env)),
+                                            [envKey, envValue],
+                                        ]);
+                                        // Reset the key and value
+                                        setEnvKey("");
+                                        setEnvValue("");
+                                    }
+                                }
+                            }}
+                        >
+                            Add
+                        </button>
+                    </div>
+                </div>
                 <input type="submit" value="Update" />
             </form>
             <StatusMessage status={status} />
-        </>
+        </div>
     );
 };
 
