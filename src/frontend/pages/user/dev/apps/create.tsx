@@ -3,6 +3,7 @@ import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import { Status, StatusMessage } from "../../../../utils/status";
+import styles from "../../../../styles/Create.module.scss";
 
 interface Props {}
 
@@ -26,7 +27,8 @@ const Create: NextPage<Props> = () => {
     const router = useRouter();
 
     return (
-        <>
+        <div className={styles.create}>
+            <h1>Create a new app</h1>
             <form
                 onSubmit={(e) => {
                     // Prevent page from reloading
@@ -115,69 +117,72 @@ const Create: NextPage<Props> = () => {
                     placeholder="GitHub Repo Branch"
                     onChange={(e) => setGhRepoBranch(e.target.value)}
                 />
-                <ul>
-                    {env.map((variable, index) => {
-                        return (
-                            <li key={index}>
-                                {variable[0]}={variable[1]}
-                                <button
-                                    onClick={(e) => {
-                                        // Prevent the page from reloading
-                                        e.preventDefault();
-
-                                        // Remove the key
-                                        const envCopy = [...env];
-                                        envCopy.splice(index, 1);
-                                        setEnv(envCopy);
-                                    }}
-                                >
-                                    -
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
-                <input
-                    type="text"
-                    value={envKey}
-                    placeholder="Env key"
-                    onChange={(e) => setEnvKey(e.target.value)}
-                />
-                <input
-                    type="text"
-                    value={envValue}
-                    placeholder="Env value"
-                    onChange={(e) => setEnvValue(e.target.value)}
-                />
-                <button
-                    onClick={(e) => {
-                        // Prevent page from reloading
-                        e.preventDefault();
-
-                        // Check that both fields are not null
-                        if (envKey.length > 0) {
-                            // Make sure that the same key does not exist
-                            const exists = env.filter(
-                                (variable) => variable[0] === envKey
+                <div className={styles.env}>
+                    <h2>Environment Variables</h2>
+                    <div className={styles.grid}>
+                        {env.map((variable, index) => {
+                            return (
+                                <>
+                                    <span>{variable[0]}</span>
+                                    <span>{variable[1]}</span>
+                                    <button
+                                        onClick={(e) => {
+                                            // Prevent the page from reloading
+                                            e.preventDefault();
+                                            // Remove the key
+                                            const envCopy = [...env];
+                                            envCopy.splice(index, 1);
+                                            setEnv(envCopy);
+                                        }}
+                                    >
+                                        Remove
+                                    </button>
+                                </>
                             );
-                            if (exists.length === 0) {
-                                // Update the environment variables
-                                setEnv([...env, [envKey, envValue]]);
-
-                                // Reset the key and value
-                                setEnvKey("");
-                                setEnvValue("");
-                            }
-                        }
-                    }}
-                >
-                    +
-                </button>
+                        })}
+                    </div>
+                    <div className={styles.inputs}>
+                        <input
+                            type="text"
+                            value={envKey}
+                            placeholder="Env key"
+                            onChange={(e) => setEnvKey(e.target.value)}
+                        />
+                        <input
+                            type="text"
+                            value={envValue}
+                            placeholder="Env value"
+                            onChange={(e) => setEnvValue(e.target.value)}
+                        />
+                        <button
+                            onClick={(e) => {
+                                // Prevent page from reloading
+                                e.preventDefault();
+                                // Check that both fields are not null
+                                if (envKey.length > 0) {
+                                    // Make sure that the same key does not exist
+                                    const exists = env.filter(
+                                        (variable) => variable[0] === envKey
+                                    );
+                                    if (exists.length === 0) {
+                                        // Update the environment variables
+                                        setEnv([...env, [envKey, envValue]]);
+                                        // Reset the key and value
+                                        setEnvKey("");
+                                        setEnvValue("");
+                                    }
+                                }
+                            }}
+                        >
+                            Add
+                        </button>
+                    </div>
+                </div>
                 <input type="submit" value="Create" />
             </form>
 
             <StatusMessage status={status} />
-        </>
+        </div>
     );
 };
 
