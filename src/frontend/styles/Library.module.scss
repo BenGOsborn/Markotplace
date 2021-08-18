@@ -8,6 +8,22 @@
         @include grid;
     }
 
+    .description {
+        width: 30%;
+        margin: 100px auto 50px auto;
+        text-align: center;
+
+        h1 {
+            color: $primaryHighlight;
+        }
+
+        h2 {
+            color: $primary;
+        }
+
+        border-bottom: 2px solid $veryLight;
+    }
+
     h3 {
         margin: 200px 0;
         text-align: center;

@@ -11,6 +11,10 @@ interface Props {
 const Library: NextPage<Props> = ({ apps }) => {
     return (
         <div className={styles.library}>
+            <div className={styles.description}>
+                <h1>Your owned apps</h1>
+                <h2>Select an app to play it now!</h2>
+            </div>
             {apps.length > 0 ? (
                 <div className={styles.grid}>
                     {apps.map((app, index) => {

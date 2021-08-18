@@ -16,6 +16,12 @@ interface Props {
 const Apps: NextPage<Props> = ({ apps }) => {
     return (
         <div className={styles.apps}>
+            <div className={styles.description}>
+                <h1>Welcome to the App markets</h1>
+                <h2>
+                    All of these apps are ready for you to play when you are!
+                </h2>
+            </div>
             {apps.length > 0 ? (
                 <div className={styles.grid}>
                     {apps.map((app, index) => {
