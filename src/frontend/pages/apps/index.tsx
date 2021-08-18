@@ -1,6 +1,6 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
-import Link from "next/link";
+import Card from "../../components/card";
 
 interface Props {
     apps: {
@@ -19,15 +19,13 @@ const Apps: NextPage<Props> = ({ apps }) => {
                 <div>
                     {apps.map((app, index) => {
                         return (
-                            <div key={index}>
-                                <h3>
-                                    <Link href={`/apps/${app.name}`}>
-                                        {app.title}
-                                    </Link>
-                                </h3>
-                                <h4>{app.author}</h4>
-                                <p>{app.description}</p>
-                            </div>
+                            <Card
+                                key={index}
+                                title={app.title}
+                                author={app.author}
+                                description={app.description}
+                                link={`/apps/${app.name}`}
+                            />
                         );
                     })}
                 </div>

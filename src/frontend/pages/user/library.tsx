@@ -1,5 +1,6 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import Card from "../../components/card";
 
 interface Props {
     apps: { name: string; title: string; description: string }[];
@@ -12,17 +13,12 @@ const Library: NextPage<Props> = ({ apps }) => {
                 <div>
                     {apps.map((app, index) => {
                         return (
-                            <div key={index}>
-                                <h3>
-                                    <a
-                                        // href={`${process.env.BACKEND_URL}/apphandler?appName=${app.name}`} // **** This is the right one eventually
-                                        href={`${process.env.BACKEND_URL}/apphandler/${app.name}`} // THE PORT COULD BREAK WHEN RESTARTED
-                                    >
-                                        {app.title}
-                                    </a>
-                                </h3>
-                                <p>{app.description}</p>
-                            </div>
+                            <Card
+                                key={index}
+                                title={app.title}
+                                description={app.description}
+                                link={`${process.env.BACKEND_URL}/apphandler/${app.name}`}
+                            />
                         );
                     })}
                 </div>

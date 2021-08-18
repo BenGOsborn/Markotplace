@@ -2,6 +2,7 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import { authenticatedCtx } from "../utils/context";
 import Nav from "./nav";
+import Footer from "./footer";
 
 const Layout: FC<{}> = ({ children }) => {
     // Initialize the contexts
@@ -27,6 +28,7 @@ const Layout: FC<{}> = ({ children }) => {
             >
                 <Nav />
                 <main>{children}</main>
+                <Footer />
             </authenticatedCtx.Provider>
         </>
     );
