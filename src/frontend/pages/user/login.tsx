@@ -76,11 +76,12 @@ const Login: NextPage<Props> = () => {
                 />
                 <input type="submit" value="Login" />
             </form>
-            <StatusMessage status={status} />
 
             <span className={styles.extra}>
                 <Link href="/user/register">{"Don't have an account?"}</Link>
             </span>
+
+            <StatusMessage status={status} />
         </div>
     );
 };

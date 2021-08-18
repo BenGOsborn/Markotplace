@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { Status, StatusMessage } from "../../utils/status";
 import { authenticatedCtx } from "../../utils/context";
 import Link from "next/link";
+import styles from "../../styles/Register.module.scss";
 
 interface Props {}
 
@@ -23,8 +24,8 @@ const Register: NextPage<Props> = () => {
     const router = useRouter();
 
     return (
-        <>
-            <h1>Register</h1>
+        <div className={styles.register}>
+            <h1>Register a new account</h1>
             <form
                 onSubmit={(e) => {
                     // Prevent the page from refreshing
@@ -81,12 +82,13 @@ const Register: NextPage<Props> = () => {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <input type="submit" value="Register" />
-
-                <StatusMessage status={status} />
-
-                <Link href="/user/login">{"Already have an account?"}</Link>
             </form>
-        </>
+            <span className={styles.extra}>
+                <Link href="/user/login">{"Already have an account?"}</Link>
+            </span>
+
+            <StatusMessage status={status} />
+        </div>
     );
 };
 
