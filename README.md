@@ -23,6 +23,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 -   Try and looking at all .find instances and try and cache some of them
 -   Make all pages fixed to a minimum height for the footer to work ?
+-   Add a proper CI/CD system using GitHub actions
 
 ## Better load balancer
 
