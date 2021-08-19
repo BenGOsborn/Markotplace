@@ -68,13 +68,14 @@ router.post("/authorize/github", async (req, res) => {
         ).id;
 
         // Make a new dev account for the user
-        const dev = Dev.create({
+        // **** BROKEN !!!!!
+        user.dev = Dev.create({
             ghAccessToken: accessToken,
             ghUsername: username,
             stripeConnectID,
             user,
         });
-        await dev.save();
+        await user.dev.save();
     } else {
         // Update the users existing dev account
         user.dev.ghAccessToken = accessToken;
