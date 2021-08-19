@@ -23,7 +23,7 @@ export class Dev extends BaseEntity {
     @Column({ unique: true })
     stripeConnectID!: string;
 
-    @OneToOne(() => User, (user) => user.dev, { cascade: true })
+    @OneToOne(() => User, (user) => user.dev)
     user!: User;
 
     @OneToMany(() => App, (app) => app.dev)
