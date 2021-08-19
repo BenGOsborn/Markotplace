@@ -26,10 +26,7 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                 {onboarded ? (
                     <a href={url}>View your Stripe dashboard</a>
                 ) : (
-                    <a href={url}>
-                        Connect with Stripe to start receiving monetizing your
-                        apps
-                    </a>
+                    <a href={url}>Connect with Stripe to monetize your apps</a>
                 )}
                 <Link href="/user/dev/authorize-github">
                     Reconnect GitHub account
