@@ -2,6 +2,7 @@ import axios from "axios";
 import express from "express";
 import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
+import { clearCache } from "../utils/cache";
 import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
 
@@ -20,8 +21,6 @@ router.post("/authorize/github", async (req, res) => {
     // Get the user data from the request
     // @ts-ignore
     const { user }: { user: User } = req.locals;
-
-    console.log(user);
 
     // Extract the code from the body and check it exists
     const { code } = req.body;
@@ -73,16 +72,20 @@ router.post("/authorize/github", async (req, res) => {
             ghAccessToken: accessToken,
             ghUsername: username,
             stripeConnectID,
+            user,
         });
         await dev.save();
-        user.dev = dev;
-        await user.save();
+        // user.dev = dev;
+        // await user.save();
     } else {
         // Update the users existing dev account
         user.dev.ghAccessToken = accessToken;
         user.dev.ghUsername = username;
         await user.dev.save();
     }
+
+    // Clear the cache
+    clearCache(`user:${user.id}`);
 
     // Return success
     res.sendStatus(200);
