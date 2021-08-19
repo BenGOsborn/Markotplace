@@ -9,11 +9,11 @@ const Home = () => {
                     Deploy. <span>Monetize</span>. Fast. For free.
                 </h1>
                 <h2>
-                    Deploy and monetize your web app in{" "}
-                    <span>under three minutes</span>, all for free.
+                    Deploy and monetize your web app in under three minutes, all
+                    for free.
                 </h2>
                 <div className={styles.buttons}>
-                    <Link href="/user/settings">Get Started</Link>
+                    <Link href="/user/dev/dashboard">Get Started</Link>
                     <Link href="/apps">Find Apps</Link>
                 </div>
             </header>

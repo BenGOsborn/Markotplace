@@ -2,7 +2,7 @@
 
 .home {
     margin: 0 auto;
-    width: 80%;
+    width: 60%;
 
     header {
         text-align: center;
@@ -23,13 +23,27 @@
             margin: 0;
             font-size: 30px;
             color: $lightHighlight;
-
-            span {
-                color: $primary;
-            }
         }
 
         .buttons {
+            width: 80%;
+            display: flex;
+            margin: 50px auto;
+            justify-content: space-evenly;
+
+            a {
+                background-color: blue;
+                padding: 15px 25px;
+                font-size: 20px;
+                border-radius: 5px;
+                font-weight: 600;
+                color: $backgroundColor;
+                background-color: $accent;
+                transition: all 0.2s ease 0s;
+                &:hover {
+                    background-color: $accentHighlight;
+                }
+            }
         }
     }
 }
