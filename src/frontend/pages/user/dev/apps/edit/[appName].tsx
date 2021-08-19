@@ -54,6 +54,7 @@ const Edit: NextPage<Props> = ({ app }) => {
 
     return (
         <div className={styles.edit}>
+            <h1>Edit your app</h1>
             <form
                 onSubmit={(e) => {
                     // Prevent the page from reloading
@@ -117,13 +118,17 @@ const Edit: NextPage<Props> = ({ app }) => {
                 <input
                     type="text"
                     required={true}
-                    value={newTitle || app.title}
+                    value={newTitle !== null ? newTitle : app.title}
                     placeholder="Title"
                     onChange={(e) => setNewTitle(e.target.value)}
                 />
                 <textarea
                     required={true}
-                    value={newDescription || app.description}
+                    value={
+                        newDescription !== null
+                            ? newDescription
+                            : app.description
+                    }
                     placeholder="Description"
                     onChange={(e) => setNewDescription(e.target.value)}
                 />
@@ -131,33 +136,47 @@ const Edit: NextPage<Props> = ({ app }) => {
                     type="number"
                     step={0.01}
                     required={true}
-                    value={newPrice || (app.price / 100).toFixed(2)}
+                    value={
+                        newPrice !== null
+                            ? newPrice
+                            : (app.price / 100).toFixed(2)
+                    }
                     placeholder="Price"
                     onChange={(e) => setNewPrice(e.target.valueAsNumber)}
                 />
                 <input
                     type="text"
                     required={true}
-                    value={newGhRepoOwner || app.ghRepoOwner}
+                    value={
+                        newGhRepoOwner !== null
+                            ? newGhRepoOwner
+                            : app.ghRepoOwner
+                    }
                     placeholder="GitHub Repo Owner"
                     onChange={(e) => setNewGhRepoOwner(e.target.value)}
                 />
                 <input
                     type="text"
                     required={true}
-                    value={newGhRepoName || app.ghRepoName}
+                    value={
+                        newGhRepoName !== null ? newGhRepoName : app.ghRepoName
+                    }
                     placeholder="GitHub Repo Name"
                     onChange={(e) => setNewGhRepoName(e.target.value)}
                 />
                 <input
                     type="text"
                     required={true}
-                    value={newGhRepoBranch || app.ghRepoBranch}
+                    value={
+                        newGhRepoBranch !== null
+                            ? newGhRepoBranch
+                            : app.ghRepoBranch
+                    }
                     placeholder="GitHub Repo Branch"
                     onChange={(e) => setNewGhRepoBranch(e.target.value)}
                 />
                 <div className={styles.env}>
-                    <h2>Edit your app</h2>
+                    <h2>Environment Variables</h2>
                     <div className={styles.grid}>
                         {(newEnv !== null ? newEnv : parseEnv(app.env)).map(
                             (variable, index) => {
