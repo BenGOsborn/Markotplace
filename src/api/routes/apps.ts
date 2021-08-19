@@ -3,7 +3,7 @@ import express from "express";
 import { App } from "../entities/app";
 import { Dev } from "../entities/dev";
 import { User } from "../entities/user";
-import { cacheData } from "../utils/cache";
+import { cacheData, clearCache } from "../utils/cache";
 import { createAppSchema, editAppSchema } from "../utils/joiSchema";
 import { devMiddleware, protectedMiddleware } from "../utils/middleware";
 import { stripe } from "../utils/stripe";
@@ -267,6 +267,9 @@ router.post(
         user.apps = [...user.apps, app];
         await user.save();
 
+        // Clear the cached user
+        await clearCache(`user:${user.id}`);
+
         // Add an app
         res.sendStatus(200);
     }
@@ -410,6 +413,9 @@ router.patch(
 
         // Update the app
         await existingApp.save();
+
+        // Clear the cached user
+        await clearCache(`user:${user.id}`);
 
         // Edit an app
         res.sendStatus(200);

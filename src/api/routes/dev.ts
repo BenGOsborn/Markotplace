@@ -67,7 +67,6 @@ router.post("/authorize/github", async (req, res) => {
         ).id;
 
         // Make a new dev account for the user
-        // **** BROKEN !!!!!
         const dev = Dev.create({
             ghAccessToken: accessToken,
             ghUsername: username,
@@ -75,8 +74,6 @@ router.post("/authorize/github", async (req, res) => {
             user,
         });
         await dev.save();
-        // user.dev = dev;
-        // await user.save();
     } else {
         // Update the users existing dev account
         user.dev.ghAccessToken = accessToken;
@@ -85,7 +82,7 @@ router.post("/authorize/github", async (req, res) => {
     }
 
     // Clear the cache
-    clearCache(`user:${user.id}`);
+    await clearCache(`user:${user.id}`);
 
     // Return success
     res.sendStatus(200);
