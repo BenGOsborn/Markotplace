@@ -17,7 +17,7 @@ export class Dev extends BaseEntity {
     @Column({ unique: true })
     ghAccessToken!: string;
 
-    @Column({ unique: true })
+    @Column()
     ghUsername!: string;
 
     @Column({ unique: true })
