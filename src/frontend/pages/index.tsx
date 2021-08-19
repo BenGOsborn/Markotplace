@@ -17,6 +17,31 @@ const Home = () => {
                     <Link href="/apps">Find Apps</Link>
                 </div>
             </header>
+            <div id="developers" className={styles.content}>
+                <h1>For developers, by developers</h1>
+                <div className={styles.blocks}>
+                    <div className={styles.block}>
+                        <p>
+                            Lorem ipsum <a>dolor sit</a> amet consectetur
+                            adipisicing elit. Dignissimos quo voluptatibus
+                            quidem id dolore. Facilis, quis. Doloribus cumque
+                            labore est voluptatibus <a>reprehenderit</a>{" "}
+                            voluptas unde corrupti atque harum,{" "}
+                            <a>voluptatem</a> amet similique.
+                        </p>
+                    </div>
+                    <div className={styles.block}>
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur adipisicing
+                            elit. <a>Dignissimos</a> quo voluptatibus quidem id
+                            dolore. Facilis, quis. Doloribus cumque labore est
+                            <a>voluptatibus</a> reprehenderit voluptas unde
+                            corrupti atque harum, voluptatem <a>amet</a>{" "}
+                            similique.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
