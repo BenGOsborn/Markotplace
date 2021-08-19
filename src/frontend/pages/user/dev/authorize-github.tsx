@@ -15,6 +15,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     // Get the code from the query
     const { code } = query;
 
+    // ******************** There is a problem with the following code ?
+
     // If there is no code in the URL query redirect the user to login with their account, otherwise update their account
     if (typeof code === "undefined") {
         try {
