@@ -21,6 +21,8 @@ router.post("/authorize/github", async (req, res) => {
     // @ts-ignore
     const { user }: { user: User } = req.locals;
 
+    console.log(user);
+
     // Extract the code from the body and check it exists
     const { code } = req.body;
     if (typeof code === "undefined")
