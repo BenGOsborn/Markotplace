@@ -33,4 +33,18 @@
             }
         }
     }
+
+    @media screen and (max-width: 1000px) {
+        text-align: center;
+        flex-direction: column;
+
+        ul {
+            padding: 0;
+            flex-direction: column;
+
+            li {
+                padding: 10px 0;
+            }
+        }
+    }
 }
