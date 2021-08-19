@@ -66,8 +66,6 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     try {
-        console.log(req.headers.cookie);
-
         // Fetch a list of the devs apps
         const {
             data: { apps },
@@ -92,7 +90,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         // Redirect to the settings page
         return {
             redirect: {
-                destination: "/user/settings",
+                destination: "/user/dev/authorize-github",
                 permanent: false,
             },
         };

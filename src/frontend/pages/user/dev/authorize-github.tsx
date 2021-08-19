@@ -15,12 +15,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     // Get the code from the query
     const { code } = query;
 
-    // ******************** There is a problem with the following code ?
-    // ******************** Also what happens if I use multiple of my accounts for one GitHub account - does it still work ?
-    // ******************** Could also be a problem in dashboard ?
-
-    // ******************** Maybe some option in the future for checking if a user is already a dev ?
-
     // If there is no code in the URL query redirect the user to login with their account, otherwise update their account
     if (typeof code === "undefined") {
         try {
