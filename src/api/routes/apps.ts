@@ -440,6 +440,7 @@ router.post("/hook", async (req, res) => {
     // Find the app with the hookID and check that it matches the branch
     const existingApp = await App.findOne({
         where: { ghRepoBranch: branch, ghWebhookID: hookID },
+        relations: ["dev", "dev.user"],
     });
     if (typeof existingApp === "undefined") {
         return res.status(400).send("Invalid webhook ID or branch");
@@ -447,6 +448,9 @@ router.post("/hook", async (req, res) => {
         // Update the version of the app
         existingApp.version += 1;
         await existingApp.save();
+
+        // Clear the cache for the user
+        await clearCache(`user:${existingApp.dev.user.id}`);
     }
 
     // Return succes
