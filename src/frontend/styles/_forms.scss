@@ -146,6 +146,8 @@
     }
 
     @media screen and (max-width: $smallScreen) {
-        min-width: none;
+        min-width: auto;
+        width: 80%;
+        box-shadow: none;
     }
 }
