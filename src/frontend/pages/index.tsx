@@ -6,11 +6,11 @@ const Home = () => {
         <div className={styles.home}>
             <header>
                 <h1>
-                    Deploy. <span>Monetize</span>. Fast. For free.
+                    Deploy. <span>Monetize</span>. Fast. Free.
                 </h1>
                 <h2>
-                    Deploy and monetize your web app in under three minutes, all
-                    for free.
+                    Deploy and monetize your web app in under three minutes,
+                    free forever.
                 </h2>
                 <div className={styles.buttons}>
                     <Link href="/user/dev/dashboard">Get Started</Link>

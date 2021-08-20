@@ -33,7 +33,7 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                 </Link>
                 <Link href="/user/dev/apps/create">
                     <a>
-                        <span>Create new app</span>
+                        <span>New app</span>
                     </a>
                 </Link>
             </nav>
