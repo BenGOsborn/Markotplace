@@ -7,15 +7,20 @@
     margin: 250px 0;
     text-align: center;
 
-    .links {
-        margin: 0 auto;
+    .rows {
         display: flex;
-        justify-content: space-evenly;
-        width: 80%;
-        color: $primary;
-        transition: all 0.2s ease 0s;
-        &:hover {
-            color: $primaryHighlight;
+        flex-direction: column;
+
+        .links {
+            margin: 10px auto;
+            display: flex;
+            justify-content: space-evenly;
+            width: 70%;
+            color: $primary;
+            transition: all 0.2s ease 0s;
+            &:hover {
+                color: $primaryHighlight;
+            }
         }
     }
 }
