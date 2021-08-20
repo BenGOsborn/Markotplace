@@ -23,4 +23,17 @@
             }
         }
     }
+
+    @media screen and (max-width: $smallScreen) {
+        .rows {
+            .links {
+                margin: 0 auto;
+                flex-direction: column;
+
+                & > * {
+                    margin: 10px auto;
+                }
+            }
+        }
+    }
 }
