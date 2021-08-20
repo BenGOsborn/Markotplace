@@ -144,4 +144,8 @@
             }
         }
     }
+
+    @media screen and (max-width: $smallScreen) {
+        min-width: none;
+    }
 }
