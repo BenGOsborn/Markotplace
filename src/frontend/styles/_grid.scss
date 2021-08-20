@@ -1,3 +1,5 @@
+@import "variables";
+
 @mixin grid {
     padding: 40px 20px;
     margin: 25px auto;
@@ -5,4 +7,8 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-row-gap: 5em;
+
+    @media screen and (max-width: $smallScreen) {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
