@@ -78,4 +78,30 @@
             font-weight: 600;
         }
     }
+
+    @media screen and (max-width: $smallScreen) {
+        text-align: center;
+        width: 90%;
+
+        header {
+            width: 100%;
+
+            .buttons {
+                flex-direction: column;
+
+                a {
+                    margin: 20px auto;
+                    width: 60%;
+                }
+            }
+        }
+
+        .content {
+            width: 90%;
+
+            .blocks {
+                flex-direction: column;
+            }
+        }
+    }
 }
