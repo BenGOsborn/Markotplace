@@ -25,9 +25,10 @@
     }
 
     h3 {
-        margin: 200px 0;
+        margin: 200px auto;
         text-align: center;
         font-size: 20px;
+        color: $primary;
     }
 
     @media screen and (max-width: $smallScreen) {
@@ -41,7 +42,7 @@
         }
 
         h3 {
-            margin: 125px 0;
+            margin: 125px auto;
         }
     }
 }
