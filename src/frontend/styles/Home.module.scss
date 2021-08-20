@@ -82,6 +82,7 @@
     @media screen and (max-width: $smallScreen) {
         text-align: center;
         width: 90%;
+        max-width: 600px;
 
         h1 {
             word-wrap: break-word;
