@@ -1,12 +1,13 @@
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
-import { authenticatedCtx } from "../utils/context";
+import { authenticatedCtx, marketAppsCtx, MarketApp } from "../utils/context";
 import Nav from "./nav";
 import Footer from "./footer";
 
 const Layout: FC<{}> = ({ children }) => {
     // Initialize the contexts
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [marketApps, setMarketApps] = useState<MarketApp[] | null>(null);
 
     useEffect(() => {
         // Check if the user is authenticated then update the context
@@ -23,13 +24,15 @@ const Layout: FC<{}> = ({ children }) => {
 
     return (
         <>
-            <authenticatedCtx.Provider
-                value={[isAuthenticated, setIsAuthenticated]}
-            >
-                <Nav />
-                <main>{children}</main>
-                <Footer />
-            </authenticatedCtx.Provider>
+            <marketAppsCtx.Provider value={[marketApps, setMarketApps]}>
+                <authenticatedCtx.Provider
+                    value={[isAuthenticated, setIsAuthenticated]}
+                >
+                    <Nav />
+                    <main>{children}</main>
+                    <Footer />
+                </authenticatedCtx.Provider>
+            </marketAppsCtx.Provider>
         </>
     );
 };
