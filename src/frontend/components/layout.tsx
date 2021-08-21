@@ -7,7 +7,7 @@ import Footer from "./footer";
 const Layout: FC<{}> = ({ children }) => {
     // Initialize the contexts
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [marketApps, setMarketApps] = useState<MarketApp[] | null>(null);
+    const [marketApps, setMarketApps] = useState<MarketApp[] | null>(null); // Now use this context across the app AND use it to create cards under each market app
 
     useEffect(() => {
         // Check if the user is authenticated then update the context
