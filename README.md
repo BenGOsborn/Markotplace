@@ -23,6 +23,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Try and looking at all .find instances and try and cache some of them
 -   Add a proper CI/CD system using GitHub actions
 -   Add CSS to the app display page
+-   Make test apps and test the LOADING AS WELL AS THE CARDS / CARD SELECTOR
 
 ## Better load balancer
 
