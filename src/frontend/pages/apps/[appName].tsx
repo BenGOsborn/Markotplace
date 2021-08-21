@@ -44,6 +44,8 @@ const App: NextPage<Props> = ({ app }) => {
     const [status, setStatus] = useState<Status | null>(null);
     const [displayApps, setDisplayApps] = useState<MarketApp[]>([]);
 
+    console.log(app);
+
     // Get the market apps or load them
     useEffect(() => {
         if (marketApps === null) {
@@ -115,24 +117,20 @@ const App: NextPage<Props> = ({ app }) => {
                     {app.price == 0 ? "Add To Library" : "Purchase Now"}
                 </a>
             </div>
-
             <StatusMessage status={status} />
-
             {displayApps.length > 0 ? (
-                <div className={styles.wrapper}>
-                    <div className={styles.extras}>
-                        {displayApps.map((dApp, index) => {
-                            return (
-                                <Card
-                                    key={index}
-                                    title={dApp.title}
-                                    link={`/apps/${dApp.name}`}
-                                    description={dApp.description}
-                                    author={dApp.author}
-                                />
-                            );
-                        })}
-                    </div>
+                <div className={styles.extras}>
+                    {displayApps.map((dApp, index) => {
+                        return (
+                            <Card
+                                key={index}
+                                title={dApp.title}
+                                link={`/apps/${dApp.name}`}
+                                description={dApp.description}
+                                author={dApp.author}
+                            />
+                        );
+                    })}
                 </div>
             ) : null}
         </div>
@@ -150,6 +148,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         } = await axios.get<Props>(
             `${process.env.BACKEND_URL}/api/apps/details/${appName}`
         );
+
         return { props: { app } as Props };
     } catch {
         return { notFound: true };

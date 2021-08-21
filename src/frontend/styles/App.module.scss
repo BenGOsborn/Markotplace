@@ -10,6 +10,7 @@
             margin: 10px auto;
             color: $primaryHighlight;
             font-size: 60px;
+            word-wrap: break-word;
         }
 
         h3 {
@@ -21,18 +22,56 @@
         p {
             color: $primary;
             font-size: 25px;
+            white-space: pre-wrap;
         }
     }
 
     .pricing {
-        background-color: blue;
+        padding: 20px;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        margin: 40px auto;
+        width: 50%;
+        font-size: 25px;
+        font-weight: 600;
+        white-space: nowrap;
+
+        p {
+            color: $dark;
+        }
+
+        a {
+            white-space: nowrap;
+            background-color: $accent;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: $backgroundColor;
+            transition: all 0.2s ease 0s;
+            &:hover {
+                background-color: $accentHighlight;
+            }
+        }
     }
 
-    .wrapper {
+    .extras {
+        width: 100%;
+        padding: 80px 0 0 0;
         border-top: 2px solid $veryLight;
-        margin: 80px auto;
-        .extras {
-            margin: 60px auto;
+        margin: 60px auto;
+    }
+
+    @media screen and (max-width: $smallScreen) {
+        width: 80%;
+
+        .content {
+            h1 {
+                font-size: 50px;
+            }
+        }
+
+        .pricing {
+            flex-direction: column;
         }
     }
 }
