@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import Card from "../../components/card";
 import { MarketApp, marketAppsCtx } from "../../utils/context";
 import { Status, StatusMessage } from "../../utils/status";
+import styles from "../../styles/App.module.scss";
 
 interface Props {
     app: {
@@ -47,10 +48,12 @@ const App: NextPage<Props> = ({ app }) => {
     useEffect(() => {
         if (marketApps === null) {
             axios
-                .get<MarketApp[]>(`${process.env.BACKEND_URL}/api/apps/list`)
+                .get<{ apps: MarketApp[] }>(
+                    `${process.env.BACKEND_URL}/api/apps/list`
+                )
                 .then((res) => {
                     // Cache the apps
-                    const apps = res.data;
+                    const apps = res.data.apps;
 
                     // Store the market apps in the state
                     setMarketApps(apps);
@@ -71,58 +74,65 @@ const App: NextPage<Props> = ({ app }) => {
     const router = useRouter();
 
     return (
-        <div>
-            <h1>{app.title}</h1>
-            <h3>{app.author}</h3>
-            <p>{app.description}</p>
-            <p>${(app.price / 100).toFixed(2)}</p>
-            <a
-                href="#"
-                onClick={(e) => {
-                    // Prevent the default action
-                    e.preventDefault();
-
-                    // Get the redirect URL
-                    axios
-                        .post<{ redirectURL: string }>(
-                            `${process.env.BACKEND_URL}/api/payment/checkout`,
-                            { appName: app.name },
-                            { withCredentials: true }
-                        )
-                        .then((res) => {
-                            // Set the status
-                            setStatus({
-                                success: true,
-                                message: "Redirecting",
+        <div className={styles.app}>
+            <div className={styles.content}>
+                <h1>{app.title}</h1>
+                <h3>{app.author}</h3>
+                <p>{app.description}</p>
+            </div>
+            <div className={styles.pricing}>
+                <p>${(app.price / 100).toFixed(2)}</p>
+                <a
+                    href="#"
+                    onClick={(e) => {
+                        // Prevent the default action
+                        e.preventDefault();
+                        // Get the redirect URL
+                        axios
+                            .post<{ redirectURL: string }>(
+                                `${process.env.BACKEND_URL}/api/payment/checkout`,
+                                { appName: app.name },
+                                { withCredentials: true }
+                            )
+                            .then((res) => {
+                                // Set the status
+                                setStatus({
+                                    success: true,
+                                    message: "Redirecting",
+                                });
+                                // Redirect to the URL
+                                router.push(res.data.redirectURL);
+                            })
+                            .catch((err) => {
+                                // Set the status
+                                setStatus({
+                                    success: false,
+                                    message: err.response?.data,
+                                });
                             });
-
-                            // Redirect to the URL
-                            router.push(res.data.redirectURL);
-                        })
-                        .catch((err) => {
-                            // Set the status
-                            setStatus({
-                                success: false,
-                                message: err.response?.data,
-                            });
-                        });
-                }}
-            >
-                {app.price == 0 ? "Add To Library" : "Purchase Now"}
-            </a>
+                    }}
+                >
+                    {app.price == 0 ? "Add To Library" : "Purchase Now"}
+                </a>
+            </div>
 
             <StatusMessage status={status} />
 
             {displayApps.length > 0 ? (
-                <div>
-                    {displayApps.map((dApp) => {
-                        <Card
-                            title={dApp.title}
-                            link={`/apps/${dApp.name}`}
-                            description={dApp.description}
-                            author={dApp.author}
-                        />;
-                    })}
+                <div className={styles.wrapper}>
+                    <div className={styles.extras}>
+                        {displayApps.map((dApp, index) => {
+                            return (
+                                <Card
+                                    key={index}
+                                    title={dApp.title}
+                                    link={`/apps/${dApp.name}`}
+                                    description={dApp.description}
+                                    author={dApp.author}
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
             ) : null}
         </div>
