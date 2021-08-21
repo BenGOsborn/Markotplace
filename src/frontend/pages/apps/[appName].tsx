@@ -1,7 +1,8 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/dist/client/router";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { MarketApp, marketAppsCtx } from "../../utils/context";
 import { Status, StatusMessage } from "../../utils/status";
 
 interface Props {
@@ -15,8 +16,50 @@ interface Props {
 }
 
 const App: NextPage<Props> = ({ app }) => {
-    // Store the status
+    // Get the app context
+    const [marketApps, setMarketApps] = useContext(marketAppsCtx);
+
+    // Initialize the states
     const [status, setStatus] = useState<Status | null>(null);
+    const [displayApps, setDisplayApps] = useState<MarketApp[]>([]);
+
+    // Get the market apps or load them
+    useEffect(() => {
+        if (marketApps === null) {
+            axios
+                .get<MarketApp[]>(`${process.env.BACKEND_URL}/api/apps/list`)
+                .then((res) => {
+                    // Cache the apps
+                    const apps = res.data;
+
+                    // Store the market apps in the state
+                    setMarketApps(apps);
+
+                    // Set the items to display under the apps
+                    const displayApps: MarketApp[] = [];
+
+                    let i = 0;
+                    let endLen = Math.min(apps.length, 3);
+                    while (i < endLen) {
+                        if (apps[i].name !== app.name) {
+                            displayApps.push(apps[i]);
+                        } else {
+                            if (apps.length > endLen) {
+                                endLen++;
+                            }
+                        }
+                        i++;
+                    }
+
+                    for (let i = 0; i < Math.min(apps.length); i++) {
+                        if (apps[i].name !== app.name) {
+                            displayApps.push(apps[i]);
+                        }
+                    }
+                })
+                .catch((err) => {});
+        }
+    }, []);
 
     // Used for redirects
     const router = useRouter();

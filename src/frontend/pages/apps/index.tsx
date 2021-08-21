@@ -1,7 +1,9 @@
 import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
+import { useContext, useEffect } from "react";
 import Card from "../../components/card";
 import styles from "../../styles/Apps.module.scss";
+import { marketAppsCtx } from "../../utils/context";
 
 interface Props {
     apps: {
@@ -14,6 +16,14 @@ interface Props {
 }
 
 const Apps: NextPage<Props> = ({ apps }) => {
+    // Get the app context
+    const [marketApps, setMarketApps] = useContext(marketAppsCtx);
+
+    // Set the market apps to be the loaded apps
+    useEffect(() => {
+        setMarketApps(apps);
+    }, []);
+
     return (
         <div className={styles.apps}>
             <div className={styles.description}>
