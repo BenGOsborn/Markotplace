@@ -2,6 +2,7 @@ import axios from "axios";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
+import Card from "../../components/card";
 import { MarketApp, marketAppsCtx } from "../../utils/context";
 import { Status, StatusMessage } from "../../utils/status";
 
@@ -13,6 +14,25 @@ interface Props {
         author: string;
         price: number;
     };
+}
+
+// Choose a number of apps to display on screen
+function chooseApps(apps: MarketApp[], app: MarketApp, numApps: number) {
+    const displayApps: MarketApp[] = [];
+    let i = 0;
+    let endLen = Math.min(apps.length, 3);
+    while (i < endLen) {
+        if (apps[i].name !== app.name) {
+            displayApps.push(apps[i]);
+        } else {
+            if (apps.length > endLen) {
+                endLen++;
+            }
+        }
+        i++;
+    }
+
+    return displayApps;
 }
 
 const App: NextPage<Props> = ({ app }) => {
@@ -35,23 +55,15 @@ const App: NextPage<Props> = ({ app }) => {
                     // Store the market apps in the state
                     setMarketApps(apps);
 
-                    // Set the items to display under the apps
-                    const displayApps: MarketApp[] = [];
-                    let i = 0;
-                    let endLen = Math.min(apps.length, 3);
-                    while (i < endLen) {
-                        if (apps[i].name !== app.name) {
-                            displayApps.push(apps[i]);
-                        } else {
-                            if (apps.length > endLen) {
-                                endLen++;
-                            }
-                        }
-                        i++;
-                    }
+                    // Set the items to display under the app data
+                    const displayApps = chooseApps(apps, app, 3);
                     setDisplayApps(displayApps);
                 })
                 .catch((err) => {});
+        } else {
+            // Set the items to display under the app data
+            const displayApps = chooseApps(marketApps, app, 3);
+            setDisplayApps(displayApps);
         }
     }, []);
 
@@ -59,7 +71,7 @@ const App: NextPage<Props> = ({ app }) => {
     const router = useRouter();
 
     return (
-        <>
+        <div>
             <h1>{app.title}</h1>
             <h3>{app.author}</h3>
             <p>{app.description}</p>
@@ -100,7 +112,20 @@ const App: NextPage<Props> = ({ app }) => {
             </a>
 
             <StatusMessage status={status} />
-        </>
+
+            {displayApps.length > 0 ? (
+                <div>
+                    {displayApps.map((dApp) => {
+                        <Card
+                            title={dApp.title}
+                            link={`/apps/${dApp.name}`}
+                            description={dApp.description}
+                            author={dApp.author}
+                        />;
+                    })}
+                </div>
+            ) : null}
+        </div>
     );
 };
 
