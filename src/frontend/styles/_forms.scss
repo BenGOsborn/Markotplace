@@ -94,7 +94,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             grid-row-gap: 10px;
             grid-column-gap: 15px;
             margin: 30px auto;
@@ -110,7 +110,6 @@
             }
 
             button {
-                grid-column: 1 / -1;
                 padding: 10px;
                 border: none;
                 cursor: pointer;
@@ -158,5 +157,15 @@
         min-width: auto;
         width: 80%;
         box-shadow: none;
+
+        .env {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+
+                button {
+                    grid-column: 1 / -1;
+                }
+            }
+        }
     }
 }
