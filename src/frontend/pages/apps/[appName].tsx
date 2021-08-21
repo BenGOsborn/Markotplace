@@ -37,7 +37,6 @@ const App: NextPage<Props> = ({ app }) => {
 
                     // Set the items to display under the apps
                     const displayApps: MarketApp[] = [];
-
                     let i = 0;
                     let endLen = Math.min(apps.length, 3);
                     while (i < endLen) {
@@ -50,12 +49,7 @@ const App: NextPage<Props> = ({ app }) => {
                         }
                         i++;
                     }
-
-                    for (let i = 0; i < Math.min(apps.length); i++) {
-                        if (apps[i].name !== app.name) {
-                            displayApps.push(apps[i]);
-                        }
-                    }
+                    setDisplayApps(displayApps);
                 })
                 .catch((err) => {});
         }
