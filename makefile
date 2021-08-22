@@ -1,8 +1,4 @@
-# ---------- Main ----------
-
-# Kill all Docker containers
-docker-kill:
-	docker rm -f $$(docker ps -q)
+include ./env/.env.dev
 
 # ---------- Dev ----------
 
