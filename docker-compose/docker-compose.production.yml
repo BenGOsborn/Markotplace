@@ -4,7 +4,7 @@ services:
     # --------- Backend services ---------
     api:
         build:
-            context: src/api
+            context: ../src/api
             dockerfile: build.Dockerfile
         ports:
             - "4000"
@@ -30,7 +30,7 @@ services:
             - backend
     apphandler:
         build:
-            context: src/apphandler
+            context: ../src/apphandler
             dockerfile: build.Dockerfile
         ports:
             - "5000"
@@ -49,7 +49,7 @@ services:
             - backend
     nginx_backend:
         build:
-            context: src/nginx_backend
+            context: ../src/nginx_backend
             dockerfile: build.Dockerfile
         ports:
             - "8000:80"
@@ -62,7 +62,7 @@ services:
     # --------- Frontend services ---------
     frontend:
         build:
-            context: src/frontend
+            context: ../src/frontend
             dockerfile: build.Dockerfile
         ports:
             - "3000"
@@ -76,7 +76,7 @@ services:
             - frontend
     nginx_frontend:
         build:
-            context: src/nginx_frontend
+            context: ../src/nginx_frontend
             dockerfile: build.Dockerfile
         depends_on:
             - frontend
