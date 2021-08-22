@@ -1,7 +1,3 @@
-# Declare the .env file to use
-include .env.local
-# include .env
-
 # ---------- Main ----------
 
 # Start containers in dev mode
