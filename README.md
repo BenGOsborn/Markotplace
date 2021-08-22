@@ -21,8 +21,6 @@ An online marketplace that allows developers to monetize their online web apps.
 -   One of my apps failed to start (maybe look into the updating tool ?)
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 -   Try and looking at all .find instances and try and cache some of them
--   Add a proper CI/CD system using GitHub actions
--   Add CSS to the app display page
 -   Make test apps and test the LOADING AS WELL AS THE CARDS / CARD SELECTOR
 
 ## Better load balancer
