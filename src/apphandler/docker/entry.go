@@ -210,7 +210,14 @@ func BuildImage(appData *database.AppData) error {
 	if err != nil {
 		return err
 	}
-	tempDir, err := ioutil.TempDir(cwd, "src")
+	buildsDir := filepath.Join(cwd, ".builds")
+	if _, err := os.Stat(buildsDir); os.IsNotExist(err) {
+		err = os.Mkdir(buildsDir, 0755)
+		if err != nil {
+			return err
+		}
+	}
+	tempDir, err := ioutil.TempDir(buildsDir, "src")
 	if err != nil {
 		return err
 	}
