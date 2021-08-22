@@ -104,6 +104,8 @@ services:
         environment:
             - BACKEND_URL=${BACKEND_URL}
             - NODE_ENV=${NODE_ENV}
+        networks:
+            - frontend
     nginx_frontend:
         build:
             context: ./src/nginx_frontend
