@@ -23,7 +23,7 @@ services:
             - backend
     api:
         build:
-            context: ../src/api
+            context: src/api
             dockerfile: dev.Dockerfile
         ports:
             - "4000"
@@ -46,7 +46,7 @@ services:
             - db
             - redis
         volumes:
-            - ../src/api:/usr/app
+            - src/api:/usr/app
         restart: always
         extra_hosts:
             - "host.docker.internal:host-gateway"
@@ -54,7 +54,7 @@ services:
             - backend
     apphandler:
         build:
-            context: ../src/apphandler
+            context: src/apphandler
             dockerfile: dev.Dockerfile
         ports:
             - "5000"
@@ -67,7 +67,7 @@ services:
             - db
             - api
         volumes:
-            - ../src/apphandler:/usr/app
+            - src/apphandler:/usr/app
             - /var/run/docker.sock:/var/run/docker.sock
             - /usr/bin/docker:/usr/bin/docker
         restart: always
@@ -77,7 +77,7 @@ services:
             - backend
     nginx_backend:
         build:
-            context: ../src/nginx_backend
+            context: src/nginx_backend
             dockerfile: dev.Dockerfile
         ports:
             - "8000:80"
@@ -85,19 +85,19 @@ services:
             - api
             - apphandler
         volumes:
-            - ../src/nginx_backend:/etc/nginx/conf.d
+            - src/nginx_backend:/etc/nginx/conf.d
         restart: always
         networks:
             - backend
     # --------- Frontend services ---------
     frontend:
         build:
-            context: ../src/frontend
+            context: src/frontend
             dockerfile: dev.Dockerfile
         ports:
             - "3000"
         volumes:
-            - ../src/frontend:/usr/app
+            - src/frontend:/usr/app
         restart: always
         extra_hosts:
             - "host.docker.internal:host-gateway"
@@ -108,14 +108,14 @@ services:
             - frontend
     nginx_frontend:
         build:
-            context: ../src/nginx_frontend
+            context: src/nginx_frontend
             dockerfile: dev.Dockerfile
         ports:
             - "80:80"
         depends_on:
             - frontend
         volumes:
-            - ../src/nginx_frontend:/etc/nginx/conf.d
+            - src/nginx_frontend:/etc/nginx/conf.d
         restart: always
         networks:
             - frontend
