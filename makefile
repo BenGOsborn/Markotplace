@@ -1,17 +1,5 @@
 # ---------- Main ----------
 
-# Start containers in dev mode
-dc-start-dev:
-	docker-compose -f docker-compose.dev.yml --env-file .env.dev up
-
-# Start and build the dev containers
-dc-start-dev-build:
-	docker-compose -f docker-compose.dev.yml --env-file .env.dev up --build
-
-# Start containers in dev mode
-dc-start-build:
-	docker-compose -f docker-compose.build.yml --env-file .env.production up --build
-
 # Kill all Docker containers
 docker-kill:
 	docker rm -f $$(docker ps -q)

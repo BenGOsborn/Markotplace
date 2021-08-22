@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":b" option; do
+while getopts ":bn" option; do
     case $option in
         b)
             # Build the containers and start them
