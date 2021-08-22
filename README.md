@@ -22,6 +22,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 -   Try and looking at all .find instances and try and cache some of them
 -   Make test apps and test the LOADING AS WELL AS THE CARDS / CARD SELECTOR
+- Change to port 443 for HTTPS instead of 80
 
 ## Better load balancer
 
