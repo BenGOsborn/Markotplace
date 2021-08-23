@@ -24,6 +24,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Make test apps and test the LOADING AS WELL AS THE CARDS / CARD SELECTOR
 -   Change to port 443 for HTTPS instead of 80
 -   Change my local network configuration to the base IP of the website as was required instead of this external host nonsense
+-   Nginx is not forwarding cookies possibly ?
 
 ## Better load balancer
 
