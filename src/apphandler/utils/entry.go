@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"os"
 	"sort"
 	"time"
 )
@@ -20,7 +21,7 @@ func GetRunningApp(appName string, tracker *map[string]*processes.Tracker, db *d
 		trackerData.ResetTimer()
 
 		// Return the URI of the app
-		return fmt.Sprintf("http://host.docker.internal:%d", trackerData.Port), nil
+		return fmt.Sprintf("%s:%d", os.Getenv("BACKEND_URL"), trackerData.Port), nil
 	} else {
 		// Find the app data that matches the app name
 		appData, err := db.GetApp(appName)
