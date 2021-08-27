@@ -5,4 +5,4 @@ mkdir -p data/redis
 mkdir -p data/postgres
 
 # Start storage services
-docker-compose -f docker-compose/docker-compose.storage.yml --env-file env/.env.production up
+docker-compose -f docker-compose/docker-compose.storage.yml --env-file env/.env.production up -d
