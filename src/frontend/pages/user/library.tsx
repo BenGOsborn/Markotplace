@@ -3,6 +3,7 @@ import { GetServerSideProps, NextPage } from "next";
 import Card from "../../components/card";
 import Link from "next/link";
 import styles from "../../styles/Library.module.scss";
+import Head from "next/head";
 
 interface Props {
     apps: { name: string; title: string; description: string }[];
@@ -10,30 +11,40 @@ interface Props {
 
 const Library: NextPage<Props> = ({ apps }) => {
     return (
-        <div className={styles.library}>
-            <div className={styles.description}>
-                <h1>Your owned apps</h1>
-                <h2>Select an app to play it now!</h2>
-            </div>
-            {apps.length > 0 ? (
-                <div className={styles.grid}>
-                    {apps.map((app, index) => {
-                        return (
-                            <Card
-                                key={index}
-                                title={app.title}
-                                description={app.description}
-                                link={`${process.env.BACKEND_URL}/apphandler/${app.name}`}
-                            />
-                        );
-                    })}
+        <>
+            <Head>
+                <title>Library - Markotplace</title>
+                <meta
+                    name="description"
+                    content="View a list of your owned apps ready to be used."
+                />
+            </Head>
+            <div className={styles.library}>
+                <div className={styles.description}>
+                    <h1>Your owned apps</h1>
+                    <h2>Select an app to play it now!</h2>
                 </div>
-            ) : (
-                <h3>
-                    No apps to display. Get some <Link href="/apps">here</Link>.
-                </h3>
-            )}
-        </div>
+                {apps.length > 0 ? (
+                    <div className={styles.grid}>
+                        {apps.map((app, index) => {
+                            return (
+                                <Card
+                                    key={index}
+                                    title={app.title}
+                                    description={app.description}
+                                    link={`${process.env.BACKEND_URL}/apphandler/${app.name}`}
+                                />
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <h3>
+                        No apps to display. Get some{" "}
+                        <Link href="/apps">here</Link>.
+                    </h3>
+                )}
+            </div>
+        </>
     );
 };
 
