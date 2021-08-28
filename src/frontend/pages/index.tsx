@@ -117,8 +117,10 @@ const Home = () => {
                             <Link href="/apps">Browse</Link> through our list of
                             amazing apps deployed by our talented connected
                             developers, <strong>buy</strong> apps that look fun
-                            or that are made by your favourite creators, and use
-                            them instantly directly from your browser.
+                            or that are made by your{" "}
+                            <strong>favourite creators</strong>, and use them
+                            instantly directly from your{" "}
+                            <strong>browser</strong>.
                         </p>
                     </div>
                 </div>
