@@ -52,6 +52,9 @@ services:
         depends_on:
             - api
             - apphandler
+        volumes:
+            - ../data/certbot/conf:/etc/letsencrypt
+            - ../data/certbot/www:/var/www/certbot
         restart: always
         networks:
             - backend
@@ -73,6 +76,9 @@ services:
             context: ../src/nginx_frontend
         depends_on:
             - frontend
+        volumes:
+            - ../data/certbot/conf:/etc/letsencrypt
+            - ../data/certbot/www:/var/www/certbot
         ports:
             - "80:80"
         restart: always
@@ -81,6 +87,9 @@ services:
     # --------- Misc services ---------
     certbot:
         image: certbot/certbot:latest
+        volumes:
+            - ../data/certbot/conf:/etc/letsencrypt
+            - ../data/certbot/www:/var/www/certbot
 
 networks:
     backend:
