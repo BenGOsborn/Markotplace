@@ -26,3 +26,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Add in the metadata
 -   Add in better
 -   Fix footer
+-   Auto deployment system (using some easy to use application)
