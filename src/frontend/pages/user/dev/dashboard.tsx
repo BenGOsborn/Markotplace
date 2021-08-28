@@ -27,7 +27,7 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                 <title>Dashboard - Markotplace</title>
                 <meta
                     name="description"
-                    content="Update your existing deployed apps or deploy a new app."
+                    content="Update your existing apps or create a new app."
                 />
             </Head>
             <div className={styles.dashboard}>
