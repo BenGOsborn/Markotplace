@@ -24,22 +24,30 @@ const Home = () => {
                 <div className={styles.blocks}>
                     <div className={styles.block}>
                         <p>
-                            Lorem ipsum <a>dolor sit</a> amet consectetur
-                            adipisicing elit. Dignissimos quo voluptatibus
-                            quidem id dolore. Facilis, quis. Doloribus cumque
-                            labore est voluptatibus <a>reprehenderit</a>{" "}
-                            voluptas unde corrupti atque harum,{" "}
-                            <a>voluptatem</a> amet similique.
+                            Did you know that the majority of abandoned projects
+                            are abandoned due to deployment struggles?{" "}
+                            <Link href="#">Markotplace</Link> was designed to
+                            take the pain out of the monetization, deployment,
+                            and marketing aspects of developing web applications
+                            so you can focus all of your attention on your code.
                         </p>
                     </div>
                     <div className={styles.block}>
                         <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. <a>Dignissimos</a> quo voluptatibus quidem id
-                            dolore. Facilis, quis. Doloribus cumque labore est{" "}
-                            <a>voluptatibus</a> reprehenderit voluptas unde
-                            corrupti atque harum, voluptatem <a>amet</a>{" "}
-                            similique.
+                            Simply deploy your app to our platform in under 5
+                            minutes from your{" "}
+                            <a
+                                href="https://github.com"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                GitHub
+                            </a>{" "}
+                            account, set the price of your app, and then{" "}
+                            {"you're"} done. We will promote your app on our
+                            market, and will automatically rebuild your code
+                            whenever you make changes to the monitored Git
+                            branch.
                         </p>
                     </div>
                 </div>

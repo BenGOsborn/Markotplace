@@ -7,6 +7,8 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe add a subscription payment system in the future ?
 -   Maybe rebrand the entire app for gamers specifically
 -   Make a blog helping developers to make apps for our site (like Unity and for other game engines)
+-   Add some way of ranking the apps to build based on the number of users who own them along with the app data (store this as a part of the app data)
+-   Add analytics tracking
 
 ## Known vulnerabilities
 
@@ -21,7 +23,6 @@ An online marketplace that allows developers to monetize their online web apps.
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 -   Try and looking at all .find instances and try and cache some of them
--   Change to port 443 for HTTPS instead of 80
--   Change my local network configuration to the base IP of the website as was required instead of this external host nonsense
 -   Add in the metadata
--   Add some way of ranking the apps to build based on the number of users who own them along with the app data (store this as a part of the app data)
+-   Add in better
+-   Fix footer
