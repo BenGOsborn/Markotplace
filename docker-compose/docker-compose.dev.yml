@@ -74,15 +74,14 @@ services:
             - backend
     nginx_backend:
         build:
-            context: ../src/nginx_backend
-            dockerfile: dev.Dockerfile
+            context: ../src/nginx_backend_dev
         ports:
             - "8000:80"
         depends_on:
             - api
             - apphandler
         volumes:
-            - ../src/nginx_backend:/etc/nginx/conf.d
+            - ../src/nginx_backend_dev:/etc/nginx/conf.d
         restart: always
         networks:
             - backend
@@ -103,14 +102,13 @@ services:
             - frontend
     nginx_frontend:
         build:
-            context: ../src/nginx_frontend
-            dockerfile: dev.Dockerfile
+            context: ../src/nginx_frontend_dev
         ports:
             - "80:80"
         depends_on:
             - frontend
         volumes:
-            - ../src/nginx_frontend:/etc/nginx/conf.d
+            - ../src/nginx_frontend_dev:/etc/nginx/conf.d
         restart: always
         networks:
             - frontend
