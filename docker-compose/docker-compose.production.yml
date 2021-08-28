@@ -47,7 +47,6 @@ services:
     nginx_backend:
         build:
             context: ../src/nginx_backend
-            dockerfile: build.Dockerfile
         ports:
             - "8000:80"
         depends_on:
@@ -72,7 +71,6 @@ services:
     nginx_frontend:
         build:
             context: ../src/nginx_frontend
-            dockerfile: build.Dockerfile
         depends_on:
             - frontend
         ports:
