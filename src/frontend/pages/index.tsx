@@ -104,22 +104,21 @@ const Home = () => {
                 <div className={styles.blocks}>
                     <div className={styles.block}>
                         <p>
-                            Lorem ipsum <a>dolor sit</a> amet consectetur
-                            adipisicing elit. Dignissimos quo voluptatibus
-                            quidem id dolore. Facilis, quis. Doloribus cumque
-                            labore est voluptatibus <a>reprehenderit</a>{" "}
-                            voluptas unde corrupti atque harum,{" "}
-                            <a>voluptatem</a> amet similique.
+                            In addition to being a platform for{" "}
+                            <strong>deploying web applications</strong>,{" "}
+                            <Link href="#">Markotplace</Link> serves as a{" "}
+                            <strong>marketplace</strong> for users to{" "}
+                            <strong>buy apps</strong> deployed on our platform
+                            and use them.
                         </p>
                     </div>
                     <div className={styles.block}>
                         <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. <a>Dignissimos</a> quo voluptatibus quidem id
-                            dolore. Facilis, quis. Doloribus cumque labore est{" "}
-                            <a>voluptatibus</a> reprehenderit voluptas unde
-                            corrupti atque harum, voluptatem <a>amet</a>{" "}
-                            similique.
+                            <Link href="/apps">Browse</Link> through our list of
+                            amazing apps deployed by our talented connected
+                            developers, <strong>buy</strong> apps that look fun
+                            or that are made by your favourite creators, and use
+                            them instantly directly from your browser.
                         </p>
                     </div>
                 </div>
