@@ -83,8 +83,6 @@ services:
             - apphandler
         volumes:
             - ../src/nginx_backend:/etc/nginx/conf.d
-            - ../data/certbot/conf:/etc/letsencrypt
-            - ../data/certbot/www:/var/www/certbot
         restart: always
         networks:
             - backend
@@ -113,14 +111,9 @@ services:
             - frontend
         volumes:
             - ../src/nginx_frontend:/etc/nginx/conf.d
-            - ../data/certbot/conf:/etc/letsencrypt
-            - ../data/certbot/www:/var/www/certbot
         restart: always
         networks:
             - frontend
-    # --------- Misc services ---------
-    certbot:
-        image: certbot/certbot:latest
 networks:
     backend:
     frontend:
