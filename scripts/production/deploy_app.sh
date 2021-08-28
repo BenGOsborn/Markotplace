@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Create the data directories if they don't exist
+mkdir -p data/certbot
+
 while getopts ":bn" option; do
     case $option in
         b)
