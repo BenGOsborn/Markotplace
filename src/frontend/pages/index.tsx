@@ -27,9 +27,12 @@ const Home = () => {
                             Did you know that the majority of abandoned projects
                             are abandoned due to deployment struggles?{" "}
                             <Link href="#">Markotplace</Link> was designed to
-                            take the pain out of the monetization, deployment,
-                            and marketing aspects of developing web applications
-                            so you can focus all of your attention on your code.
+                            take the pain out of the{" "}
+                            <strong>
+                                monetization, deployment, and marketing
+                            </strong>{" "}
+                            aspects of developing web applications so you can
+                            focus all of your attention on your code.
                         </p>
                     </div>
                     <div className={styles.block}>
@@ -44,9 +47,10 @@ const Home = () => {
                                 GitHub
                             </a>{" "}
                             account, set the price of your app, and then{" "}
-                            {"you're"} done. We will promote your app on our
-                            market, and will automatically rebuild your code
-                            whenever you make changes to the monitored Git
+                            {"you're"} done. We will{" "}
+                            <strong>promote your app</strong> on our market, and
+                            will <strong>automatically rebuild</strong> your
+                            code whenever you make changes to the monitored Git
                             branch.
                         </p>
                     </div>
@@ -59,22 +63,36 @@ const Home = () => {
                 <div className={styles.blocks}>
                     <div className={styles.block}>
                         <p>
-                            Lorem ipsum <a>dolor sit</a> amet consectetur
-                            adipisicing elit. Dignissimos quo voluptatibus
-                            quidem id dolore. Facilis, quis. Doloribus cumque
-                            labore est voluptatibus <a>reprehenderit</a>{" "}
-                            voluptas unde corrupti atque harum,{" "}
-                            <a>voluptatem</a> amet similique.
+                            <Link href="#">Markotplace</Link> uses{" "}
+                            <a
+                                href="https://www.docker.com"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Docker
+                            </a>{" "}
+                            for deploying your apps to our platform, meaning
+                            that you can test how your app will run once it is
+                            deployed on your own machine and that it is{" "}
+                            <strong>guaranteed to work</strong> the same way on
+                            our platform.
                         </p>
                     </div>
                     <div className={styles.block}>
                         <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. <a>Dignissimos</a> quo voluptatibus quidem id
-                            dolore. Facilis, quis. Doloribus cumque labore est{" "}
-                            <a>voluptatibus</a> reprehenderit voluptas unde
-                            corrupti atque harum, voluptatem <a>amet</a>{" "}
-                            similique.
+                            Simply create a <strong>Dockerfile</strong> in the
+                            root folder of your{" "}
+                            <a
+                                href="https://github.com"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                GitHub
+                            </a>{" "}
+                            repo branch specifying how your app should run in
+                            production, and then we will{" "}
+                            <strong>deploy this container</strong> containing
+                            your app to our platform.
                         </p>
                     </div>
                 </div>

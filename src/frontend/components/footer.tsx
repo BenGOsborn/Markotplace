@@ -6,14 +6,13 @@ const Footer = () => {
         <footer className={styles.footer}>
             <div className={styles.rows}>
                 <div className={styles.links}>
-                    <Link href="#">{`© Copyright Markotplace ${new Date().getFullYear()}`}</Link>
-                    <Link href="#">{`© Copyright Markotplace ${new Date().getFullYear()}`}</Link>
-                    <Link href="#">{`© Copyright Markotplace ${new Date().getFullYear()}`}</Link>
-                </div>
-                <div className={styles.links}>
-                    <Link href="#">{`© Copyright Markotplace ${new Date().getFullYear()}`}</Link>
-                    <Link href="#">{`© Copyright Markotplace ${new Date().getFullYear()}`}</Link>
-                    <Link href="#">{`© Copyright Markotplace ${new Date().getFullYear()}`}</Link>
+                    <a
+                        href="https://github.com/BenGOsborn"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        GitHub
+                    </a>
                 </div>
                 <div className={styles.links}>
                     <Link href="#">{`© Copyright Markotplace ${new Date().getFullYear()}`}</Link>
