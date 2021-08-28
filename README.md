@@ -23,6 +23,6 @@ An online marketplace that allows developers to monetize their online web apps.
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 -   Try and looking at all .find instances and try and cache some of them
--   Add in the metadata
+-   Add in the metadata, sitemap, icon
 -   Add in https via letsencrypt docker
 -   Auto deployment system (using some easy to use application)

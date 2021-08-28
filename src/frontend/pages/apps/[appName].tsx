@@ -6,6 +6,7 @@ import Card from "../../components/card";
 import { MarketApp, marketAppsCtx } from "../../utils/context";
 import { Status, StatusMessage } from "../../utils/status";
 import styles from "../../styles/App.module.scss";
+import Head from "next/head";
 
 interface Props {
     app: {
@@ -76,64 +77,70 @@ const App: NextPage<Props> = ({ app }) => {
     const router = useRouter();
 
     return (
-        <div className={styles.app}>
-            <div className={styles.content}>
-                <h1>{app.title}</h1>
-                <h3>{app.author}</h3>
-                <p>{app.description}</p>
-            </div>
-            <div className={styles.pricing}>
-                <p>${(app.price / 100).toFixed(2)}</p>
-                <a
-                    href="#"
-                    onClick={(e) => {
-                        // Prevent the default action
-                        e.preventDefault();
-                        // Get the redirect URL
-                        axios
-                            .post<{ redirectURL: string }>(
-                                `${process.env.BACKEND_URL}/api/payment/checkout`,
-                                { appName: app.name },
-                                { withCredentials: true }
-                            )
-                            .then((res) => {
-                                // Set the status
-                                setStatus({
-                                    success: true,
-                                    message: "Redirecting",
-                                });
-                                // Redirect to the URL
-                                router.push(res.data.redirectURL);
-                            })
-                            .catch((err) => {
-                                // Set the status
-                                setStatus({
-                                    success: false,
-                                    message: err.response?.data,
-                                });
-                            });
-                    }}
-                >
-                    {app.price == 0 ? "Add To Library" : "Purchase Now"}
-                </a>
-            </div>
-            <StatusMessage status={status} />
-            {displayApps.length > 0 ? (
-                <div className={styles.extras}>
-                    {displayApps.map((dApp, index) => {
-                        return (
-                            <Card
-                                key={index}
-                                title={dApp.title}
-                                link={`/apps/${dApp.name}`}
-                                description={dApp.description}
-                                author={dApp.author}
-                            />
-                        );
-                    })}
+        <>
+            <Head>
+                <title>{app.title} - Markotplace</title>
+                <meta name="description" content={app.description} />
+            </Head>
+            <div className={styles.app}>
+                <div className={styles.content}>
+                    <h1>{app.title}</h1>
+                    <h3>{app.author}</h3>
+                    <p>{app.description}</p>
                 </div>
-            ) : null}
-        </div>
+                <div className={styles.pricing}>
+                    <p>${(app.price / 100).toFixed(2)}</p>
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            // Prevent the default action
+                            e.preventDefault();
+                            // Get the redirect URL
+                            axios
+                                .post<{ redirectURL: string }>(
+                                    `${process.env.BACKEND_URL}/api/payment/checkout`,
+                                    { appName: app.name },
+                                    { withCredentials: true }
+                                )
+                                .then((res) => {
+                                    // Set the status
+                                    setStatus({
+                                        success: true,
+                                        message: "Redirecting",
+                                    });
+                                    // Redirect to the URL
+                                    router.push(res.data.redirectURL);
+                                })
+                                .catch((err) => {
+                                    // Set the status
+                                    setStatus({
+                                        success: false,
+                                        message: err.response?.data,
+                                    });
+                                });
+                        }}
+                    >
+                        {app.price == 0 ? "Add To Library" : "Purchase Now"}
+                    </a>
+                </div>
+                <StatusMessage status={status} />
+                {displayApps.length > 0 ? (
+                    <div className={styles.extras}>
+                        {displayApps.map((dApp, index) => {
+                            return (
+                                <Card
+                                    key={index}
+                                    title={dApp.title}
+                                    link={`/apps/${dApp.name}`}
+                                    description={dApp.description}
+                                    author={dApp.author}
+                                />
+                            );
+                        })}
+                    </div>
+                ) : null}
+            </div>
+        </>
     );
 };
 
