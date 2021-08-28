@@ -53,6 +53,7 @@ services:
         depends_on:
             - api
             - apphandler
+            - certbot
         volumes:
             - ../data/certbot/conf:/etc/letsencrypt
             - ../data/certbot/www:/var/www/certbot
@@ -78,6 +79,7 @@ services:
         command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         depends_on:
             - frontend
+            - certbot
         volumes:
             - ../data/certbot/conf:/etc/letsencrypt
             - ../data/certbot/www:/var/www/certbot
@@ -93,9 +95,6 @@ services:
             - ../data/certbot/conf:/etc/letsencrypt
             - ../data/certbot/www:/var/www/certbot
         entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-        depends_on:
-            - nginx_backend
-            - nginx_frontend
 
 networks:
     backend:
