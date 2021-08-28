@@ -114,7 +114,9 @@ services:
         restart: always
         networks:
             - frontend
-
+    # --------- Misc services ---------
+    certbot:
+        image: certbot/certbot:latest
 networks:
     backend:
     frontend:
