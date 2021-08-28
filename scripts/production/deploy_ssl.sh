@@ -39,7 +39,7 @@ echo
 
 
 echo "### Starting nginx ..."
-docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.env.production up --force-recreate -d nginx_backend nginx_frontend
+docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.env.production up --force-recreate -d
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
