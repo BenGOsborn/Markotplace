@@ -13,7 +13,6 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Known vulnerabilities
 
 -   Make sure on a payment webhook, multiple requests cant be inserted (can this even occur with a many to many relationship?)
--   Could Docker files hack our system by mounting volumes within the container ?
 -   Look at ways people could break the naming / parsing system
 -   Encrypt the app ID's so noone can use them usinbg the secret key ?
 -   Users could possibly repeat the Stripe webhooks and keep adding the same app to their account
