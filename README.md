@@ -7,7 +7,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Maybe add a subscription payment system in the future ?
 -   Maybe rebrand the entire app for gamers specifically
 -   Make a blog helping developers to make apps for our site (like Unity and for other game engines)
--   Add some way of ranking the apps to build based on the number of users who own them along with the app data (store this as a part of the app data)
+-   Add some way of ranking the apps to build based on the number of users who own them along with the app data (store this as a part of the app data), this would also allow us to keep forwarding the same user to the same app for keeping track of state if it worked like that
 -   Add analytics tracking
 
 ## Known vulnerabilities
