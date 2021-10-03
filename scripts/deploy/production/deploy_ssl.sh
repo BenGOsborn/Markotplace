@@ -11,6 +11,12 @@ data_path="data/certbot"
 email="ben@gmail.com" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
+if [ -d "$data_path" ]; then
+    echo "### Starting containers ..."
+    docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.env.production up --force-recreate -d
+    exit
+fi
+
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
     echo "### Downloading recommended TLS parameters ..."
     mkdir -p "$data_path/conf"
