@@ -24,3 +24,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Try and looking at all .find instances and try and cache some of them
 -   Add in https via letsencrypt docker (add setup SSL in deploy script)
 -   Auto deployment system (using some easy to use application)
+-   GitHub actions auto deployment
