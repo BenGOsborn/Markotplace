@@ -11,43 +11,34 @@ import { clearCache } from "../utils/cache";
 const router = express.Router();
 
 // Allow a dev to view their Stripe account
-router.get(
-    "/stripe-dashboard",
-    protectedMiddleware,
-    devMiddleware,
-    async (req, res) => {
-        // Get the user
-        // @ts-ignore
-        const { user }: { user: User } = req.locals;
+router.get("/stripe-dashboard", protectedMiddleware, devMiddleware, async (req, res) => {
+    // Get the user
+    // @ts-ignore
+    const { user }: { user: User } = req.locals;
 
-        // Also check the status of the account
-        const detailsSubmitted = (
-            await stripe.accounts.retrieve(user.dev.stripeConnectID)
-        ).details_submitted;
-        if (!detailsSubmitted) {
-            // Create an onboarding link for the dev
-            const onboardingLink = (
-                await stripe.accountLinks.create({
-                    account: user.dev.stripeConnectID,
-                    type: "account_onboarding",
-                    refresh_url: `${process.env.FRONTEND_URL}/user/dev/dashboard`,
-                    return_url: `${process.env.FRONTEND_URL}/user/dev/dashboard`,
-                })
-            ).url;
-
-            // Return the url
-            return res.json({ url: onboardingLink, onboarded: false });
-        }
-
-        // Redirect the user to their Stripe dashboard
-        const dashbordLink = (
-            await stripe.accounts.createLoginLink(user.dev.stripeConnectID)
+    // Also check the status of the account
+    const detailsSubmitted = (await stripe.accounts.retrieve(user.dev.stripeConnectID)).details_submitted;
+    if (!detailsSubmitted) {
+        // Create an onboarding link for the dev
+        const onboardingLink = (
+            await stripe.accountLinks.create({
+                account: user.dev.stripeConnectID,
+                type: "account_onboarding",
+                refresh_url: `https://${process.env.FRONTEND_HOSTNAME}/user/dev/dashboard`,
+                return_url: `https://${process.env.FRONTEND_HOSTNAME}/user/dev/dashboard`,
+            })
         ).url;
 
         // Return the url
-        res.json({ url: dashbordLink, onboarded: true });
+        return res.json({ url: onboardingLink, onboarded: false });
     }
-);
+
+    // Redirect the user to their Stripe dashboard
+    const dashbordLink = (await stripe.accounts.createLoginLink(user.dev.stripeConnectID)).url;
+
+    // Return the url
+    res.json({ url: dashbordLink, onboarded: true });
+});
 
 interface CheckoutReturn {
     redirectURL: string;
@@ -69,8 +60,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
 
     // Check the list of the users apps to see if that game already exists
     for (const app of user.apps) {
-        if (app.name === appName)
-            return res.status(400).send("You already own this app");
+        if (app.name === appName) return res.status(400).send("You already own this app");
     }
 
     // Get the app from the database
@@ -78,8 +68,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
         where: { name: appName },
         relations: ["dev"],
     });
-    if (typeof existingApp === "undefined")
-        return res.status(400).send("Invalid app");
+    if (typeof existingApp === "undefined") return res.status(400).send("Invalid app");
 
     // If the app is free, add the app to the users account
     if (existingApp.price === 0) {
@@ -92,7 +81,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
 
         // Return success
         return res.json({
-            redirectURL: `${process.env.FRONTEND_URL}/user/library`,
+            redirectURL: `https://${process.env.FRONTEND_HOSTNAME}/user/library`,
         } as CheckoutReturn);
     }
 
@@ -121,8 +110,8 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
             },
         ],
         mode: "payment",
-        success_url: `${process.env.FRONTEND_URL}/user/library`,
-        cancel_url: `${process.env.FRONTEND_URL}/apps/${existingApp.name}`,
+        success_url: `https://${process.env.FRONTEND_HOSTNAME}/user/library`,
+        cancel_url: `https://${process.env.FRONTEND_HOSTNAME}/apps/${existingApp.name}`,
     });
 
     // Return the payment intent
@@ -132,58 +121,49 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
 });
 
 // On payment success
-router.post(
-    "/checkout/hook",
-    bodyParser.raw({ type: "application/json" }),
-    async (req, res) => {
-        // Get the Stripe signature
-        const signature = req.headers["stripe-signature"];
+router.post("/checkout/hook", bodyParser.raw({ type: "application/json" }), async (req, res) => {
+    // Get the Stripe signature
+    const signature = req.headers["stripe-signature"];
 
-        try {
-            // Get the webhook event
-            const event = stripe.webhooks.constructEvent(
-                req.body,
-                signature as string,
-                process.env.STRIPE_WEBOOK_SIGNING_SECRET_PURCHASE as string
-            );
+    try {
+        // Get the webhook event
+        const event = stripe.webhooks.constructEvent(req.body, signature as string, process.env.STRIPE_WEBOOK_SIGNING_SECRET_PURCHASE as string);
 
-            // Check that the payment succeeded
-            if (event.type !== "payment_intent.succeeded")
-                return res.sendStatus(400);
+        // Check that the payment succeeded
+        if (event.type !== "payment_intent.succeeded") return res.sendStatus(400);
 
-            // Get the payment intent
-            const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        // Get the payment intent
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-            // Get the metadata from the payment intent
-            // @ts-ignore
-            const { userID, appName }: MetaData = paymentIntent.metadata;
+        // Get the metadata from the payment intent
+        // @ts-ignore
+        const { userID, appName }: MetaData = paymentIntent.metadata;
 
-            // Get the app
-            const app = (await App.findOne({
-                where: { name: appName },
-            })) as App;
+        // Get the app
+        const app = (await App.findOne({
+            where: { name: appName },
+        })) as App;
 
-            // Update the users apps
-            const user = (await User.findOne({
-                where: { id: userID },
-                relations: ["apps"],
-            })) as User;
+        // Update the users apps
+        const user = (await User.findOne({
+            where: { id: userID },
+            relations: ["apps"],
+        })) as User;
 
-            // Add the app to the users account
-            user.apps = [...user.apps, app];
-            await user.save();
+        // Add the app to the users account
+        user.apps = [...user.apps, app];
+        await user.save();
 
-            // Clear the cache of the user
-            await clearCache(`user:${user.id}`);
+        // Clear the cache of the user
+        await clearCache(`user:${user.id}`);
 
-            // Return success
-            res.sendStatus(200);
-        } catch {
-            // Return error
-            res.sendStatus(500);
-        }
+        // Return success
+        res.sendStatus(200);
+    } catch {
+        // Return error
+        res.sendStatus(500);
     }
-);
+});
 
 // Export the router
 export default router;

@@ -12,7 +12,7 @@ const router = express.Router();
 // Authorize user with GitHub
 router.get("/authorize/github", async (req, res) => {
     // Return the authorization URL
-    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo&redirect_uri=${process.env.FRONTEND_URL}/user/dev/authorize-github`;
+    const redirectURL = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=repo&redirect_uri=https://${process.env.FRONTEND_HOSTNAME}/user/dev/authorize-github`;
     res.status(200).send(redirectURL);
 });
 
@@ -24,8 +24,7 @@ router.post("/authorize/github", async (req, res) => {
 
     // Extract the code from the body and check it exists
     const { code } = req.body;
-    if (typeof code === "undefined")
-        return res.status(400).send("Code is missing");
+    if (typeof code === "undefined") return res.status(400).send("Code is missing");
 
     // Get the access token
     let accessToken;
@@ -89,14 +88,9 @@ router.post("/authorize/github", async (req, res) => {
 });
 
 // Verify that a user is a developer
-router.get(
-    "/is-authorized",
-    protectedMiddleware,
-    devMiddleware,
-    async (req, res) => {
-        res.sendStatus(200);
-    }
-);
+router.get("/is-authorized", protectedMiddleware, devMiddleware, async (req, res) => {
+    res.sendStatus(200);
+});
 
 // Export the router
 export default router;
