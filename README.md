@@ -25,3 +25,5 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Add in https via letsencrypt docker (add setup SSL in deploy script)
 -   Auto deployment system (using some easy to use application)
 -   GitHub actions auto deployment
+
+-   Change the .env files to have the domain name instead of the URL for the frontend and backend and then use that with NGINX and the deployment scripts
