@@ -28,3 +28,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   GitHub actions auto deployment
 
 -   Change the .env files to have the domain name instead of the URL for the frontend and backend and then use that with NGINX and the deployment scripts
+-   Update the dev environment to use the same ports as the .env files
