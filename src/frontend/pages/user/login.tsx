@@ -27,10 +27,7 @@ const Login: NextPage<Props> = () => {
         <>
             <Head>
                 <title>Login - Markotplace</title>
-                <meta
-                    name="description"
-                    content="Login to your Markotplace account."
-                />
+                <meta name="description" content="Login to your Markotplace account." />
             </Head>
             <div className={styles.login}>
                 <h1>Sign in to your account</h1>
@@ -40,11 +37,7 @@ const Login: NextPage<Props> = () => {
                         e.preventDefault();
                         // Make the login request
                         axios
-                            .post<string>(
-                                `${process.env.BACKEND_URL}/api/user/login`,
-                                { username, password },
-                                { withCredentials: true }
-                            )
+                            .post<string>(`https://${process.env.BACKEND_HOSTNAME}/api/user/login`, { username, password }, { withCredentials: true })
                             .then((res) => {
                                 // Set the status
                                 setStatus({
@@ -67,24 +60,12 @@ const Login: NextPage<Props> = () => {
                             });
                     }}
                 >
-                    <input
-                        type="text"
-                        required={true}
-                        placeholder="Username"
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <input
-                        type="password"
-                        required={true}
-                        placeholder="Password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <input type="text" required={true} placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+                    <input type="password" required={true} placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                     <input type="submit" value="Login" />
                 </form>
                 <span className={styles.extra}>
-                    <Link href="/user/register">
-                        {"Don't have an account?"}
-                    </Link>
+                    <Link href="/user/register">{"Don't have an account?"}</Link>
                 </span>
                 <StatusMessage status={status} />
             </div>

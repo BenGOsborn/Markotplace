@@ -14,10 +14,7 @@ const Library: NextPage<Props> = ({ apps }) => {
         <>
             <Head>
                 <title>Library - Markotplace</title>
-                <meta
-                    name="description"
-                    content="View a list of your owned apps ready to be used."
-                />
+                <meta name="description" content="View a list of your owned apps ready to be used." />
             </Head>
             <div className={styles.library}>
                 <div className={styles.description}>
@@ -32,15 +29,14 @@ const Library: NextPage<Props> = ({ apps }) => {
                                     key={index}
                                     title={app.title}
                                     description={app.description}
-                                    link={`${process.env.BACKEND_URL}/apphandler/${app.name}`}
+                                    link={`https://${process.env.BACKEND_HOSTNAME}/apphandler/${app.name}`}
                                 />
                             );
                         })}
                     </div>
                 ) : (
                     <h3>
-                        No apps to display. Get some{" "}
-                        <Link href="/apps">here</Link>.
+                        No apps to display. Get some <Link href="/apps">here</Link>.
                     </h3>
                 )}
             </div>
@@ -51,10 +47,7 @@ const Library: NextPage<Props> = ({ apps }) => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
         // Fetch a list of the users apps
-        const apps = await axios.get<Props>(
-            `${process.env.BACKEND_URL}/api/apps/owned`,
-            { withCredentials: true, headers: { Cookie: req.headers.cookie } }
-        );
+        const apps = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/owned`, { withCredentials: true, headers: { Cookie: req.headers.cookie } });
         return { props: { apps: apps.data.apps } as Props };
     } catch {
         // Redirect the user

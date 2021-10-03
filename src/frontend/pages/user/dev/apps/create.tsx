@@ -47,7 +47,7 @@ const Create: NextPage<Props> = () => {
                         // Make the request to create the new app
                         axios
                             .post<string>(
-                                `${process.env.BACKEND_URL}/api/apps/dev/create`,
+                                `https://${process.env.BACKEND_HOSTNAME}/api/apps/dev/create`,
                                 {
                                     name,
                                     title,
@@ -78,48 +78,13 @@ const Create: NextPage<Props> = () => {
                             });
                     }}
                 >
-                    <input
-                        type="text"
-                        required={true}
-                        placeholder="Name"
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        required={true}
-                        placeholder="Title"
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <textarea
-                        required={true}
-                        placeholder="Description"
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        step={0.01}
-                        required={true}
-                        placeholder="Price"
-                        onChange={(e) => setPrice(e.target.valueAsNumber)}
-                    />
-                    <input
-                        type="text"
-                        required={true}
-                        placeholder="GitHub Repo Owner"
-                        onChange={(e) => setGhRepoOwner(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        required={true}
-                        placeholder="GitHub Repo Name"
-                        onChange={(e) => setGhRepoName(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        required={true}
-                        placeholder="GitHub Repo Branch"
-                        onChange={(e) => setGhRepoBranch(e.target.value)}
-                    />
+                    <input type="text" required={true} placeholder="Name" onChange={(e) => setName(e.target.value)} />
+                    <input type="text" required={true} placeholder="Title" onChange={(e) => setTitle(e.target.value)} />
+                    <textarea required={true} placeholder="Description" onChange={(e) => setDescription(e.target.value)} />
+                    <input type="number" step={0.01} required={true} placeholder="Price" onChange={(e) => setPrice(e.target.valueAsNumber)} />
+                    <input type="text" required={true} placeholder="GitHub Repo Owner" onChange={(e) => setGhRepoOwner(e.target.value)} />
+                    <input type="text" required={true} placeholder="GitHub Repo Name" onChange={(e) => setGhRepoName(e.target.value)} />
+                    <input type="text" required={true} placeholder="GitHub Repo Branch" onChange={(e) => setGhRepoBranch(e.target.value)} />
                     <div className={styles.env}>
                         <h2>Environment Variables</h2>
                         <div className={styles.grid}>
@@ -145,18 +110,8 @@ const Create: NextPage<Props> = () => {
                             })}
                         </div>
                         <div className={styles.inputs}>
-                            <input
-                                type="text"
-                                value={envKey}
-                                placeholder="Env key"
-                                onChange={(e) => setEnvKey(e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                value={envValue}
-                                placeholder="Env value"
-                                onChange={(e) => setEnvValue(e.target.value)}
-                            />
+                            <input type="text" value={envKey} placeholder="Env key" onChange={(e) => setEnvKey(e.target.value)} />
+                            <input type="text" value={envValue} placeholder="Env value" onChange={(e) => setEnvValue(e.target.value)} />
                             <button
                                 onClick={(e) => {
                                     // Prevent page from reloading
@@ -164,15 +119,10 @@ const Create: NextPage<Props> = () => {
                                     // Check that both fields are not null
                                     if (envKey.length > 0) {
                                         // Make sure that the same key does not exist
-                                        const exists = env.filter(
-                                            (variable) => variable[0] === envKey
-                                        );
+                                        const exists = env.filter((variable) => variable[0] === envKey);
                                         if (exists.length === 0) {
                                             // Update the environment variables
-                                            setEnv([
-                                                ...env,
-                                                [envKey, envValue],
-                                            ]);
+                                            setEnv([...env, [envKey, envValue]]);
                                             // Reset the key and value
                                             setEnvKey("");
                                             setEnvValue("");
@@ -195,13 +145,10 @@ const Create: NextPage<Props> = () => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
         // Verify that the user is a developer
-        await axios.get<Props>(
-            `${process.env.BACKEND_URL}/api/dev/is-authorized`,
-            {
-                withCredentials: true,
-                headers: { Cookie: req.headers.cookie },
-            }
-        );
+        await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/dev/is-authorized`, {
+            withCredentials: true,
+            headers: { Cookie: req.headers.cookie },
+        });
         return { props: {} as Props };
     } catch {
         // Redirect to the settings page

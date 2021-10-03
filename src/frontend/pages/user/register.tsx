@@ -28,10 +28,7 @@ const Register: NextPage<Props> = () => {
         <>
             <Head>
                 <title>Register - Markotplace</title>
-                <meta
-                    name="description"
-                    content="Register a new Markotplace account to purchase or deploy an app."
-                />
+                <meta name="description" content="Register a new Markotplace account to purchase or deploy an app." />
             </Head>
             <div className={styles.register}>
                 <h1>Register a new account</h1>
@@ -41,11 +38,7 @@ const Register: NextPage<Props> = () => {
                         e.preventDefault();
                         // Make the register request
                         axios
-                            .post<string>(
-                                `${process.env.BACKEND_URL}/api/user/register`,
-                                { username, email, password },
-                                { withCredentials: true }
-                            )
+                            .post<string>(`$https://${process.env.BACKEND_HOSTNAME}/api/user/register`, { username, email, password }, { withCredentials: true })
                             .then((res) => {
                                 // Set the status
                                 setStatus({
@@ -68,24 +61,9 @@ const Register: NextPage<Props> = () => {
                             });
                     }}
                 >
-                    <input
-                        type="text"
-                        required={true}
-                        placeholder="Username"
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <input
-                        type="email"
-                        required={true}
-                        placeholder="Email"
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <input
-                        type="password"
-                        required={true}
-                        placeholder="Password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <input type="text" required={true} placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+                    <input type="email" required={true} placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+                    <input type="password" required={true} placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                     <input type="submit" value="Register" />
                 </form>
                 <span className={styles.extra}>

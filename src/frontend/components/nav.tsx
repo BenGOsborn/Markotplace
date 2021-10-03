@@ -39,14 +39,8 @@ const Nav = () => {
                                 <a
                                     onClick={(e) =>
                                         axios
-                                            .post<string>(
-                                                `${process.env.BACKEND_URL}/api/user/logout`,
-                                                {},
-                                                { withCredentials: true }
-                                            )
-                                            .then((res) =>
-                                                setIsAuthenticated(false)
-                                            )
+                                            .post<string>(`https://${process.env.BACKEND_HOSTNAME}/api/user/logout`, {}, { withCredentials: true })
+                                            .then((res) => setIsAuthenticated(false))
                                     }
                                 >
                                     Logout

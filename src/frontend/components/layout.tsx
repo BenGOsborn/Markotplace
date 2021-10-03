@@ -13,12 +13,9 @@ const Layout: FC<{}> = ({ children }) => {
     useEffect(() => {
         // Check if the user is authenticated then update the context
         axios
-            .get<string>(
-                `${process.env.BACKEND_URL}/api/user/is-authenticated`,
-                {
-                    withCredentials: true,
-                }
-            )
+            .get<string>(`https://${process.env.BACKEND_HOSTNAME}/api/user/is-authenticated`, {
+                withCredentials: true,
+            })
             .then((res) => setIsAuthenticated(true))
             .catch((err) => setIsAuthenticated(false));
     }, []);
@@ -28,23 +25,15 @@ const Layout: FC<{}> = ({ children }) => {
             <Head>
                 <meta charSet="UTF-8" />
                 <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1.0"
-                />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <meta name="robots" content="index, follow" />
                 <link rel="manifest" href="/manifest.json" />
                 <title>Markotplace - Deploy, Monetize, Fast, Free</title>
-                <meta
-                    name="description"
-                    content="A PaaS startup that allows developers to deploy and monetize their app in under 5 minutes for free."
-                />
+                <meta name="description" content="A PaaS startup that allows developers to deploy and monetize their app in under 5 minutes for free." />
             </Head>
 
             <marketAppsCtx.Provider value={[marketApps, setMarketApps]}>
-                <authenticatedCtx.Provider
-                    value={[isAuthenticated, setIsAuthenticated]}
-                >
+                <authenticatedCtx.Provider value={[isAuthenticated, setIsAuthenticated]}>
                     <Nav />
                     <main>{children}</main>
                     <Footer />

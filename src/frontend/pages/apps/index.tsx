@@ -29,31 +29,17 @@ const Apps: NextPage<Props> = ({ apps }) => {
         <>
             <Head>
                 <title>Market - Markotplace</title>
-                <meta
-                    name="description"
-                    content="View the apps developed by our talented developers."
-                />
+                <meta name="description" content="View the apps developed by our talented developers." />
             </Head>
             <div className={styles.apps}>
                 <div className={styles.description}>
                     <h1>Welcome to the App markets</h1>
-                    <h2>
-                        All of these apps are ready for you to play when you
-                        are!
-                    </h2>
+                    <h2>All of these apps are ready for you to play when you are!</h2>
                 </div>
                 {apps.length > 0 ? (
                     <div className={styles.grid}>
                         {apps.map((app, index) => {
-                            return (
-                                <Card
-                                    key={index}
-                                    title={app.title}
-                                    author={app.author}
-                                    description={app.description}
-                                    link={`/apps/${app.name}`}
-                                />
-                            );
+                            return <Card key={index} title={app.title} author={app.author} description={app.description} link={`/apps/${app.name}`} />;
                         })}
                     </div>
                 ) : (
@@ -68,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
     try {
         const {
             data: { apps },
-        } = await axios.get<Props>(`${process.env.BACKEND_URL}/api/apps/list`);
+        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/list`);
         return { props: { apps } as Props };
     } catch {
         return { props: { apps: [] } as Props };

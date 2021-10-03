@@ -23,10 +23,7 @@ const Settings: NextPage<Props> = ({ username, email }) => {
         <>
             <Head>
                 <title>Settings - Markotplace</title>
-                <meta
-                    name="description"
-                    content="Update your Markotplace account."
-                />
+                <meta name="description" content="Update your Markotplace account." />
             </Head>
             <div className={styles.settings}>
                 <h1>Update your settings</h1>
@@ -37,15 +34,11 @@ const Settings: NextPage<Props> = ({ username, email }) => {
                         // Make the request to edit the users details
                         axios
                             .patch<string>(
-                                `${process.env.BACKEND_URL}/api/user/edit`,
+                                `https://${process.env.BACKEND_HOSTNAME}/api/user/edit`,
                                 {
-                                    username: newUsername
-                                        ? newUsername
-                                        : undefined,
+                                    username: newUsername ? newUsername : undefined,
                                     email: newEmail ? newEmail : undefined,
-                                    password: newPassword
-                                        ? newPassword
-                                        : undefined,
+                                    password: newPassword ? newPassword : undefined,
                                 },
                                 { withCredentials: true }
                             )
@@ -74,17 +67,8 @@ const Settings: NextPage<Props> = ({ username, email }) => {
                         value={newUsername !== null ? newUsername : username}
                         onChange={(e) => setNewUsername(e.target.value)}
                     />
-                    <input
-                        type="email"
-                        placeholder="New email"
-                        value={newEmail !== null ? newEmail : email}
-                        onChange={(e) => setNewEmail(e.target.value)}
-                    />
-                    <input
-                        type="password"
-                        placeholder="New password"
-                        onChange={(e) => setNewPassword(e.target.value)}
-                    />
+                    <input type="email" placeholder="New email" value={newEmail !== null ? newEmail : email} onChange={(e) => setNewEmail(e.target.value)} />
+                    <input type="password" placeholder="New password" onChange={(e) => setNewPassword(e.target.value)} />
                     <input type="submit" value="Update" />
                     <StatusMessage status={status} />
                     <Link href="/user/dev/dashboard">
@@ -101,13 +85,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         // Get the users profile
         const {
             data: { username, email },
-        } = await axios.get<Props>(
-            `${process.env.BACKEND_URL}/api/user/profile`,
-            {
-                withCredentials: true,
-                headers: { Cookie: req.headers.cookie },
-            }
-        );
+        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/user/profile`, {
+            withCredentials: true,
+            headers: { Cookie: req.headers.cookie },
+        });
         return { props: { username, email } as Props };
     } catch {
         // Redirect the user

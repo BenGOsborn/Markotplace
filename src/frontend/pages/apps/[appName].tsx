@@ -51,9 +51,7 @@ const App: NextPage<Props> = ({ app }) => {
     useEffect(() => {
         if (marketApps === null) {
             axios
-                .get<{ apps: MarketApp[] }>(
-                    `${process.env.BACKEND_URL}/api/apps/list`
-                )
+                .get<{ apps: MarketApp[] }>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/list`)
                 .then((res) => {
                     // Cache the apps
                     const apps = res.data.apps;
@@ -98,7 +96,7 @@ const App: NextPage<Props> = ({ app }) => {
                             // Get the redirect URL
                             axios
                                 .post<{ redirectURL: string }>(
-                                    `${process.env.BACKEND_URL}/api/payment/checkout`,
+                                    `https://${process.env.BACKEND_HOSTNAME}/api/payment/checkout`,
                                     { appName: app.name },
                                     { withCredentials: true }
                                 )
@@ -127,15 +125,7 @@ const App: NextPage<Props> = ({ app }) => {
                 {displayApps.length > 0 ? (
                     <div className={styles.extras}>
                         {displayApps.map((dApp, index) => {
-                            return (
-                                <Card
-                                    key={index}
-                                    title={dApp.title}
-                                    link={`/apps/${dApp.name}`}
-                                    description={dApp.description}
-                                    author={dApp.author}
-                                />
-                            );
+                            return <Card key={index} title={dApp.title} link={`/apps/${dApp.name}`} description={dApp.description} author={dApp.author} />;
                         })}
                     </div>
                 ) : null}
@@ -152,9 +142,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         // Fetch and return the data for the app
         const {
             data: { app },
-        } = await axios.get<Props>(
-            `${process.env.BACKEND_URL}/api/apps/details/${appName}`
-        );
+        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/details/${appName}`);
 
         return { props: { app } as Props };
     } catch {

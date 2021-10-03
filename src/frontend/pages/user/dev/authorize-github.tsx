@@ -7,11 +7,7 @@ const Authorize: NextPage<Props> = () => {
     return <></>;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-    req,
-    res,
-    query,
-}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
     // Get the code from the query
     const { code } = query;
 
@@ -19,13 +15,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     if (typeof code === "undefined") {
         try {
             // Get the GitHub OAuth URL
-            const { data: url } = await axios.get<string>(
-                `${process.env.BACKEND_URL}/api/dev/authorize/github`,
-                {
-                    withCredentials: true,
-                    headers: { Cookie: req.headers.cookie },
-                }
-            );
+            const { data: url } = await axios.get<string>(`https://${process.env.BACKEND_HOSTNAME}/api/dev/authorize/github`, {
+                withCredentials: true,
+                headers: { Cookie: req.headers.cookie },
+            });
 
             // Redirect the user
             return { redirect: { destination: url, permanent: false } };
@@ -39,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         try {
             // Update the data
             await axios.post<string>(
-                `${process.env.BACKEND_URL}/api/dev/authorize/github`,
+                `https://${process.env.BACKEND_HOSTNAME}/api/dev/authorize/github`,
                 { code },
                 {
                     withCredentials: true,

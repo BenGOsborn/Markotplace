@@ -25,23 +25,12 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
         <>
             <Head>
                 <title>Dashboard - Markotplace</title>
-                <meta
-                    name="description"
-                    content="Update your existing apps or create a new app."
-                />
+                <meta name="description" content="Update your existing apps or create a new app." />
             </Head>
             <div className={styles.dashboard}>
                 <nav>
-                    {onboarded ? (
-                        <a href={url}>View your Stripe dashboard</a>
-                    ) : (
-                        <a href={url}>
-                            Connect with Stripe to monetize your apps
-                        </a>
-                    )}
-                    <Link href="/user/dev/authorize-github">
-                        Reconnect GitHub account
-                    </Link>
+                    {onboarded ? <a href={url}>View your Stripe dashboard</a> : <a href={url}>Connect with Stripe to monetize your apps</a>}
+                    <Link href="/user/dev/authorize-github">Reconnect GitHub account</Link>
                     <Link href="/user/dev/apps/create">
                         <a>
                             <span>New app</span>
@@ -55,14 +44,7 @@ const Dashboard: NextPage<Props> = ({ apps, url, onboarded }) => {
                 {apps.length > 0 ? (
                     <div className={styles.grid}>
                         {apps.map((app, index) => {
-                            return (
-                                <Card
-                                    key={index}
-                                    title={app.title}
-                                    description={app.description}
-                                    link={`/user/dev/apps/edit/${app.name}`}
-                                />
-                            );
+                            return <Card key={index} title={app.title} description={app.description} link={`/user/dev/apps/edit/${app.name}`} />;
                         })}
                     </div>
                 ) : (
@@ -78,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         // Fetch a list of the devs apps
         const {
             data: { apps },
-        } = await axios.get<Props>(`${process.env.BACKEND_URL}/api/apps/dev`, {
+        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/dev`, {
             withCredentials: true,
             headers: { Cookie: req.headers.cookie },
         });
@@ -86,13 +68,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         // Get the devs payment link
         const {
             data: { url, onboarded },
-        } = await axios.get<Props>(
-            `${process.env.BACKEND_URL}/api/payment/stripe-dashboard`,
-            {
-                withCredentials: true,
-                headers: { Cookie: req.headers.cookie },
-            }
-        );
+        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/payment/stripe-dashboard`, {
+            withCredentials: true,
+            headers: { Cookie: req.headers.cookie },
+        });
 
         return { props: { apps, url, onboarded } as Props };
     } catch {
