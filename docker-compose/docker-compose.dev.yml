@@ -40,7 +40,7 @@ services:
             - STRIPE_SECRET_TEST=${STRIPE_SECRET_TEST}
             - STRIPE_WEBOOK_SIGNING_SECRET_PURCHASE=${STRIPE_WEBOOK_SIGNING_SECRET_PURCHASE}
             - FRONTEND_URL=${FRONTEND_URL}
-            - BACKEND_URL=${BACKEND_URL}
+            - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
             - NODE_ENV=${NODE_ENV}
         depends_on:
             - db
@@ -61,7 +61,7 @@ services:
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
             - POSTGRES_DB=${POSTGRES_DB}
-            - BACKEND_URL=${BACKEND_URL}
+            - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
         depends_on:
             - db
             - api
@@ -96,7 +96,7 @@ services:
             - ../src/frontend:/usr/app
         restart: always
         environment:
-            - BACKEND_URL=${BACKEND_URL}
+            - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
             - NODE_ENV=${NODE_ENV}
         networks:
             - frontend
