@@ -8,7 +8,7 @@ staging=0 # Set to 1 if you're testing your setup to avoid hitting request limit
 
 if [ -d "$data_path" ]; then
     echo "### Starting containers ..."
-    docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.env.production up --force-recreate -d
+    docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.env.production up --force-recreate --build -d
     exit
 fi
 
@@ -31,7 +31,7 @@ docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.e
 echo
 
 echo "### Starting nginx ..."
-docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.env.production up --force-recreate -d
+docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.env.production up --build --force-recreate -d
 echo
 
 echo "### Deleting dummy certificate for $domains ..."
