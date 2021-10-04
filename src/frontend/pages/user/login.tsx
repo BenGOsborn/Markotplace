@@ -35,6 +35,7 @@ const Login: NextPage<Props> = () => {
                     onSubmit={(e) => {
                         // Prevent the page from refreshing
                         e.preventDefault();
+
                         // Make the login request
                         axios
                             .post<string>(`https://${process.env.BACKEND_HOSTNAME}/api/user/login`, { username, password }, { withCredentials: true })
