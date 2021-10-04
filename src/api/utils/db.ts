@@ -12,6 +12,7 @@ export const connectDB = () => {
         database: process.env.POSTGRES_DB,
         username: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,
+        ssl: process.env.NODE_ENV === "production",
         synchronize: true,
         entities: [User, Dev, App],
     }).then((connection) => connection.synchronize());
