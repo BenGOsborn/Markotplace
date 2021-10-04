@@ -34,3 +34,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   I need some way of building the containers when they are remade too
 
 -   The problem is that the template is not being filled out by docker compose properly - it is unclear why (update the dev version of docker compose too)
+-   It seems that the 'command' is preventing nginx from running the template script - how can I work around this
