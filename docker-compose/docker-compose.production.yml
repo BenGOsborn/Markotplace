@@ -54,6 +54,7 @@ services:
         ports:
             - "8000:80"
         environment:
+            - NGINX_ENVSUBST_TEMPLATE_SUFFIX=".conf"
             - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
         depends_on:
             - api
@@ -91,6 +92,7 @@ services:
         ports:
             - "80:80"
         environment:
+            - NGINX_ENVSUBST_TEMPLATE_SUFFIX=".conf"
             - FRONTEND_HOSTNAME=${FRONTEND_HOSTNAME}
         restart: always
         networks:
