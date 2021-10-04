@@ -52,6 +52,8 @@ services:
         command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         ports:
             - "8000:443"
+        volumes:
+          - "../src/nginx/backend:/etc/nginx/templates"
         environment:
             - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
         depends_on:
@@ -90,6 +92,8 @@ services:
         ports:
             - "80:80"
             - "443:443"
+        volumes:
+          - "../src/nginx/frontend:/etc/nginx/templates"
         environment:
             - FRONTEND_HOSTNAME=${FRONTEND_HOSTNAME}
         restart: always
