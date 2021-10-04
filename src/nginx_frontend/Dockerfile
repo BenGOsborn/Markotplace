@@ -1,4 +1,4 @@
 # Build the environment
 FROM nginx:latest
 RUN rm /etc/nginx/conf.d/*
-COPY nginx.conf /etc/nginx/conf.d/
+COPY nginx.conf.template /etc/nginx/templates/
