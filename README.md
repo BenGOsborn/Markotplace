@@ -9,7 +9,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Make a blog helping developers to make apps for our site (like Unity and for other game engines)
 -   Add some way of ranking the apps to build based on the number of users who own them along with the app data (store this as a part of the app data), this would also allow us to keep forwarding the same user to the same app for keeping track of state if it worked like that
 -   Add analytics tracking
--   Rebuild frontend with tailwindcss
+-   Rebuild frontend with tailwindcss + fix the html tag types (e.g. turn h1's into h2's etc) and seperate into components
 
 ## Known vulnerabilities
 
