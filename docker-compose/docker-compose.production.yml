@@ -53,7 +53,6 @@ services:
         ports:
             - "8000:443"
         environment:
-            - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
             - FRONTEND_HOSTNAME=${FRONTEND_HOSTNAME} # Needed because it shares the same SSL certificate as the frontend currently
         depends_on:
             - api

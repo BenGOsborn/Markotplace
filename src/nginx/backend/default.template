@@ -1,6 +1,6 @@
 server {
     listen 443 ssl;
-    server_name ${BACKEND_HOSTNAME};
+    server_name ${FRONTEND_HOSTNAME};
 
     ssl_certificate /etc/letsencrypt/live/${FRONTEND_HOSTNAME}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_HOSTNAME}/privkey.pem;
