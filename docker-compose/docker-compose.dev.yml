@@ -76,8 +76,7 @@ services:
         networks:
             - backend
     nginx_backend:
-        build:
-            context: ../src/nginx_backend_dev
+        image: nginx
         ports:
             - "8000:80"
         depends_on:
@@ -104,8 +103,7 @@ services:
         networks:
             - frontend
     nginx_frontend:
-        build:
-            context: ../src/nginx_frontend_dev
+        image: nginx
         ports:
             - "80:80"
         depends_on:
