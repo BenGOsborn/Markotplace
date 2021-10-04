@@ -35,3 +35,4 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   The problem is that the template is not being filled out by docker compose properly - it is unclear why (update the dev version of docker compose too)
 -   It seems that the 'command' is preventing nginx from running the template script - how can I work around this
+-   Maybe consider changing from frontend hostname to backend host name ???? (because now the backend is not getting the certificate properly ?)
