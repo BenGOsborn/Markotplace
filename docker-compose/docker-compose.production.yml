@@ -52,7 +52,7 @@ services:
             context: ../src/nginx_backend
         command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         ports:
-            - "8000:80"
+            - "8000:443"
         environment:
             - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
         depends_on:
