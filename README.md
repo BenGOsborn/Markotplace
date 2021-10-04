@@ -32,3 +32,5 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Make a new user for the app to run on
 
 -   I need some way of building the containers when they are remade too
+
+-   Plan: Rebuild all of the containers, try and get the app working WITHOUT ssl, then add in SSL when that version works - possibly rewrite the deploy and build scripts too for continuous integration
