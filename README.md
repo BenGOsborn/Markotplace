@@ -10,6 +10,8 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Add some way of ranking the apps to build based on the number of users who own them along with the app data (store this as a part of the app data), this would also allow us to keep forwarding the same user to the same app for keeping track of state if it worked like that
 -   Add analytics tracking
 -   Rebuild frontend with tailwindcss + fix the html tag types (e.g. turn h1's into h2's etc) and seperate into components
+-   Maybe make the .env files contain some of the ports for the docker compose as well which then affect the nginx configs ???
+-   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 
 ## Known vulnerabilities
 
@@ -21,12 +23,7 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Immediate
 
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
--   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 -   Try and looking at all .find instances and try and cache some of them
--   GitHub actions auto deployment
-
-    -   Make it so that certbot auto sends N to the email prompt
-
--   Maybe make the .env files contain some of the ports for the docker compose as well which then affect the nginx configs ???
--   Make a new user for the app to run on
+-   Make a new production non-root user for the app to run on
 -   Forward www to non www
+-   GitHub actions auto deployment
