@@ -35,4 +35,4 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   Plan: Rebuild all of the containers, try and get the app working WITHOUT ssl, then add in SSL when that version works - possibly rewrite the deploy and build scripts too for continuous integration
 
--   Fix the template for nginx, fix up the SSL with postgres for Golang and Node, find a new redis host OR find out what is wrong with it ?
+-   The problem is that the template is not being filled out by docker compose properly - it is unclear why

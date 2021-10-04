@@ -48,8 +48,7 @@ services:
         networks:
             - backend
     nginx_backend:
-        build:
-            context: ../src/nginx_backend
+        image: nginx
         command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         ports:
             - "8000:443"
