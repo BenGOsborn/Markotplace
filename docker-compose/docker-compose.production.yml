@@ -49,7 +49,7 @@ services:
             - backend
     nginx_backend:
         image: nginx
-        command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+        # command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         ports:
             - "8000:443"
         environment:
@@ -80,7 +80,7 @@ services:
             - frontend
     nginx_frontend:
         image: nginx
-        command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+        # command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         depends_on:
             - frontend
             - certbot
