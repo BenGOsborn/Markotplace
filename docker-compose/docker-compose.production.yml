@@ -52,8 +52,6 @@ services:
         command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         ports:
             - "8000:443"
-        volumes:
-          - "../src/nginx/backend:/etc/nginx/templates"
         environment:
             - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
         depends_on:
@@ -63,6 +61,7 @@ services:
         volumes:
             - ../data/certbot/conf:/etc/letsencrypt
             - ../data/certbot/www:/var/www/certbot
+            - "../src/nginx/backend:/etc/nginx/templates"
         restart: always
         networks:
             - backend
@@ -80,8 +79,7 @@ services:
         networks:
             - frontend
     nginx_frontend:
-        build:
-            context: ../src/nginx_frontend
+        image: nginx
         command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         depends_on:
             - frontend
@@ -89,11 +87,10 @@ services:
         volumes:
             - ../data/certbot/conf:/etc/letsencrypt
             - ../data/certbot/www:/var/www/certbot
+            - "../src/nginx/frontend:/etc/nginx/templates"
         ports:
             - "80:80"
             - "443:443"
-        volumes:
-          - "../src/nginx/frontend:/etc/nginx/templates"
         environment:
             - FRONTEND_HOSTNAME=${FRONTEND_HOSTNAME}
         restart: always
