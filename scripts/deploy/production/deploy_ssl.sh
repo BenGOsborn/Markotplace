@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if ! [ -x "$(command -v docker-compose)" ]; then
-    echo 'Error: docker-compose is not installed.' >&2
-    exit 1
-fi
-
 domains=(markotplace.com www.markotplace.com) # Have some way of setting this up automatically ?
 rsa_key_size=4096
 data_path="data/certbot"
