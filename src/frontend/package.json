@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "scripts": {
         "dev": "next dev",
-        "build": "next build",
+        "builds": "BACKEND_HOSTNAME=$BACKEND_HOSTNAME next build",
+        "build": "echo $BACKEND_HOSTNAME",
         "start": "next start",
         "lint": "next lint"
     },

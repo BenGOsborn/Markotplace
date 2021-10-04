@@ -3,6 +3,7 @@ FROM node:latest as build
 WORKDIR /usr/app
 COPY . .
 RUN npm install
+ARG BACKEND_HOSTNAME
 RUN npm run build
 
 # Copy built files to production environment

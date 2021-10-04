@@ -70,11 +70,12 @@ services:
         build:
             context: ../src/frontend
             dockerfile: build.Dockerfile
+            args:
+                - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
         ports:
             - "3000"
         restart: always
         environment:
-            - BACKEND_HOSTNAME=${BACKEND_HOSTNAME}
             - NODE_ENV=${NODE_ENV}
         networks:
             - frontend
