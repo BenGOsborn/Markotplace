@@ -29,5 +29,4 @@ An online marketplace that allows developers to monetize their online web apps.
 
 -   Maybe make the .env files contain some of the ports for the docker compose as well which then affect the nginx configs ???
 -   Make a new user for the app to run on
--   When stopping the app there was a warning about an env variable missing - look into this
 -   Forward www to non www
