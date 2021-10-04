@@ -30,3 +30,5 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Change the .env files to have the domain name instead of the URL for the frontend and backend and then use that with NGINX and the deployment scripts
 -   Update the dev environment to use the same ports as the .env files
 -   Make a new user for the app to run on
+
+-   I need some way of building the containers when they are remade too
