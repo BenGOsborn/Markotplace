@@ -34,4 +34,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   The problem is that the template is not being filled out by docker compose properly - it is unclear why (update the dev version of docker compose too)
 
 -   Now there is a new problem - the BACKEND_HOSTNAME is not being sent to the "frontend" container and as a result it is sending data to "undefined" hostname
+
     -   [Maybe its because I have to expose these somehow with an env file, but how am I going to do this ?](https://nextjs.org/docs/basic-features/environment-variables)
+
+-   When stopping the app there was a warning about an env variable missing - look into this
