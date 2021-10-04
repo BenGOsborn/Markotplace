@@ -23,11 +23,11 @@ An online marketplace that allows developers to monetize their online web apps.
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
 -   Try and looking at all .find instances and try and cache some of them
--   Add in https via letsencrypt docker (add setup SSL in deploy script)
--   Auto deployment system (using some easy to use application)
 -   GitHub actions auto deployment
 
+    -   Make it so that certbot auto sends N to the email prompt
+
 -   Maybe make the .env files contain some of the ports for the docker compose as well which then affect the nginx configs ???
--   Update the dev environment to use the same ports as the .env files
 -   Make a new user for the app to run on
 -   When stopping the app there was a warning about an env variable missing - look into this
+-   Forward www to non www

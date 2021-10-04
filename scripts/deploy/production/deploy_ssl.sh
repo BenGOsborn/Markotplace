@@ -64,6 +64,7 @@ docker-compose -f docker-compose/docker-compose.production.yml --env-file env/.e
         $domain_args \
         --rsa-key-size $rsa_key_size \
         --agree-tos \
+        --no-eff-email \
         --force-renewal" certbot
 echo
 
