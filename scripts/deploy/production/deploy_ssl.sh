@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Load env file
+set -o allexport
+source env/.env.production
+set +o allexport
+
+echo $FRONTEND_ADDRESS
+
 domains=($FRONTEND_ADDRESS)
 rsa_key_size=4096
 data_path="data/certbot"

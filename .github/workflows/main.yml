@@ -26,4 +26,4 @@ jobs:
                       cd Markotplace
                       scripts/deploy/production/stop.sh
                       git pull
-                      set -a; . env/.env.production && scripts/deploy/production/deploy_ssl.sh; set +a
+                      scripts/deploy/production/deploy_ssl.sh
