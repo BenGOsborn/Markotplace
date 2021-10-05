@@ -1,10 +1,7 @@
 #!/bin/bash
 
 # Load env file
-set -a
-source env/.env.production
-set +a
-
+export $(cat env/.env.production | xargs)
 echo "============== THIS IS THE ADDRES =========="
 echo ${FRONTEND_ADDRESS}
 echo "============== THIS IS THE ADDRES =========="
