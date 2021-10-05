@@ -26,5 +26,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Try and looking at all .find instances and try and cache some of them
 -   Make a new production non-root user for the app to run on
 -   Forward www to non www
+-   Add "hostname" into the deploy.ssl script (maybe export env variables and then use it that way ?)
+-   Maybe the need for setting the environment variable before the build command is not needed now with the addition of the ARG
 -   GitHub actions auto deployment
 -   Hostnames do not contain port ??? (maybe change that from hostname to domain name or something)
