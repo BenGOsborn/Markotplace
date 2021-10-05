@@ -24,4 +24,3 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Immediate
 
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
--   Make a new production non-root user for the app to run on
