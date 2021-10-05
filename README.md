@@ -27,3 +27,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Make a new production non-root user for the app to run on
 
 -   Frontend address did not get deployed - why is this ? (it is saying that this address should be called '\*\*\*' for some reason - why are you doing this to me ?)
+-   [It is because of the GitHub actions censoring (because the host is also this - maybe I should change that)](https://github.community/t/github-actions-output-has-asterisks-in-place-of-text/181720)
