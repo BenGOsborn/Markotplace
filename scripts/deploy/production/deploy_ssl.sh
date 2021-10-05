@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Load env file
-set -o allexport
+set -a
 source env/.env.production
-set +o allexport
+set +a
 
-echo $FRONTEND_ADDRESS
+echo "============== THIS IS THE ADDRES =========="
+echo ${FRONTEND_ADDRESS}
+echo "============== THIS IS THE ADDRES =========="
 
 domains=($FRONTEND_ADDRESS)
 rsa_key_size=4096
