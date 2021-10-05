@@ -24,3 +24,4 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Immediate
 
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
+-   Maybe look into the users permissions more
