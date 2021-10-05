@@ -1,4 +1,9 @@
 server {
+    server_name www.${FRONTEND_HOSTNAME};
+    return 301 $scheme://${FRONTEND_HOSTNAME}$request_uri;
+}
+
+server {
     listen 80;
     server_name ${FRONTEND_HOSTNAME};
 
