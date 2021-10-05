@@ -14,14 +14,16 @@ jobs:
     # This workflow contains a single job called "build"
     deploy:
         runs-on: ubuntu-latest
-        uses: appleboy/ssh-action@v0.1.2
-        with:
-            username: ${{secrets.SSH_USERNAME}}
-            host: ${{secrets.SSH_HOST}}
-            key: ${{secrets.SSH_KEY}}
+        steps:
+            - name: Deploy Markotplace
+              uses: appleboy/ssh-action@v0.1.2
+              with:
+                  username: ${{secrets.SSH_USERNAME}}
+                  host: ${{secrets.SSH_HOST}}
+                  key: ${{secrets.SSH_KEY}}
 
-            script: |
-                cd Markotplace
-                scripts/deploy/production/stop.sh
-                git pull
-                scripts/deploy/production/deploy_ssl.sh
+                  script: |
+                      cd Markotplace
+                      scripts/deploy/production/stop.sh
+                      git pull
+                      scripts/deploy/production/deploy_ssl.sh
