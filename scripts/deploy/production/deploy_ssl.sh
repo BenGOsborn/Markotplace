@@ -2,9 +2,9 @@
 
 # Load env file
 set -a; . env/.env.production; set +a
-echo "============== THIS IS THE ADDRES =========="
+echo "============== THIS IS THE ADDRESS =========="
 echo ${FRONTEND_ADDRESS}
-echo "============== THIS IS THE ADDRES =========="
+echo "============== THIS IS THE ADDRESS =========="
 
 domains=($FRONTEND_ADDRESS)
 rsa_key_size=4096
