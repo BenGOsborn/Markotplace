@@ -29,7 +29,7 @@ const Library: NextPage<Props> = ({ apps }) => {
                                     key={index}
                                     title={app.title}
                                     description={app.description}
-                                    link={`https://${process.env.BACKEND_HOSTNAME}/apphandler/${app.name}`}
+                                    link={`https://${process.env.BACKEND_ADDRESS}/apphandler/${app.name}`}
                                 />
                             );
                         })}
@@ -47,7 +47,7 @@ const Library: NextPage<Props> = ({ apps }) => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
         // Fetch a list of the users apps
-        const apps = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/owned`, { withCredentials: true, headers: { Cookie: req.headers.cookie } });
+        const apps = await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/apps/owned`, { withCredentials: true, headers: { Cookie: req.headers.cookie } });
         return { props: { apps: apps.data.apps } as Props };
     } catch {
         // Redirect the user

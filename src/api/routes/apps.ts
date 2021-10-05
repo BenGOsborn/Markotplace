@@ -212,7 +212,7 @@ router.post("/dev/create", protectedMiddleware, devMiddleware, async (req, res) 
             `https://api.github.com/repos/${ghRepoOwner}/${ghRepoName}/hooks`,
             {
                 config: {
-                    url: `https://${process.env.BACKEND_HOSTNAME}/api/apps/hook`,
+                    url: `https://${process.env.BACKEND_ADDRESS}/api/apps/hook`,
                     content_type: "json",
                 },
             },
@@ -335,7 +335,7 @@ router.patch("/dev/edit", protectedMiddleware, devMiddleware, async (req, res) =
                 `https://api.github.com/repos/${ghRepoOwner || existingApp.ghRepoOwner}/${ghRepoName || existingApp.ghRepoName}/hooks`,
                 {
                     config: {
-                        url: `https://${process.env.BACKEND_HOSTNAME}/api/apps/hook`,
+                        url: `https://${process.env.BACKEND_ADDRESS}/api/apps/hook`,
                         content_type: "json",
                     },
                 },

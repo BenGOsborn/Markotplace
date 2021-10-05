@@ -1,6 +1,6 @@
 module.exports = {
     reactStrictMode: true,
     env: {
-        BACKEND_HOSTNAME: process.env.BACKEND_HOSTNAME,
+        BACKEND_ADDRESS: process.env.BACKEND_ADDRESS,
     },
 };

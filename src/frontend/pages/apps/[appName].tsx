@@ -51,7 +51,7 @@ const App: NextPage<Props> = ({ app }) => {
     useEffect(() => {
         if (marketApps === null) {
             axios
-                .get<{ apps: MarketApp[] }>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/list`)
+                .get<{ apps: MarketApp[] }>(`https://${process.env.BACKEND_ADDRESS}/api/apps/list`)
                 .then((res) => {
                     // Cache the apps
                     const apps = res.data.apps;
@@ -96,7 +96,7 @@ const App: NextPage<Props> = ({ app }) => {
                             // Get the redirect URL
                             axios
                                 .post<{ redirectURL: string }>(
-                                    `https://${process.env.BACKEND_HOSTNAME}/api/payment/checkout`,
+                                    `https://${process.env.BACKEND_ADDRESS}/api/payment/checkout`,
                                     { appName: app.name },
                                     { withCredentials: true }
                                 )
@@ -142,7 +142,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         // Fetch and return the data for the app
         const {
             data: { app },
-        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/details/${appName}`);
+        } = await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/apps/details/${appName}`);
 
         return { props: { app } as Props };
     } catch {

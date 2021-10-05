@@ -24,8 +24,8 @@ router.get("/stripe-dashboard", protectedMiddleware, devMiddleware, async (req, 
             await stripe.accountLinks.create({
                 account: user.dev.stripeConnectID,
                 type: "account_onboarding",
-                refresh_url: `https://${process.env.FRONTEND_HOSTNAME}/user/dev/dashboard`,
-                return_url: `https://${process.env.FRONTEND_HOSTNAME}/user/dev/dashboard`,
+                refresh_url: `https://${process.env.FRONTEND_ADDRESS}/user/dev/dashboard`,
+                return_url: `https://${process.env.FRONTEND_ADDRESS}/user/dev/dashboard`,
             })
         ).url;
 
@@ -81,7 +81,7 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
 
         // Return success
         return res.json({
-            redirectURL: `https://${process.env.FRONTEND_HOSTNAME}/user/library`,
+            redirectURL: `https://${process.env.FRONTEND_ADDRESS}/user/library`,
         } as CheckoutReturn);
     }
 
@@ -110,8 +110,8 @@ router.post("/checkout", protectedMiddleware, async (req, res) => {
             },
         ],
         mode: "payment",
-        success_url: `https://${process.env.FRONTEND_HOSTNAME}/user/library`,
-        cancel_url: `https://${process.env.FRONTEND_HOSTNAME}/apps/${existingApp.name}`,
+        success_url: `https://${process.env.FRONTEND_ADDRESS}/user/library`,
+        cancel_url: `https://${process.env.FRONTEND_ADDRESS}/apps/${existingApp.name}`,
     });
 
     // Return the payment intent

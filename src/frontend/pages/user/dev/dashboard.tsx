@@ -60,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         // Fetch a list of the devs apps
         const {
             data: { apps },
-        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/dev`, {
+        } = await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/apps/dev`, {
             withCredentials: true,
             headers: { Cookie: req.headers.cookie },
         });
@@ -68,7 +68,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         // Get the devs payment link
         const {
             data: { url, onboarded },
-        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/payment/stripe-dashboard`, {
+        } = await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/payment/stripe-dashboard`, {
             withCredentials: true,
             headers: { Cookie: req.headers.cookie },
         });

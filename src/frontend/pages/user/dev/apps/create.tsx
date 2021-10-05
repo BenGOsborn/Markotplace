@@ -47,7 +47,7 @@ const Create: NextPage<Props> = () => {
                         // Make the request to create the new app
                         axios
                             .post<string>(
-                                `https://${process.env.BACKEND_HOSTNAME}/api/apps/dev/create`,
+                                `https://${process.env.BACKEND_ADDRESS}/api/apps/dev/create`,
                                 {
                                     name,
                                     title,
@@ -145,7 +145,7 @@ const Create: NextPage<Props> = () => {
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     try {
         // Verify that the user is a developer
-        await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/dev/is-authorized`, {
+        await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/dev/is-authorized`, {
             withCredentials: true,
             headers: { Cookie: req.headers.cookie },
         });

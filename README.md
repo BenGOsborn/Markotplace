@@ -12,6 +12,7 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Rebuild frontend with tailwindcss + fix the html tag types (e.g. turn h1's into h2's etc) and seperate into components
 -   Maybe make the .env files contain some of the ports for the docker compose as well which then affect the nginx configs ???
 -   Look at all instances of cacheData and check if I can use a different identifier for something (and clear cache) (ESPECIALLY LOOK FOR CACHE CLEARS)
+-   Try and looking at all .find instances and try and cache some of them
 
 ## Known vulnerabilities
 
@@ -23,9 +24,4 @@ An online marketplace that allows developers to monetize their online web apps.
 ## Immediate
 
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
--   Try and looking at all .find instances and try and cache some of them
 -   Make a new production non-root user for the app to run on
--   Add "hostname" into the deploy.ssl script (maybe export env variables and then use it that way ?)
--   Maybe the need for setting the environment variable before the build command is not needed now with the addition of the ARG
--   GitHub actions auto deployment
--   Hostnames do not contain port ??? (maybe change that from hostname to domain name or something)

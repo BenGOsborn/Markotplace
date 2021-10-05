@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
     if (typeof code === "undefined") {
         try {
             // Get the GitHub OAuth URL
-            const { data: url } = await axios.get<string>(`https://${process.env.BACKEND_HOSTNAME}/api/dev/authorize/github`, {
+            const { data: url } = await axios.get<string>(`https://${process.env.BACKEND_ADDRESS}/api/dev/authorize/github`, {
                 withCredentials: true,
                 headers: { Cookie: req.headers.cookie },
             });
@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
         try {
             // Update the data
             await axios.post<string>(
-                `https://${process.env.BACKEND_HOSTNAME}/api/dev/authorize/github`,
+                `https://${process.env.BACKEND_ADDRESS}/api/dev/authorize/github`,
                 { code },
                 {
                     withCredentials: true,

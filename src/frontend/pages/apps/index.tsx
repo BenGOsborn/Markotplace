@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
     try {
         const {
             data: { apps },
-        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/list`);
+        } = await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/apps/list`);
         return { props: { apps } as Props };
     } catch {
         return { props: { apps: [] } as Props };

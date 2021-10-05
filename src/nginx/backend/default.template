@@ -1,9 +1,9 @@
 server {
     listen 443 ssl;
-    server_name ${FRONTEND_HOSTNAME};
+    server_name ${FRONTEND_ADDRESS};
 
-    ssl_certificate /etc/letsencrypt/live/${FRONTEND_HOSTNAME}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_HOSTNAME}/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/${FRONTEND_ADDRESS}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${FRONTEND_ADDRESS}/privkey.pem;
 
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;

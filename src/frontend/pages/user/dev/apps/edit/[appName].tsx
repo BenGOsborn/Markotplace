@@ -79,7 +79,7 @@ const Edit: NextPage<Props> = ({ app }) => {
                         // Make the request to update the app
                         axios
                             .patch<string>(
-                                `https://${process.env.BACKEND_HOSTNAME}/api/apps/dev/edit`,
+                                `https://${process.env.BACKEND_ADDRESS}/api/apps/dev/edit`,
                                 {
                                     name: app.name,
                                     title: newTitle ? newTitle : undefined,
@@ -222,7 +222,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params 
         // Get the details for the app
         const {
             data: { app },
-        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/apps/dev/details/${appName}`, {
+        } = await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/apps/dev/details/${appName}`, {
             withCredentials: true,
             headers: { Cookie: req.headers.cookie },
         });

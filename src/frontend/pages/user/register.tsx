@@ -38,7 +38,7 @@ const Register: NextPage<Props> = () => {
                         e.preventDefault();
                         // Make the register request
                         axios
-                            .post<string>(`$https://${process.env.BACKEND_HOSTNAME}/api/user/register`, { username, email, password }, { withCredentials: true })
+                            .post<string>(`$https://${process.env.BACKEND_ADDRESS}/api/user/register`, { username, email, password }, { withCredentials: true })
                             .then((res) => {
                                 // Set the status
                                 setStatus({

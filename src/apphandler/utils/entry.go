@@ -20,7 +20,6 @@ func GetRunningApp(appName string, tracker *map[string]*processes.Tracker, db *d
 		trackerData.ResetTimer()
 
 		// Return the URI of the app
-		// return fmt.Sprintf("%s:%d", fmt.Sprintf("https://%s", os.Getenv("BACKEND_HOSTNAME")), trackerData.Port), nil // Why was this here ?
 		return fmt.Sprintf("http://host.docker.internal:%d", trackerData.Port), nil
 	} else {
 		// Find the app data that matches the app name

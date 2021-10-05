@@ -34,7 +34,7 @@ const Settings: NextPage<Props> = ({ username, email }) => {
                         // Make the request to edit the users details
                         axios
                             .patch<string>(
-                                `https://${process.env.BACKEND_HOSTNAME}/api/user/edit`,
+                                `https://${process.env.BACKEND_ADDRESS}/api/user/edit`,
                                 {
                                     username: newUsername ? newUsername : undefined,
                                     email: newEmail ? newEmail : undefined,
@@ -85,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         // Get the users profile
         const {
             data: { username, email },
-        } = await axios.get<Props>(`https://${process.env.BACKEND_HOSTNAME}/api/user/profile`, {
+        } = await axios.get<Props>(`https://${process.env.BACKEND_ADDRESS}/api/user/profile`, {
             withCredentials: true,
             headers: { Cookie: req.headers.cookie },
         });
