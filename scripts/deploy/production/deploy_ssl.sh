@@ -1,6 +1,6 @@
 #!/bin/bash
 
-domains=(markotplace.com www.markotplace.com) # Have some way of setting this up automatically ?
+domains=(markotplace.com) # Have some way of setting this up automatically ?
 rsa_key_size=4096
 data_path="data/certbot"
 email="ben@gmail.com" # Adding a valid address is strongly recommended

@@ -27,3 +27,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   Make a new production non-root user for the app to run on
 -   Forward www to non www
 -   GitHub actions auto deployment
+-   Hostnames do not contain port ??? (maybe change that from hostname to domain name or something)
