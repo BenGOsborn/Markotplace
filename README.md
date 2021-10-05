@@ -26,4 +26,4 @@ An online marketplace that allows developers to monetize their online web apps.
 -   One of my apps failed to start (maybe look into the updating tool ?) (could be to do with the build times ?)
 -   Make a new production non-root user for the app to run on
 
--   Frontend address did not get deployed - why is this ?
+-   Frontend address did not get deployed - why is this ? (it is saying that this address should be called '\*\*\*' for some reason - why are you doing this to me ?)
