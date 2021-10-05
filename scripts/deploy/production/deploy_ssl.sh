@@ -3,6 +3,7 @@
 # Load env file
 export $(cat env/.env.production | xargs)
 echo "============== THIS IS THE ADDRES =========="
+cat env/.env.production
 echo ${FRONTEND_ADDRESS}
 echo "============== THIS IS THE ADDRES =========="
 
